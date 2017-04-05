@@ -34,7 +34,7 @@
      p {{item.name}}
      ul
        li(v-for='url in item.urls')
-         a(v-bind:href='url') {{url}}
+         a(v-bind:href='url',target='_blank') {{url}}
   mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
     p 文件名： {{curFile.server_filename}}
     p 文件大小： {{transeSize(curFile)}}

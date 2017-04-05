@@ -52,7 +52,7 @@ export default {
       .then(list=>{
         this.fileList = list;
       })
-      .catch(error=>console.log(err));
+      .catch(error=>console.log(error));
     },
     transeSize:function(file){
       if(file.isdir == 1){

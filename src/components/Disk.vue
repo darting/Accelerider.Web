@@ -6,7 +6,7 @@
       mu-flat-button.go-back(v-on:click='backFileList()',slot="right")
        | Back
     //mu-linear-progress
-    mu-table(showCheckbox=false)
+    mu-table(v-bind:showCheckbox='false')
       mu-thead
         mu-tr
           mu-th 文件名
@@ -16,18 +16,25 @@
       mu-tbody
         mu-tr(v-for="file in fileList" key='file.fs_id')
           mu-td
-           a(v-if='file.isdir == 1')
-             a(v-on:click='goFileList(file.path)')
+           div(v-if='file.isdir == 1')
+             a(href='#/disk',v-on:click='goFileList(file.path)')
                span {{file.server_filename}}
            div(v-if='file.isdir == 0')
              span {{file.server_filename}}
           mu-td {{transeSize(file)}}
-          mu-td {{transeTime(file)}}
+          mu-td {{transeTime(file.server_mtime)}}
           mu-flat-button.demo-menu
             mu-icon-menu(icon='more')
-              mu-menu-item(title='下载')
-              mu-menu-item(title='属性')
-    mu-toast(v-if="toast" v-bind:message="errMsg")
+              mu-menu-item(v-on:click='openDownLinks(file)',title='下载')
+              mu-menu-item(v-on:click='fileProperty(file)',title='属性')
+    mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
+      p(v-for='item in downlinks') {{item}}
+    mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
+     p 文件名： {{curFile.server_filename}}
+     p 文件大小： {{transeSize(curFile)}}
+     p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
+     p 修改时间： {{transeTime(curFile.server_mtime)}}
+     p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
 </template>
 
 <script>
@@ -38,8 +45,10 @@ export default {
       title:'网盘',
       curPath:[],
       fileList:[],
-      toast:false,
-      errMsg:''
+      dialogDL:false,
+      dialogProP:false,
+      downlinks:[],
+      curFile:{},
     }
   },
   methods:{
@@ -63,7 +72,6 @@ export default {
         this.title = curTitle;
         this.curPath.push(path);
         this.fileList = list;
-        console.log(this.curPath);
       })
       .catch(error=>{
         let edata = error.response.data;
@@ -93,12 +101,55 @@ export default {
         //return `${(size / Math.pow(k, i)).toPrecision(5)} ${sizes[i]}`;
       }
     },
-    transeTime:function(file){
-      let mtime = file.server_mtime;
+    transeTime:function(mtime){
       let newDate = new Date();
       newDate.setTime(mtime * 1000); 
       return newDate.toLocaleString();
-
+    },
+    fileProperty:function(file){
+      this.curFile = file;
+      this.dialogProP = true;
+    },
+    closePropertyDia:function(){
+      this.dialogProP = false;
+    },
+    openDownLinks:function(file){
+      const token = sessionStorage.getItem('accessToken');
+      const uk = sessionStorage.getItem('accessUk');
+      const url = 'http://api.pescn.top/filelinks';
+      let method = file.size>31457280 ? "JUMP" : "APPID";
+      let f = {
+        "path":encodeURIComponent(file.path),
+        "id": file.fs_id}
+      ;
+      this.$ajax({
+        method:'POST',
+        url:url,
+        /*transformRequest: [function (data) {
+          let ret = ''
+          for (let it in data) {
+            ret += `"${encodeURIComponent(it)}"="${encodeURIComponent(data[it])}"&`
+          }
+          return ret
+        }],*/
+        data:{"files":[f]},
+        params:{
+          token:token,
+          uk:uk,
+          method:method
+        }
+      })
+      .then(response=>{
+        this.dialogDL = true;
+        console.log(response.data);
+      })
+      .catch(err=>{
+        let data = err.response.data;
+        console.log(data.message);
+        });
+    },
+    closeDownLinks:function(){
+      this.dialogDL = false;
     }
   },
   mounted(){

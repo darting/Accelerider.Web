@@ -1,7 +1,9 @@
 <template lang="pug">
   .container
-    mu-appbar.header(title="网盘")
-      mu-flat-button.go-back(href='#/main', slot="right")
+    mu-appbar.header(v-bind:title="title")
+      mu-flat-button.ret-path(href='#/main',slot='left')
+       | RETURN MAIN
+      mu-flat-button.go-back(v-on:click='backFileList()',slot="right")
        | Back
     //mu-linear-progress
     mu-table(showCheckbox=false)
@@ -13,9 +15,14 @@
           mu-th 操作
       mu-tbody
         mu-tr(v-for="file in fileList" key='file.fs_id')
-          mu-td {{file.server_filename}}
+          mu-td
+           a(v-if='file.isdir == 1')
+             a(v-on:click='goFileList(file.path)')
+               span {{file.server_filename}}
+           div(v-if='file.isdir == 0')
+             span {{file.server_filename}}
           mu-td {{transeSize(file)}}
-          mu-td {{file.server_mtime}}
+          mu-td {{transeTime(file)}}
           mu-flat-button.demo-menu
             mu-icon-menu(icon='more')
               mu-menu-item(title='下载')
@@ -28,13 +35,16 @@ export default {
   name: 'userinfo',
   data () {
     return {
+      title:'网盘',
+      curPath:[],
       fileList:[],
       toast:false,
       errMsg:''
     }
   },
   methods:{
-    getFileList:function(){
+    goFileList:function(path){
+      let curTitle = `网盘 ${path}`
       let token = sessionStorage.getItem('accessToken');
       let uk = sessionStorage.getItem('accessUk');
       let url=`http://api.pescn.top/filelist`;
@@ -44,27 +54,55 @@ export default {
         params:{
           token:token,
           uk:uk,
-          path:'/'
+          path:encodeURIComponent(path)
         }
       })
       .then(response=>response.data)
       .then(data=>data.list)
       .then(list=>{
+        this.title = curTitle;
+        this.curPath.push(path);
         this.fileList = list;
+        console.log(this.curPath);
       })
-      .catch(error=>console.log(error));
+      .catch(error=>{
+        let edata = error.response.data;
+        let errno = edata.errno;
+        console.log(edata.message);
+      });
+    },
+    backFileList:function(){
+      let pathStack = this.curPath;
+      let cur = '/';
+      if(pathStack.length != 1){
+        pathStack.pop();
+        cur = pathStack.pop();
+      }
+      console.log(cur);
+      this.goFileList(cur);
     },
     transeSize:function(file){
       if(file.isdir == 1){
-      return '--';
+        return '--';
       }else{
-       let size = file.size/1024/1024;
-       return size.toFixed(2) + 'MB';
+        let k = 1024;
+        let sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        let size = file.size;
+        let i = Math.floor(Math.log(size) / Math.log(k));
+        return `${(size / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+        //return `${(size / Math.pow(k, i)).toPrecision(5)} ${sizes[i]}`;
       }
+    },
+    transeTime:function(file){
+      let mtime = file.server_mtime;
+      let newDate = new Date();
+      newDate.setTime(mtime * 1000); 
+      return newDate.toLocaleString();
+
     }
   },
   mounted(){
-    this.getFileList();
+    this.goFileList('/');
   }
 }
 </script>
@@ -75,7 +113,7 @@ export default {
   display: inline-block;
   margin: 16px;
 }
-.go-back{
+.ret-path.go-back{
   margin:10px;
 }
 </style>

@@ -30,7 +30,11 @@
                 mu-menu-item(v-on:click='fileProperty(file)',title='属性')
   //mu-float-button(icon='↑',v-on:click='')
   mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
-    p(v-for='item in downlinks') {{item}}
+    div(v-for='item in downlinks')
+     p {{item.name}}
+     ul
+       li(v-for='url in item.urls')
+         a(v-bind:href='url') {{url}}
   mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
     p 文件名： {{curFile.server_filename}}
     p 文件大小： {{transeSize(curFile)}}
@@ -55,6 +59,21 @@ export default {
     }
   },
   methods:{
+    parseDownLinks:function(data){
+      if(data.errno == 0){
+        this.dialogDL = true;
+        let links = data.links;
+        for(let key in links){
+          let obj ={
+            "name":decodeURIComponent(key),
+            "urls":links[key]
+          };
+          this.downlinks.push(obj);
+        }
+      }else{
+        console.log('errno',data.errno);
+      }
+    },
     goFileList:function(path){
       let curTitle = `网盘 ${path}`
       this.isLoading = true;
@@ -124,33 +143,34 @@ export default {
       let method = file.size>31457280 ? "JUMP" : "APPID";
       let f = {
         "path":encodeURIComponent(file.path),
-        "id": file.fs_id}
-      ;
-      this.$ajax({
-        method:'POST',
+        "id": file.fs_id
+      };
+      this.$ajax({method:'POST',
         url:url,
-        /*transformRequest: [function (data) {
-          let ret = ''
-          for (let it in data) {
-            ret += `"${encodeURIComponent(it)}"="${encodeURIComponent(data[it])}"&`
-          }
-          return ret
-        }],*/
-        data:{"files":[f]},
         params:{
           token:token,
           uk:uk,
           method:method
+        },
+        transformRequest:[function(data){
+          let ret = '';
+          for (let it in data) {ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`}
+          return ret;
+        }],
+        data:{
+          "files":`[${JSON.stringify(f)}]`
         }
       })
-      .then(response=>{
-        this.dialogDL = true;
-        console.log(response.data);
+      .then(response=>response.data)
+      .then(data=>{
+        this.parseDownLinks(data);
       })
       .catch(err=>{
-        let data = err.response.data;
-        console.log(data.message);
-        });
+        if(err.response){
+          let edata = err.response.data;
+          console.log(edata.message);
+        }else{console.log(err)}
+      });
     },
     closeDownLinks:function(){
       this.dialogDL = false;

@@ -1,40 +1,42 @@
 <template lang="pug">
-  .container
-    mu-appbar.header(v-bind:title="title")
-      mu-flat-button.ret-path(href='#/main',slot='left')
-       | RETURN MAIN
-      mu-flat-button.go-back(v-on:click='backFileList()',slot="right")
-       | Back
-    //mu-linear-progress
-    mu-table(v-bind:showCheckbox='false')
-      mu-thead
-        mu-tr
-          mu-th 文件名
-          mu-th 大小
-          mu-th 修改日期
-          mu-th 操作
-      mu-tbody
-        mu-tr(v-for="file in fileList" key='file.fs_id')
-          mu-td
-           div(v-if='file.isdir == 1')
-             a(href='#/disk',v-on:click='goFileList(file.path)')
+.container
+  mu-appbar.header(v-bind:title="title")
+    mu-flat-button.ret-path(href='#/main',slot='left')
+      | RETURN MAIN
+    mu-flat-button.go-back(v-on:click='backFileList()',slot="right")
+      | Back
+  mu-linear-progress(v-if='isLoading')
+  .content
+      mu-table(v-bind:showCheckbox='false')
+        mu-thead
+          mu-tr
+            mu-th 文件名
+            mu-th 大小
+            mu-th 修改日期
+            mu-th 操作
+        mu-tbody
+          mu-tr(v-for="file in fileList" key='file.fs_id')
+            mu-td
+             div(v-if='file.isdir == 1')
+               a(href='#/disk',v-on:click='goFileList(file.path)')
+                 span {{file.server_filename}}
+             div(v-if='file.isdir == 0')
                span {{file.server_filename}}
-           div(v-if='file.isdir == 0')
-             span {{file.server_filename}}
-          mu-td {{transeSize(file)}}
-          mu-td {{transeTime(file.server_mtime)}}
-          mu-flat-button.demo-menu
-            mu-icon-menu(icon='more')
-              mu-menu-item(v-on:click='openDownLinks(file)',title='下载')
-              mu-menu-item(v-on:click='fileProperty(file)',title='属性')
-    mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
-      p(v-for='item in downlinks') {{item}}
-    mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
-     p 文件名： {{curFile.server_filename}}
-     p 文件大小： {{transeSize(curFile)}}
-     p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
-     p 修改时间： {{transeTime(curFile.server_mtime)}}
-     p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
+            mu-td {{transeSize(file)}}
+            mu-td {{transeTime(file.server_mtime)}}
+            mu-flat-button.demo-menu
+              mu-icon-menu(icon='...')
+                mu-menu-item(v-on:click='openDownLinks(file)',title='下载')
+                mu-menu-item(v-on:click='fileProperty(file)',title='属性')
+  //mu-float-button(icon='↑',v-on:click='')
+  mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
+    p(v-for='item in downlinks') {{item}}
+  mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
+    p 文件名： {{curFile.server_filename}}
+    p 文件大小： {{transeSize(curFile)}}
+    p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
+    p 修改时间： {{transeTime(curFile.server_mtime)}}
+    p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
 </template>
 
 <script>
@@ -43,6 +45,7 @@ export default {
   data () {
     return {
       title:'网盘',
+      isLoading:true,
       curPath:[],
       fileList:[],
       dialogDL:false,
@@ -54,6 +57,7 @@ export default {
   methods:{
     goFileList:function(path){
       let curTitle = `网盘 ${path}`
+      this.isLoading = true;
       let token = sessionStorage.getItem('accessToken');
       let uk = sessionStorage.getItem('accessUk');
       let url=`http://api.pescn.top/filelist`;
@@ -71,6 +75,7 @@ export default {
       .then(list=>{
         this.title = curTitle;
         this.curPath.push(path);
+        this.isLoading = false;
         this.fileList = list;
       })
       .catch(error=>{
@@ -86,7 +91,6 @@ export default {
         pathStack.pop();
         cur = pathStack.pop();
       }
-      console.log(cur);
       this.goFileList(cur);
     },
     transeSize:function(file){
@@ -160,6 +164,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.header{
+  //position:fixed; top:0;
+}
 .demo-menu {
   display: inline-block;
   margin: 16px;

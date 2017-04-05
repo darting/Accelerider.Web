@@ -1,9 +1,8 @@
 <template lang="pug">
   .container
-    h1 hello
-    mu-flat-button(primary href='#/login') {{linkLogin}}
-        
-
+    mu-appbar.header(title="欢迎光临！")
+    div.content(align='center')
+      mu-flat-button(primary href='#/login') {{linkLogin}}
 </template>
 
 <script>
@@ -20,5 +19,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.content{
+  margin-top:40px;
+}
 </style>

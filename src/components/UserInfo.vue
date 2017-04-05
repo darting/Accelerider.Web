@@ -3,7 +3,7 @@
    .errinfo(v-if='userInfos.length==0')
     | {{errMsg}}
    .info(v-if='userInfos.length!=0')
-     mu-table(showCheckbox=false)
+     mu-table(v-bind:showCheckbox='false')
       mu-thead
         mu-tr
           mu-th 昵称
@@ -69,8 +69,8 @@ export default {
             item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
             item.Token = this.getToken();
           });
-          this.errMsg = '获取账户列表失败，请先绑定账户';
         }else{
+          this.errMsg = '获取账户列表失败，请先绑定账户';
           console.log(data.message);
         }
         return data.userlist;

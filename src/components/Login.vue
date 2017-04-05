@@ -1,14 +1,16 @@
 <template lang="pug">
   .container
     mu-appbar.header(title='LOGIN')
-    form
-      .form-group
-        mu-text-field#username(label='username',v-model='username',v-bind:labelFloat='true',v-bind:maxLength='64')
-      .form-group
-        mu-text-field#password(label='password',type='password',v-model='pwd',v-bind:labelFloat='true',v-bind:maxLength='256')
-      .form-group
-        mu-raised-button(primary, v-on:click='login')
-         | {{sumitstr}}
+    .content-form(align='center')
+      form
+        .form-group
+          mu-text-field#username(label='username',v-model='username',v-bind:labelFloat='true',v-bind:maxLength='64')
+        .form-group
+          mu-text-field#password(label='password',type='password',v-model='pwd',v-bind:labelFloat='true',v-bind:maxLength='256')
+        .form-group
+          div.login-button()
+            mu-raised-button(primary, v-bind:fullWidth='true', v-on:click='login')
+              | {{sumitstr}}
     mu-toast(v-if="toast" v-bind:message="errMsg")
 </template>
 
@@ -37,7 +39,7 @@ export default {
       }
       this.toast = true;
       if (this.toastTimer) clearTimeout(this.toastTimer)
-        this.toastTimer = setTimeout(() => { this.toast = false }, 1000)
+        this.toastTimer = setTimeout(() => { this.toast = false }, 1800)
       
     },
     login:function(){
@@ -78,7 +80,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.form-group{
-	margin:10px
+.content-form{
+  margin-top:5%;
+}
+.login-button{
+  padding:0 35% 0 35%;
 }
 </style>

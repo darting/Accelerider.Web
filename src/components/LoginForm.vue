@@ -1,18 +1,17 @@
 <template lang="pug">
-.login-form
-  form
-    .form-group
-      mu-text-field#username(label='username',v-model='username',v-bind:labelFloat='true', v-bind:maxLength='64')
-    .form-group
-      mu-text-field#password(label='password',type='password',v-model='pwd',v-bind:labelFloat='true',v-bind:maxLength='256')
-    .form-group
-      .login-button
-        mu-raised-button(primary, v-on:click='login')
-         | {{sumitstr}}
-  mu-toast(v-if="toast" v-bind:message="errMsg")
+el-form.login-form
+  el-form-item(label='username')
+    el-input#username(v-model='username')
+  el-form-item(label='password')
+    el-input#password(type='password',v-model='pwd')
+  el-form-item
+    .login-button
+      el-button(type='primary', @click='login',v-loading.fullscreen.lock='loginLoading')
+       | {{sumitstr}}
 </template>
 
 <script>
+import Bus from '../libs/eventBus.js';
 export default {
   name: 'loginform',
   data () {
@@ -20,31 +19,25 @@ export default {
       sumitstr:'LOGIN!',
       username:'',
       pwd:'',
-      toast:false,
-      errMsg:''
+      loginLoading:false
     }
   },
   methods:{
     parseRep:function(response){
+      this.loginLoading = false;
       let data = response.data;
       let errno = data.errno;
       if(errno == 0){
        let token = data.token;
         sessionStorage.setItem('accessToken', token);
-        this.$router.push({path:"/main"});
+        Bus.$emit('loginsuccess', 'OK');
       }else{
-        this.errMsg = data.message;
+        this.$message.error(data.message);
       }
-      this.toast = true;
-      if (this.toastTimer) clearTimeout(this.toastTimer)
-        this.toastTimer = setTimeout(() => { this.toast = false }, 1800)
     },
     login:function(){
+      this.loginLoading = true;
 	    const url="/login";
-      let datas = {
-        "name":this.username,
-        "password":this.pwd
-      };
       this.$ajax({
         method:'POST',
         url:url,
@@ -56,7 +49,10 @@ export default {
           }
           return ret
         }],
-        data:datas
+        data:{
+          "name":encodeURIComponent(this.username),
+          "password":this.pwd
+          }
       })
       .then(response=>this.parseRep(response))
       .catch(err=>{
@@ -68,15 +64,10 @@ export default {
         }
       });
     }
-  },
-  mounted(){
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.login-form{
-  padding:0 auto 0 auto;
-}
 </style>

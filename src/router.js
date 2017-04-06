@@ -5,7 +5,6 @@ import Login from '@/views/Login'
 import Main from '@/views/Main'
 import Disk from '@/views/Disk'
 
-import AppBar from '@/components/AppBar'
 import LoginForm from '@/components/LoginForm'
 import UserInfo from '@/components/UserInfo'
 import WebDisk from '@/components/WebDisk'
@@ -57,7 +56,6 @@ const router = new Router({
   ]
 });
 
-Vue.component('my-appbar',AppBar)
 Vue.component('login-form',LoginForm)
 Vue.component('user-info',UserInfo)
 Vue.component('web-disk',WebDisk)

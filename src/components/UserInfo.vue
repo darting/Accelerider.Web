@@ -3,21 +3,19 @@
   .err-info(v-if='userInfos.length==0')
    | {{errMsg}}
   .info(v-if='userInfos.length!=0')
-    mu-table(v-bind:showCheckbox='false')
-      mu-thead
-        mu-tr
-          mu-th 昵称
-          mu-th 用量(已用/总量)
-          mu-th 操作
-      mu-tbody
-        mu-tr(v-for='user in userInfos' key='user.Name')
-          mu-td {{user.Name}}
-          mu-td {{user.used}}G/{{user.total}}G
-          mu-flat-button.operation-menu(primary,v-on:click="gotoDisk(user.uk)")
-           | DISK
+    el-table(v-bind:data='userInfos',border)
+      el-table-column(prop='Name',label='昵称')
+      el-table-column(label='用量(已用/总量)')
+        template(scope="scope")
+          | {{scope.row.used}}G/{{scope.row.total}}G
+      el-table-column(label='操作')
+        template(scope="scope")
+          el-button.operation-menu(primary,v-on:click="gotoDisk(scope.row.uk)")
+            | DISK
 </template>
 
 <script>
+import Bus from '../libs/eventBus.js';
 export default {
   name: 'userinfo',
   data () {
@@ -30,7 +28,7 @@ export default {
     gotoDisk:function(uk){
       let token = this.getToken();
       sessionStorage.setItem('accessUk', uk);
-      this.$router.push({path:"/disk"});
+      Bus.$emit('godisk', uk);
     },
     getToken:function(){
       return sessionStorage.getItem('accessToken')
@@ -55,6 +53,7 @@ export default {
         })
     },
     getUserList:function(){
+      this.userInfos = [];
       let token = this.getToken();
       let url='/userlist';
       this.$ajax({

@@ -14,7 +14,7 @@ export default {
   },
   methods:{
     GO:function(){
-       this.$router.push({path:"/login"});
+      this.$router.push({path:"/login"});
     }
   }
 }
@@ -22,4 +22,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.content{
+  margin-top: 40px;
+}
 </style>

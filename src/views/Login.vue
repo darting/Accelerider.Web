@@ -1,16 +1,17 @@
 <template lang="pug">
 .container
-  my-appbar
   .content(align='center')
     login-form
 </template>
 
 <script>
+import Bus from '../libs/eventBus.js';
 export default {
   name: 'login',
-  data () {
-    return {
-    }
+  created(){
+    Bus.$on('loginsuccess',msg=>{
+      this.$router.push({path:"/main"});
+    })
   }
 }
 </script>

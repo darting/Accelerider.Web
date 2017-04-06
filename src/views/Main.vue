@@ -18,8 +18,10 @@ export default {
       this.$router.push({path:"/"});
     }
   },
-  mounted(){
-    Bus.$emit('action', this.logout);    
+  created(){
+    Bus.$on('godisk',uk=>{
+      this.$router.push({path:"/disk"});
+    })
   }
 }
 </script>

@@ -6,7 +6,17 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  data () {
+    return {
+      msg:"TEST"
+    }
+  },
+  methods:{
+    testFunc:function(){}
+  },
+  created(){},
+  mounted(){}
 }
 </script>
 

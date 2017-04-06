@@ -1,5 +1,5 @@
 <template lang="pug">
-.user-info
+.user-info(v-loading.fullscreen.lock='infoLoading')
   .err-info(v-if='userInfos.length==0')
    | {{errMsg}}
   .info(v-if='userInfos.length!=0')
@@ -10,7 +10,7 @@
           | {{scope.row.used}}G/{{scope.row.total}}G
       el-table-column(label='操作')
         template(scope="scope")
-          el-button.operation-menu(primary,v-on:click="gotoDisk(scope.row.uk)")
+          el-button.operation-menu(primary,@click="gotoDisk(scope.row.uk)")
             | DISK
 </template>
 
@@ -22,6 +22,7 @@ export default {
     return {
       errMsg:'',
       userInfos:[],
+      infoLoading:true
     }
   },
   methods:{
@@ -65,32 +66,27 @@ export default {
         let data = response.data;
         let errno = data.errno;
         if(errno == 0){
-          data.userlist.map(item=>{
-            item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
-            item.Token = this.getToken();
-          });
-        }else{
-          this.errMsg = '获取账户列表失败，请先绑定账户';
-          console.log(data.message);
+          if(data.userlist.length == 0){
+            this.errMsg = '获取账户列表失败，请先绑定账户';
+          }else{
+            data.userlist.map(item=>{
+              item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
+              item.Token = this.getToken();
+            });
+          }
         }
         return data.userlist;
       })
-      .then(data=>{
-        let promiss = [];
-        data.map(item=>{
-          let r = this.getUserInfo(item.Uk);
-          promiss.push(r)
-        });
-        return promiss;
-      })
+      .then(data=>data.map(item=>this.getUserInfo(item.Uk)))
       .then(reps=>{
+        this.infoLoading = false;
         for(let i in reps)
-        reps[i].then(data=>{
-          this.userInfos.push(data);
-        })
+          reps[i].then(data=>{
+            this.userInfos.push(data);
+          })
       })
       .catch(err=>{
-        console.log('Error',err.message);
+        this.$message.error(err.message);
       });
     }
   },

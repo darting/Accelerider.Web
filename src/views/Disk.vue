@@ -10,7 +10,6 @@ export default {
   name: 'disk',
   data () {
     return {
-      title:'网盘',
     }
   }
 }

@@ -14,7 +14,7 @@
         mu-tr(v-for="file in fileList" key='file.fs_id')
           mu-td
             div(v-if='file.isdir == 1')
-              a(v-on:click='goFileList(file.path)')
+              a(@click='goFileList(file.path)')
                  span {{file.server_filename}}
             div(v-if='file.isdir == 0')
               span {{file.server_filename}}
@@ -22,16 +22,16 @@
           mu-td {{transeTime(file.server_mtime)}}
           mu-flat-button.demo-menu
             mu-icon-menu(icon='...')
-              mu-menu-item(v-on:click='openDownLinks(file)',title='下载')
-              mu-menu-item(v-on:click='fileProperty(file)',title='属性')
+              mu-menu-item(@click='openDownLinks(file)',title='下载')
+              mu-menu-item(@click='fileProperty(file)',title='属性')
   .dialog
-    mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
+    el-dialog(v-model='dialogDL',title='下载链接')
       div(v-for='item in downlinks')
        p {{item.name}}
        ul
          li(v-for='url in item.urls')
            a(v-bind:href='url',target='_blank') {{url}}
-    mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
+    el-dialog(v-model='dialogProP',title='文件属性')
       p 文件名： {{curFile.server_filename}}
       p 文件大小： {{transeSize(curFile)}}
       p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import Bus from '../libs/eventBus.js';
 export default {
   name: 'webdisk',
   data () {
@@ -129,9 +130,6 @@ export default {
       this.curFile = file;
       this.dialogProP = true;
     },
-    closePropertyDia:function(){
-      this.dialogProP = false;
-    },
     openDownLinks:function(file){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
@@ -167,9 +165,6 @@ export default {
           console.log(edata.message);
         }else{console.log(err)}
       });
-    },
-    closeDownLinks:function(){
-      this.dialogDL = false;
     }
   },
   mounted(){

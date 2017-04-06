@@ -1,6 +1,5 @@
 <template lang="pug">
 .container
-  my-appbar
   .content
     user-info
 </template>

@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
   .content(align='center')
-    el-button(type='primary' href='#/login') {{linkLogin}}
+    el-button(type='primary',@click='GO') {{linkLogin}}
 </template>
 
 <script>
@@ -13,6 +13,9 @@ export default {
     }
   },
   methods:{
+    GO:function(){
+       this.$router.push({path:"/login"});
+    }
   }
 }
 </script>

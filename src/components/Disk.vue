@@ -61,6 +61,7 @@ export default {
   methods:{
     parseDownLinks:function(data){
       if(data.errno == 0){
+        this.downlinks = [];
         this.dialogDL = true;
         let links = data.links;
         for(let key in links){

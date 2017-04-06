@@ -8,10 +8,6 @@
 import Bus from '../libs/eventBus.js';
 export default {
   name: 'main',
-  data () {
-    return {
-    }
-  },
   methods:{
     loginout:function(){
       sessionStorage.removeItem('accessToken');

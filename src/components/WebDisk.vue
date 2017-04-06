@@ -1,36 +1,37 @@
 <template lang="pug">
 .disk
-  .loading-progress
-    mu-linear-progress(v-if='isLoading')
+  .path-status
+    el-button(@click='backFileList',icon='arrow-left',style="float: left")
+    el-breadcrumb(separator=">",v-bind:replace='true')
+      el-breadcrumb-item(v-for='p in parseBreadCrumb(curPath)',key = 'p')
+        | {{p}}
+      | Total: {{fileList.length}}
   .disk-table
-    mu-table(v-bind:showCheckbox='false')
-      mu-thead
-        mu-tr
-          mu-th 文件名
-          mu-th 大小
-          mu-th 修改日期
-          mu-th 操作
-      mu-tbody
-        mu-tr(v-for="file in fileList" key='file.fs_id')
-          mu-td
-            div(v-if='file.isdir == 1')
-              a(@click='goFileList(file.path)')
-                 span {{file.server_filename}}
-            div(v-if='file.isdir == 0')
-              span {{file.server_filename}}
-          mu-td {{transeSize(file)}}
-          mu-td {{transeTime(file.server_mtime)}}
-          mu-flat-button.demo-menu
-            mu-icon-menu(icon='...')
-              mu-menu-item(@click='openDownLinks(file)',title='下载')
-              mu-menu-item(@click='fileProperty(file)',title='属性')
+    el-table(v-bind:data='fileList',v-loading="isLoading")
+      el-table-column(label='文件名')
+        template(scope="scope")
+          div(style="float: left",v-if='scope.row.isdir == 0',v-bind:style={cursor:'default'})
+            span {{scope.row.server_filename}}
+          div(style="float: left",v-if='scope.row.isdir == 1')
+            el-button(type='text',@click='goFileList(scope.row.path)',v-bind:style={cursor:'pointer'})
+              | {{scope.row.server_filename}}
+          div(style="float: right")
+            el-button(type='text',icon='arrow-down',@click='openDownLinks(scope.row)')
+            el-button(type='text',icon='more',@click='fileProperty(scope.row)')
+          //
+      el-table-column(label='大小')
+        template(scope="scope")
+          | {{transeSize(scope.row)}}
+      el-table-column(label='修改日期')
+        template(scope="scope")
+          | {{transeTime(scope.row.server_mtime)}}
   .dialog
     el-dialog(v-model='dialogDL',title='下载链接')
       div(v-for='item in downlinks')
-       p {{item.name}}
+       p {{curFile.server_filename}}
        ul
          li(v-for='url in item.urls')
-           a(v-bind:href='url',target='_blank') {{url}}
+           a(v-bind:href='url',target='_blank') 链接
     el-dialog(v-model='dialogProP',title='文件属性')
       p 文件名： {{curFile.server_filename}}
       p 文件大小： {{transeSize(curFile)}}
@@ -55,7 +56,17 @@ export default {
     }
   },
   methods:{
+    parseBreadCrumb:function(pathStack){
+      let path = '全部文件';
+      if(pathStack.length > 1){
+        path = pathStack[pathStack.length-1];
+      }
+      path=path.split('/');
+      path[0] = '全部文件';
+      return path;
+    },
     parseDownLinks:function(data){
+      this.isLoading = false;
       if(data.errno == 0){
         this.downlinks = [];
         this.dialogDL = true;
@@ -72,7 +83,8 @@ export default {
       }
     },
     goFileList:function(path){
-      let curTitle = `网盘 ${path}`
+      let curTitle = `网盘 ${path}`;
+      this.downlinks = [];
       this.isLoading = true;
       let token = sessionStorage.getItem('accessToken');
       let uk = sessionStorage.getItem('accessUk');
@@ -103,10 +115,10 @@ export default {
     backFileList:function(){
       let pathStack = this.curPath;
       let cur = '/';
-      if(pathStack.length != 1){
+      if(pathStack.length > 1){
         pathStack.pop();
-        cur = pathStack.pop();
       }
+      cur = pathStack.pop();
       this.goFileList(cur);
     },
     transeSize:function(file){
@@ -131,6 +143,8 @@ export default {
       this.dialogProP = true;
     },
     openDownLinks:function(file){
+      this.curFile = file;
+      this.isLoading = true;
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
       const url = '/filelinks';
@@ -169,6 +183,11 @@ export default {
   },
   mounted(){
     this.goFileList('/');
+  },
+  created(){
+    // Bus.$on('gofilelist',path=>{
+    //   this.goFileList(path);
+    // });
   }
 }
 </script>

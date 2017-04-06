@@ -1,54 +1,49 @@
 <template lang="pug">
-.container
-  mu-appbar.header(v-bind:title="title")
-    mu-flat-button.ret-path(href='#/main',slot='left')
-      | RETURN MAIN
-    mu-flat-button.go-back(v-on:click='backFileList()',slot="right")
-      | Back
-  mu-linear-progress(v-if='isLoading')
-  .content
-      mu-table(v-bind:showCheckbox='false')
-        mu-thead
-          mu-tr
-            mu-th 文件名
-            mu-th 大小
-            mu-th 修改日期
-            mu-th 操作
-        mu-tbody
-          mu-tr(v-for="file in fileList" key='file.fs_id')
-            mu-td
-             div(v-if='file.isdir == 1')
-               a(href='#/disk',v-on:click='goFileList(file.path)')
+.disk
+  .loading-progress
+    mu-linear-progress(v-if='isLoading')
+  .disk-table
+    mu-table(v-bind:showCheckbox='false')
+      mu-thead
+        mu-tr
+          mu-th 文件名
+          mu-th 大小
+          mu-th 修改日期
+          mu-th 操作
+      mu-tbody
+        mu-tr(v-for="file in fileList" key='file.fs_id')
+          mu-td
+            div(v-if='file.isdir == 1')
+              a(v-on:click='goFileList(file.path)')
                  span {{file.server_filename}}
-             div(v-if='file.isdir == 0')
-               span {{file.server_filename}}
-            mu-td {{transeSize(file)}}
-            mu-td {{transeTime(file.server_mtime)}}
-            mu-flat-button.demo-menu
-              mu-icon-menu(icon='...')
-                mu-menu-item(v-on:click='openDownLinks(file)',title='下载')
-                mu-menu-item(v-on:click='fileProperty(file)',title='属性')
-  //mu-float-button(icon='↑',v-on:click='')
-  mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
-    div(v-for='item in downlinks')
-     p {{item.name}}
-     ul
-       li(v-for='url in item.urls')
-         a(v-bind:href='url',target='_blank') {{url}}
-  mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
-    p 文件名： {{curFile.server_filename}}
-    p 文件大小： {{transeSize(curFile)}}
-    p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
-    p 修改时间： {{transeTime(curFile.server_mtime)}}
-    p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
+            div(v-if='file.isdir == 0')
+              span {{file.server_filename}}
+          mu-td {{transeSize(file)}}
+          mu-td {{transeTime(file.server_mtime)}}
+          mu-flat-button.demo-menu
+            mu-icon-menu(icon='...')
+              mu-menu-item(v-on:click='openDownLinks(file)',title='下载')
+              mu-menu-item(v-on:click='fileProperty(file)',title='属性')
+  .dialog
+    mu-dialog(v-bind:open='dialogDL',title='下载链接',@close='closeDownLinks' scrollable)
+      div(v-for='item in downlinks')
+       p {{item.name}}
+       ul
+         li(v-for='url in item.urls')
+           a(v-bind:href='url',target='_blank') {{url}}
+    mu-dialog(v-bind:open='dialogProP',title='文件属性',@close='closePropertyDia')
+      p 文件名： {{curFile.server_filename}}
+      p 文件大小： {{transeSize(curFile)}}
+      p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
+      p 修改时间： {{transeTime(curFile.server_mtime)}}
+      p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
 </template>
 
 <script>
 export default {
-  name: 'userinfo',
+  name: 'webdisk',
   data () {
     return {
-      title:'网盘',
       isLoading:true,
       curPath:[],
       fileList:[],
@@ -80,7 +75,7 @@ export default {
       this.isLoading = true;
       let token = sessionStorage.getItem('accessToken');
       let uk = sessionStorage.getItem('accessUk');
-      let url=`http://api.pescn.top/filelist`;
+      let url='/filelist';
       this.$ajax({
         method:'GET',
         url:url,
@@ -140,7 +135,7 @@ export default {
     openDownLinks:function(file){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-      const url = 'http://api.pescn.top/filelinks';
+      const url = '/filelinks';
       let method = file.size>31457280 ? "JUMP" : "APPID";
       let f = {
         "path":encodeURIComponent(file.path),
@@ -185,14 +180,4 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.header{
-  //position:fixed; top:0;
-}
-.demo-menu {
-  display: inline-block;
-  margin: 16px;
-}
-.ret-path.go-back{
-  margin:10px;
-}
 </style>

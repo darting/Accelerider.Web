@@ -1,22 +1,20 @@
 <template lang="pug">
-  .container
-    mu-appbar.header(title='LOGIN')
-    .content-form(align='center')
-      form
-        .form-group
-          mu-text-field#username(label='username',v-model='username',v-bind:labelFloat='true',v-bind:maxLength='64')
-        .form-group
-          mu-text-field#password(label='password',type='password',v-model='pwd',v-bind:labelFloat='true',v-bind:maxLength='256')
-        .form-group
-          div.login-button()
-            mu-raised-button(primary, v-bind:fullWidth='true', v-on:click='login')
-              | {{sumitstr}}
-    mu-toast(v-if="toast" v-bind:message="errMsg")
+.login-form
+  form
+    .form-group
+      mu-text-field#username(label='username',v-model='username',v-bind:labelFloat='true', v-bind:maxLength='64')
+    .form-group
+      mu-text-field#password(label='password',type='password',v-model='pwd',v-bind:labelFloat='true',v-bind:maxLength='256')
+    .form-group
+      .login-button
+        mu-raised-button(primary, v-on:click='login')
+         | {{sumitstr}}
+  mu-toast(v-if="toast" v-bind:message="errMsg")
 </template>
 
 <script>
 export default {
-  name: 'login',
+  name: 'loginform',
   data () {
     return {
       sumitstr:'LOGIN!',
@@ -40,15 +38,13 @@ export default {
       this.toast = true;
       if (this.toastTimer) clearTimeout(this.toastTimer)
         this.toastTimer = setTimeout(() => { this.toast = false }, 1800)
-      
     },
     login:function(){
-	    const url="http://api.pescn.top/login";
+	    const url="/login";
       let datas = {
         "name":this.username,
         "password":this.pwd
       };
-
       this.$ajax({
         method:'POST',
         url:url,
@@ -62,9 +58,7 @@ export default {
         }],
         data:datas
       })
-      .then(response=>{
-        this.parseRep(response);
-      })
+      .then(response=>this.parseRep(response))
       .catch(err=>{
         if(err.response){
           let eresponse = err.response;
@@ -74,16 +68,15 @@ export default {
         }
       });
     }
+  },
+  mounted(){
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.content-form{
-  margin-top:5%;
-}
-.login-button{
-  padding:0 35% 0 35%;
+.login-form{
+  padding:0 auto 0 auto;
 }
 </style>

@@ -3,16 +3,25 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-
-import MuseUI from 'muse-ui'
-import 'muse-ui/dist/muse-ui.css'
-
 import axios from 'axios'
 
-Vue.config.productionTip = false
-Vue.prototype.$ajax = axios
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-default/index.css'
 
-Vue.use(MuseUI)
+//- deprecated
+import MuseUI from 'muse-ui'
+import 'muse-ui/dist/muse-ui.css'
+//
+
+Vue.config.productionTip = false
+Vue.prototype.$ajax = axios.create({
+  baseURL: 'http://api.pescn.top/',
+  //timeout: 1000,
+  headers: {}
+});
+
+Vue.use(ElementUI)
+Vue.use(MuseUI)//deprecated
 
 /* eslint-disable no-new */
 new Vue({

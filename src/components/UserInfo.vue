@@ -1,9 +1,9 @@
 <template lang="pug">
-  .user-info
-   .errinfo(v-if='userInfos.length==0')
-    | {{errMsg}}
-   .info(v-if='userInfos.length!=0')
-     mu-table(v-bind:showCheckbox='false')
+.user-info
+  .err-info(v-if='userInfos.length==0')
+   | {{errMsg}}
+  .info(v-if='userInfos.length!=0')
+    mu-table(v-bind:showCheckbox='false')
       mu-thead
         mu-tr
           mu-th 昵称
@@ -37,7 +37,7 @@ export default {
     },
     getUserInfo:function(uk){
       let token = this.getToken();
-      let url=`http://api.pescn.top/userinfo`;
+      let url='/userinfo';
       return this.$ajax({
         method:'GET',url:url,
         params:{token:token, uk:uk} 
@@ -56,10 +56,11 @@ export default {
     },
     getUserList:function(){
       let token = this.getToken();
-      let url=`http://api.pescn.top/userlist?token=${token}`;
+      let url='/userlist';
       this.$ajax({
         method:'GET',
         url:url,
+        params:{token:token}
       })
       .then(response=>{
         let data = response.data;

@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Hello from '@/views/Hello'
+import Login from '@/views/Login'
+import Main from '@/views/Main'
+import Disk from '@/views/Disk'
+
 import AppBar from '@/components/AppBar'
-import Hello from '@/components/Hello'
-import Login from '@/components/Login'
-import Main from '@/components/Main'
-import Disk from '@/components/Disk'
+import LoginForm from '@/components/LoginForm'
 import UserInfo from '@/components/UserInfo'
+import WebDisk from '@/components/WebDisk'
 
 Vue.use(Router)
 const router = new Router({
@@ -54,7 +57,9 @@ const router = new Router({
   ]
 });
 
-Vue.component('custom-appbar',AppBar)
+Vue.component('my-appbar',AppBar)
+Vue.component('login-form',LoginForm)
 Vue.component('user-info',UserInfo)
+Vue.component('web-disk',WebDisk)
 
 export default router

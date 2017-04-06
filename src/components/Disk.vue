@@ -155,7 +155,7 @@ export default {
         },
         transformRequest:[function(data){
           let ret = '';
-          for (let it in data) {ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`}
+          for (let it in data) {ret += `${it}=${data[it]}`}
           return ret;
         }],
         data:{

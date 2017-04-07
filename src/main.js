@@ -11,7 +11,6 @@ import 'element-ui/lib/theme-default/index.css'
 Vue.config.productionTip = false
 Vue.prototype.$ajax = axios.create({
   baseURL: 'http://api.pescn.top/',
-  //timeout: 1000,
   headers: {}
 });
 

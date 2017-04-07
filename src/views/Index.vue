@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'index',
   data () {
     return {
       linkLogin:"通往新世界的大门!"
@@ -22,7 +22,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.content{
-  margin-top: 40px;
-}
+@import './css/index.css';
 </style>

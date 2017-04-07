@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/views/Hello'
+import index from '@/views/Index'
 import Login from '@/views/Login'
 import Main from '@/views/Main'
 import Disk from '@/views/Disk'
@@ -15,18 +15,18 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello,
+      name: 'Index',
+      component: index,
       children:[]
     },
     {
       path: '/login',
-      name: 'Login',
+      name: 'login',
       component: Login
     },
     {
       path: '/main',
-      name: 'Main',
+      name: 'main',
       component: Main,
       beforeEnter :(to, from, next) => {
         if (!sessionStorage.getItem('accessToken')) {

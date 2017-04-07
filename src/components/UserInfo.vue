@@ -95,7 +95,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.operation-menu{
-  margin:10px;
-}
+@import './css/userinfo.css';
 </style>

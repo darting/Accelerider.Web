@@ -5,9 +5,10 @@ el-form.login-form
   el-form-item(label='password')
     el-input#password(type='password',v-model='pwd')
   el-form-item
-    .login-button
-      el-button(type='primary', @click='login',v-loading.fullscreen.lock='loginLoading')
-       | {{sumitstr}}
+    el-button(type='primary', @click='login',v-loading.fullscreen.lock='loginLoading')
+      | {{sumitstr}}
+    el-button(type='text',@click='register')
+      | {{registerstr}}
 </template>
 
 <script>
@@ -17,6 +18,7 @@ export default {
   data () {
     return {
       sumitstr:'LOGIN!',
+      registerstr: 'REGISTER',
       username:'',
       pwd:'',
       loginLoading:false
@@ -34,6 +36,9 @@ export default {
       }else{
         this.$message.error(data.message);
       }
+    },
+    register:function(){
+      Bus.$emit('wantregister', 'OK');
     },
     login:function(){
       this.loginLoading = true;
@@ -67,7 +72,3 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>

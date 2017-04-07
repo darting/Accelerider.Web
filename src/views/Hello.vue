@@ -14,7 +14,7 @@ export default {
   },
   methods:{
     GO:function(){
-      this.$router.push({path:"/login"});
+      this.$router.push({path:"/main"});
     }
   }
 }

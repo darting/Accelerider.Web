@@ -185,11 +185,6 @@ export default {
   },
   mounted(){
     this.goFileList('/');
-  },
-  created(){
-    // Bus.$on('gofilelist',path=>{
-    //   this.goFileList(path);
-    // });
   }
 }
 </script>

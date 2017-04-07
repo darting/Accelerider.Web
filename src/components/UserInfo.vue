@@ -1,17 +1,14 @@
 <template lang="pug">
-.user-info(v-loading.fullscreen.lock='infoLoading')
-  .err-info(v-if='userInfos.length==0')
-   | {{errMsg}}
-  .info(v-if='userInfos.length!=0')
-    el-table(v-bind:data='userInfos',border)
-      el-table-column(prop='Name',label='昵称')
-      el-table-column(label='用量(已用/总量)')
-        template(scope="scope")
-          | {{scope.row.used}}G/{{scope.row.total}}G
-      el-table-column(label='操作')
-        template(scope="scope")
-          el-button.operation-menu(primary,@click="gotoDisk(scope.row.uk)")
-            | DISK
+.user-info(v-loading='infoLoading')
+  el-table(v-bind:data='userInfos',border)
+    el-table-column(prop='Name',label='昵称')
+    el-table-column(label='用量(已用/总量)')
+      template(scope="scope")
+        | {{scope.row.used}}G/{{scope.row.total}}G
+    el-table-column(label='操作')
+      template(scope="scope")
+        el-button.operation-menu(primary,@click="gotoDisk(scope.row.uk)")
+          | DISK
 </template>
 
 <script>
@@ -20,7 +17,6 @@ export default {
   name: 'userinfo',
   data () {
     return {
-      errMsg:'',
       userInfos:[],
       infoLoading:true
     }
@@ -65,15 +61,12 @@ export default {
       .then(response=>{
         let data = response.data;
         let errno = data.errno;
-        if(errno == 0){
-          if(data.userlist.length == 0){
-            this.errMsg = '获取账户列表失败，请先绑定账户';
-          }else{
-            data.userlist.map(item=>{
-              item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
-              item.Token = this.getToken();
-            });
-          }
+        Bus.$emit('isbinding', data.userlist.length);
+        if(data.userlist.length != 0){
+          data.userlist.map(item=>{
+            item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
+            item.Token = this.getToken();
+          });
         }
         return data.userlist;
       })
@@ -86,7 +79,11 @@ export default {
           })
       })
       .catch(err=>{
-        this.$message.error(err.message);
+        this.infoLoading = false;
+        if(err.response){
+          let edata = err.response.data;
+          this.$message.error(edata.message);
+        }else{console.log(err)}
       });
     }
   },

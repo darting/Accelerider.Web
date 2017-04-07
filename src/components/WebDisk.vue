@@ -66,10 +66,7 @@ export default {
       return path;
     },
     parseDownLinks:function(data){
-      this.isLoading = false;
       if(data.errno == 0){
-        this.downlinks = [];
-        this.dialogDL = true;
         let links = data.links;
         for(let key in links){
           let obj ={
@@ -144,7 +141,8 @@ export default {
     },
     openDownLinks:function(file){
       this.curFile = file;
-      this.isLoading = true;
+      this.downlinks = [];
+      this.dialogDL = true;
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
       const url = '/filelinks';

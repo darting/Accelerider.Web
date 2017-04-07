@@ -1,11 +1,12 @@
 <template lang="pug">
 .disk
-  .path-status
-    el-button(@click='backFileList',icon='arrow-left',style="float: left")
+  el-row.path-status
+    el-button(@click='backFileList',icon='arrow-left')
     el-breadcrumb(separator=">",v-bind:replace='true')
       el-breadcrumb-item(v-for='p in parseBreadCrumb(curPath)',key = 'p')
         | {{p}}
       | Total: {{fileList.length}}
+    el-button(@click='goMainForm',) 回到主页
   .disk-table
     el-table(v-bind:data='fileList',v-loading="isLoading")
       el-table-column(label='文件名')
@@ -108,6 +109,9 @@ export default {
         let errno = edata.errno;
         console.log(edata.message);
       });
+    },
+    goMainForm:function(){
+      Bus.$emit('gomain','back');
     },
     backFileList:function(){
       let pathStack = this.curPath;

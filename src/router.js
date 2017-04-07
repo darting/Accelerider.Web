@@ -5,6 +5,7 @@ import Login from '@/views/Login'
 import Main from '@/views/Main'
 import Disk from '@/views/Disk'
 
+import RegisterForm from '@/components/RegisterForm'
 import LoginForm from '@/components/LoginForm'
 import UserInfo from '@/components/UserInfo'
 import WebDisk from '@/components/WebDisk'
@@ -56,6 +57,7 @@ const router = new Router({
   ]
 });
 
+Vue.component('register-form',RegisterForm)
 Vue.component('login-form',LoginForm)
 Vue.component('user-info',UserInfo)
 Vue.component('web-disk',WebDisk)

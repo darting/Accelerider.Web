@@ -12,6 +12,7 @@ el-form.login-form
 </template>
 
 <script>
+import MD5 from '../libs/cryptos.js';
 import Bus from '../libs/eventBus.js';
 export default {
   name: 'loginform',
@@ -46,7 +47,7 @@ export default {
       this.$ajax({
         method:'POST',
         url:url,
-        params:{"security":"express"},
+        params:{"security":"md5"},
         transformRequest: [function (data) {
           let ret = ''
           for (let it in data) {
@@ -56,7 +57,7 @@ export default {
         }],
         data:{
           "name":encodeURIComponent(this.username),
-          "password":this.pwd
+          "password":MD5(this.pwd).toString()
           }
       })
       .then(response=>this.parseRep(response))

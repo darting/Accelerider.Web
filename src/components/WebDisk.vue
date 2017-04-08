@@ -1,12 +1,12 @@
 <template lang="pug">
 .disk
   el-row.path-status
-    el-button(@click='backFileList',icon='arrow-left')
     el-breadcrumb(separator=">",v-bind:replace='true')
       el-breadcrumb-item(v-for='p in parseBreadCrumb(curPath)',key = 'p')
         | {{p}}
       | Total: {{fileList.length}}
-    el-button(@click='goMainForm',) 回到主页
+    el-button(@click='goMainForm',icon='menu') MAIN
+    el-button(@click='backFileList',icon='arrow-left') BACK
   .disk-table
     el-table(v-bind:data='fileList',v-loading="isLoading")
       el-table-column(label='文件名')
@@ -19,7 +19,6 @@
           div(style="float: right")
             el-button(type='text',icon='arrow-down',@click='openDownLinks(scope.row)')
             el-button(type='text',icon='more',@click='fileProperty(scope.row)')
-          //
       el-table-column(label='大小')
         template(scope="scope")
           | {{transeSize(scope.row)}}
@@ -84,9 +83,9 @@ export default {
       let curTitle = `网盘 ${path}`;
       this.downlinks = [];
       this.isLoading = true;
-      let token = sessionStorage.getItem('accessToken');
-      let uk = sessionStorage.getItem('accessUk');
-      let url='/filelist';
+      const token = sessionStorage.getItem('accessToken');
+      const uk = sessionStorage.getItem('accessUk');
+      const url='/filelist';
       this.$ajax({
         method:'GET',
         url:url,
@@ -150,7 +149,8 @@ export default {
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
       const url = '/filelinks';
-      let method = file.size>31457280 ? "JUMP" : "APPID";
+      const FILESIZE_30M = 30*1024*1024;
+      const method = "APPID";// file.size>FILESIZE_30M ? "DEFAULT" : "APPID";
       let f = {
         "path":encodeURIComponent(file.path),
         "id": file.fs_id

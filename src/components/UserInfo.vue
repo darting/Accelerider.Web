@@ -7,7 +7,7 @@
         | {{scope.row.used}}G/{{scope.row.total}}G
     el-table-column(label='操作')
       template(scope="scope")
-        el-button.operation-menu(primary,@click="gotoDisk(scope.row.uk)")
+        el-button.operation-menu(@click="gotoDisk(scope.row.uk)")
           | DISK
 </template>
 
@@ -51,8 +51,8 @@ export default {
     },
     getUserList:function(){
       this.userInfos = [];
-      let token = this.getToken();
-      let url='/userlist';
+      const token = this.getToken();
+      const url='/userlist';
       this.$ajax({
         method:'GET',
         url:url,

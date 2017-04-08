@@ -1,7 +1,11 @@
 <template lang="pug">
 .container
   .content(align='center')
-    el-button(type='primary',@click='GO') {{linkLogin}}
+    el-button(type='primary',@click='GO') {{linkMsg}}
+  .content(align='center')
+    el-button(@click='SHARE') SHARE
+  el-dialog(v-model='share')
+    share-list
 </template>
 
 <script>
@@ -9,12 +13,16 @@ export default {
   name: 'index',
   data () {
     return {
-      linkLogin:"通往新世界的大门!"
+      linkMsg:"通往新世界的大门!",
+      share:false
     }
   },
   methods:{
     GO:function(){
       this.$router.push({path:"/main"});
+    },
+    SHARE:function(){
+      this.share = true;
     }
   }
 }

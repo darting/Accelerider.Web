@@ -9,6 +9,7 @@ import RegisterForm from '@/components/RegisterForm'
 import LoginForm from '@/components/LoginForm'
 import UserInfo from '@/components/UserInfo'
 import WebDisk from '@/components/WebDisk'
+import ShareList from '@/components/ShareList'
 
 Vue.use(Router)
 const router = new Router({
@@ -57,6 +58,7 @@ const router = new Router({
   ]
 });
 
+Vue.component('share-list',ShareList)
 Vue.component('register-form',RegisterForm)
 Vue.component('login-form',LoginForm)
 Vue.component('user-info',UserInfo)

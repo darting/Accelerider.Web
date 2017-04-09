@@ -33,7 +33,9 @@
 </template>
 
 <script>
+import Utils from '../libs/utils.js';
 import Bus from '../libs/eventBus.js';
+let utils = new Utils();
 export default {
   name: 'filelist',
   data () {
@@ -76,17 +78,11 @@ export default {
       if (file.isdir == 1) {
         return '--';
       }else{
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        let size = file.size;
-        let i = Math.floor(Math.log(size) / Math.log(k));
-        return `${(size / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+        return utils.transeSize(file.size);
       }
     },
     transeTime:function(mtime){
-      let newDate = new Date();
-      newDate.setTime(mtime * 1000); 
-      return newDate.toLocaleString();
+      return utils.transeTime(mtime);
     }
   },
   created(){

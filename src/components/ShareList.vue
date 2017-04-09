@@ -13,8 +13,8 @@
 </template>
 
 <script>
+import shareAPI from '../libs/shareAPI.js';
 import Bus from '../libs/eventBus.js';
-const url="/sharefiles";
 export default {
   name: 'sharelist',
   data () {
@@ -27,48 +27,30 @@ export default {
   },
   methods:{
     getsharelist:function(path){
-      this.$ajax({
-        method:'GET',
-        url:url,
-        params:{
-        "token":this.sharetoken,
-        "path":path}
-      })
-      .then(data=>data.data)
-      .then(filelist=>{this.isLoading = false;
+      let api = new shareAPI();
+      api.getsharelist(this.sharetoken,path)
+      .then(filelist=>{
+        this.isLoading = false;
         if(filelist.errno == 0)
-          {
-            Bus.$emit('showfilelist', filelist.list);
-          }
+        {
+          Bus.$emit('showfilelist', filelist.list);
+        }
       })
     },
     getShare:function(){
       this.isLoading = true;
-      this.$ajax({
-        method:'GET',
-        url:url,
-        params:{"shareurl":this.shareurl,"pass":this.pwd}
+      let api = new shareAPI();
+      api.getshare(this.shareurl,this.pwd,(data)=>{
+        this.isLoading = false;
+        this.$message.error(data.message);
       })
-      .then(response=>response.data)
-      .then(data=>data.token)
-      .then(token=>{this.sharetoken=token; this.getsharelist('/')})
-      .catch(err=>{this.isLoading = false;
-        if(err.response){
-          const edata = err.response.data;
-          this.$message.error(edata.message);
-        }else{
-          console.log('Error',err.message)
-        }
-      });
+      .then(token=>{this.sharetoken=token; this.getsharelist('/')});
     }
   },
-  created(){
-    Bus.$on('downfiles',files=>{
-      console.log(files);
-      this.$message.error('还没有！');
-    });
-  },
   mounted(){
+    // Bus.$on('downfiles',files=>{
+    //   this.$message.error('还没有！');
+    // });
     Bus.$on('changepath',file=>{
       this.getsharelist(file.path);
     });

@@ -10,7 +10,7 @@ el-form.register-form(label='注册',v-loading='regLoading')
 </template>
 
 <script>
-import MD5 from '../libs/cryptos.js';
+import restAPI from '../libs/restAPI.js';
 import Bus from '../libs/eventBus.js';
 export default {
   name: 'registerform',
@@ -23,9 +23,8 @@ export default {
     }
   },
   methods:{
-    parseRep:function(response){
+    parseRep:function(data){
       this.loginLoading = false;
-      let data = response.data;
       let errno = data.errno;
       this.regLoading = false;
       if(errno == 0){
@@ -36,33 +35,9 @@ export default {
       }
     },
     register:function(){
+      let api = new restAPI();
       this.regLoading = true;
-	    const url="/signup";
-      this.$ajax({
-        method:'POST',
-        url:url,
-        params:{"security":"md5"},
-        transformRequest: [function (data) {
-          let ret = ''
-          for (let it in data) {
-            ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`
-          }
-          return ret
-        }],
-        data:{
-          "name":encodeURIComponent(this.username),
-          "password":MD5(this.pwd).toString()
-          }
-      })
-      .then(response=>this.parseRep(response))
-      .catch(err=>{
-        if(err.response){
-          let eresponse = err.response;
-          this.parseRep(eresponse);
-        }else{
-          console.log('Error',err.message)
-        }
-      });;
+	    api.signup(this.username, this.pwd,this.parseRep);
     }
   }
 }

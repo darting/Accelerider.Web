@@ -12,7 +12,10 @@
 </template>
 
 <script>
+import restAPI from '../libs/restAPI.js';
 import Bus from '../libs/eventBus.js';
+import Utils from '../libs/utils.js';
+let utils = new Utils();
 export default {
   name: 'userinfo',
   data () {
@@ -30,67 +33,26 @@ export default {
     getToken:function(){
       return sessionStorage.getItem('accessToken')
     },
-    getUserInfo:function(uk){
-      let token = this.getToken();
-      let url='/userinfo';
-      return this.$ajax({
-        method:'GET',url:url,
-        params:{token:token, uk:uk} 
-        }).then(data=>{
-          data = data.data;
-          let info = {}
-          info.uk = uk;
-          info.Name = data.username;
-          info.nick_name = data.nick_name;
-          info.total = data.total;
-          info.free = data.free;
-          info.used = data.used;
-          info.used = info.used.toFixed(2);
-          return info;
-        })
+    parseRep:function(data){
+      this.infoLoading = false;
+      let errno = data.errno;
+      if(errno == 0){
+        Bus.$emit('isbinding', data.userlist.length);
+      }else{
+        this.$message.error(data.message);
+      }
     },
     getUserList:function(){
       this.userInfos = [];
       const token = this.getToken();
-      const url='/userlist';
-      this.$ajax({
-        method:'GET',
-        url:url,
-        params:{token:token}
-      })
-      .then(response=>{
-        let data = response.data;
-        let errno = data.errno;
-        Bus.$emit('isbinding', data.userlist.length);
-        if(data.userlist.length != 0){
-          data.userlist.map(item=>{
-            item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
-            item.Token = this.getToken();
-          });
-        }
-        return data.userlist;
-      })
-      .then(data=>data.map(item=>this.getUserInfo(item.Uk)))
-      .then(reps=>{
-        this.infoLoading = false;
-        for(let i in reps)
-          reps[i].then(data=>{
-            this.userInfos.push(data);
-          })
-      })
-      .catch(err=>{
-        this.infoLoading = false;
-        if(err.response){
-          let edata = err.response.data;
-          this.$message.error(edata.message);
-        }else{console.log(err)}
+      let api = new restAPI();
+	    api.userlist(token,this.parseRep).then(reps=>{
+        for (let i in reps)
+          reps[i].then(data => {this.userInfos.push(data);})
       });
     },
     transeSize:function(size){
-      const k = 1024;
-      const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-      let i = Math.floor(Math.log(size) / Math.log(k));
-      return `${(size / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+      return utils.transeSize(size);
     }
   },
   mounted(){

@@ -2,8 +2,8 @@
 .container
   .content(align='center')
     login-form
-    el-dialog(v-model='isReg')
-      register-form
+  el-dialog(v-model='isReg')
+    register-form
 </template>
 
 <script>

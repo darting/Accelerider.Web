@@ -4,7 +4,7 @@
     el-table-column(prop='Name',label='昵称')
     el-table-column(label='用量(已用/总量)')
       template(scope="scope")
-        | {{scope.row.used}}G/{{scope.row.total}}G
+        | {{transeSize(scope.row.used)}}/{{transeSize(scope.row.total)}}
     el-table-column(label='操作')
       template(scope="scope")
         el-button.operation-menu(@click="gotoDisk(scope.row.uk)")
@@ -42,9 +42,9 @@ export default {
           info.uk = uk;
           info.Name = data.username;
           info.nick_name = data.nick_name;
-          info.total = data.total/1024/1024/1024;
-          info.free = data.free/1024/1024/1024;
-          info.used = data.used/1024/1024/1024;
+          info.total = data.total;
+          info.free = data.free;
+          info.used = data.used;
           info.used = info.used.toFixed(2);
           return info;
         })
@@ -85,6 +85,12 @@ export default {
           this.$message.error(edata.message);
         }else{console.log(err)}
       });
+    },
+    transeSize:function(size){
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+      let i = Math.floor(Math.log(size) / Math.log(k));
+      return `${(size / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
     }
   },
   mounted(){

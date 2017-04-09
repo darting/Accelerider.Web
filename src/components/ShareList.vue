@@ -8,12 +8,12 @@
         el-input#password(v-model='pwd')
       el-form-item
         el-button(type='primary',@click='getShare') GET
-  span(v-for='item in sharelist')
-    ul
-      li {{item.server_filename}}
+  .disk-table
+    file-list
 </template>
 
 <script>
+import Bus from '../libs/eventBus.js';
 const url="/sharefiles";
 export default {
   name: 'sharelist',
@@ -22,18 +22,25 @@ export default {
       isLoading:false,
       shareurl:'',
       pwd:'',
-      sharelist:[]
+      sharetoken:''
     }
   },
   methods:{
-    getsharelist:function(token,path){
-      return this.$ajax({
+    getsharelist:function(path){
+      this.$ajax({
         method:'GET',
         url:url,
         params:{
-        "token":token,
+        "token":this.sharetoken,
         "path":path}
-      }).then(data=>data.data)
+      })
+      .then(data=>data.data)
+      .then(filelist=>{this.isLoading = false;
+        if(filelist.errno == 0)
+          {
+            Bus.$emit('showfilelist', filelist.list);
+          }
+      })
     },
     getShare:function(){
       this.isLoading = true;
@@ -44,14 +51,7 @@ export default {
       })
       .then(response=>response.data)
       .then(data=>data.token)
-      .then(token=>this.getsharelist(token,'/'))
-      .then(filelist=>{this.isLoading = false;
-        if(filelist.errno == 0)
-          {
-            this.sharelist = filelist.list;
-            console.log(filelist.list)
-          }
-      })
+      .then(token=>{this.sharetoken=token; this.getsharelist('/')})
       .catch(err=>{this.isLoading = false;
         if(err.response){
           const edata = err.response.data;
@@ -61,6 +61,17 @@ export default {
         }
       });
     }
-  }
+  },
+  created(){
+    Bus.$on('downfiles',files=>{
+      console.log(files);
+      this.$message.error('还没有！');
+    });
+  },
+  mounted(){
+    Bus.$on('changepath',file=>{
+      this.getsharelist(file.path);
+    });
+  },
 }
 </script>

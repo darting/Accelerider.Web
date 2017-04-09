@@ -9,7 +9,7 @@ export default {
   name: 'app',
   data () {
     return {
-      version:"2.1.0"
+      version:"2.1.5"
     }
   },
   methods:{

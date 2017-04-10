@@ -4,6 +4,7 @@ import index from '@/views/Index'
 import Login from '@/views/Login'
 import Main from '@/views/Main'
 import Disk from '@/views/Disk'
+import Share from '@/views/Share'
 
 import RegisterForm from '@/components/RegisterForm'
 import LoginForm from '@/components/LoginForm'
@@ -55,6 +56,11 @@ const router = new Router({
           next()
         }
       }
+    },
+    {
+      path:'/share',
+      name:'share',
+      component:Share
     }
   ]
 });

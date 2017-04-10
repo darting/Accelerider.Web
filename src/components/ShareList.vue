@@ -1,6 +1,10 @@
 <template lang="pug">
 .sharelist(v-loading='isLoading')
-  .content(align='center')
+  el-row
+    el-button(type='text',@click='backFileList',icon='arrow-left') BACK
+  el-row.disk-table
+    file-list(pre_='share_')
+  el-dialog(v-model='parseUrl')
     el-form.sharelist(v-loading='infoLoading')
       el-form-item(label='分享链接')
         el-input#shareurl(v-model='shareurl')
@@ -8,8 +12,6 @@
         el-input#password(v-model='pwd')
       el-form-item
         el-button(type='primary',@click='getShare') GET
-  .disk-table
-    file-list(pre_='share_')
 </template>
 
 <script>
@@ -17,20 +19,35 @@ export default {
   name: 'sharelist',
   data () {
     return {
+      parseUrl:false,
       isLoading:false,
       shareurl:'',
       pwd:'',
-      sharetoken:''
+      sharetoken:'',
+      filescount:0,
+      curPath:[]
     }
   },
   methods:{
+    backFileList:function(){
+      let pathStack = this.curPath;
+      let cur = '/';
+      if(pathStack.length > 1){
+        pathStack.pop();
+      }
+      cur = pathStack.pop();
+      this.getsharelist(cur);
+    },
     getsharelist:function(path){
+      this.isLoading = true;
       this.$shareAPI.getsharelist(this.sharetoken,path,(data)=>{
         this.isLoading = false;
         this.$message.error(data.message);
       })
       .then(filelist=>{
         this.isLoading = false;
+        this.curPath.push(path);
+        this.filescount = filelist.length;
         if(filelist.errno == 0)
         {
           this.Bus.$emit('share_showfilelist', filelist.list);
@@ -38,6 +55,7 @@ export default {
       })
     },
     getShare:function(){
+      this.parseUrl = false;
       this.isLoading = true;
       this.$shareAPI.getshare(this.shareurl,this.pwd,(data)=>{
         this.isLoading = false;
@@ -47,6 +65,9 @@ export default {
     }
   },
   mounted(){
+    this.Bus.$on('share_shareurl',data=>{
+      this.parseUrl = true;
+    });
     this.Bus.$on('share_downfiles',files=>{
       this.$message.error('还没有！');
     });

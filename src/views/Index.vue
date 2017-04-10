@@ -6,8 +6,6 @@
   el-row
     el-col.content(type='flex',v-bind:md='{span:8,offset:8}',v-bind:lg='{span:8,offset:8}')
       el-button(@click='SHARE') SHARE
-  el-dialog(v-model='share')
-    share-list
 </template>
 
 <script>
@@ -16,7 +14,6 @@ export default {
   data () {
     return {
       linkMsg:"通往新世界的大门!",
-      share:false
     }
   },
   methods:{
@@ -24,7 +21,7 @@ export default {
       this.$router.push({path:"/main"});
     },
     SHARE:function(){
-      this.share = true;
+      this.$router.push({path:"/share"});
     }
   }
 }

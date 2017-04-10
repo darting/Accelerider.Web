@@ -34,10 +34,12 @@
 
 <script>
 import Utils from '../libs/utils.js';
-import Bus from '../libs/eventBus.js';
 let utils = new Utils();
 export default {
   name: 'filelist',
+  props:{
+    pre_:''
+  },
   data () {
     return {
       fileList:[],
@@ -48,8 +50,8 @@ export default {
     }
   },
   methods:{
-    changefilepath:(file)=>{
-      Bus.$emit('changepath', file);
+    changefilepath:function(file){
+      this.Bus.$emit(`${this.pre_}changepath`, file);
     },
     fileProperty:function(file){
       this.curFile = file;
@@ -72,7 +74,7 @@ export default {
       }
     },
     openDownLinks:function(file){
-      Bus.$emit('downfiles', file);
+      this.Bus.$emit(`${this.pre_}downfiles`, file);
     },
     transeSize:function(file){
       if (file.isdir == 1) {
@@ -86,10 +88,10 @@ export default {
     }
   },
   created(){
-    Bus.$on('showdownlinks',data=>{
+    this.Bus.$on(`${this.pre_}showdownlinks`,data=>{
       this.parseDownLinks(data);
     });
-    Bus.$on('showfilelist',fl=>{
+    this.Bus.$on(`${this.pre_}showfilelist`,fl=>{
       this.fileList = fl;
     });
   }

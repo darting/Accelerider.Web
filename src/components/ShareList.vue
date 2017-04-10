@@ -9,12 +9,10 @@
       el-form-item
         el-button(type='primary',@click='getShare') GET
   .disk-table
-    file-list
+    file-list(pre_='share_')
 </template>
 
 <script>
-import shareAPI from '../libs/shareAPI.js';
-import Bus from '../libs/eventBus.js';
 export default {
   name: 'sharelist',
   data () {
@@ -27,20 +25,18 @@ export default {
   },
   methods:{
     getsharelist:function(path){
-      let api = new shareAPI();
-      api.getsharelist(this.sharetoken,path)
+      this.$shareAPI.getsharelist(this.sharetoken,path)
       .then(filelist=>{
         this.isLoading = false;
         if(filelist.errno == 0)
         {
-          Bus.$emit('showfilelist', filelist.list);
+          this.Bus.$emit('share_showfilelist', filelist.list);
         }
       })
     },
     getShare:function(){
       this.isLoading = true;
-      let api = new shareAPI();
-      api.getshare(this.shareurl,this.pwd,(data)=>{
+      this.$shareAPI.getshare(this.shareurl,this.pwd,(data)=>{
         this.isLoading = false;
         this.$message.error(data.message);
       })
@@ -48,10 +44,10 @@ export default {
     }
   },
   mounted(){
-    // Bus.$on('downfiles',files=>{
-    //   this.$message.error('还没有！');
-    // });
-    Bus.$on('changepath',file=>{
+    this.Bus.$on('share_downfiles',files=>{
+      this.$message.error('还没有！');
+    });
+    this.Bus.$on('share_changepath',file=>{
       this.getsharelist(file.path);
     });
   },

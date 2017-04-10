@@ -10,8 +10,6 @@ el-form.register-form(label='注册',v-loading='regLoading')
 </template>
 
 <script>
-import restAPI from '../libs/restAPI.js';
-import Bus from '../libs/eventBus.js';
 export default {
   name: 'registerform',
   data () {
@@ -23,21 +21,20 @@ export default {
     }
   },
   methods:{
-    parseRep:function(data){
-      this.loginLoading = false;
-      let errno = data.errno;
-      this.regLoading = false;
-      if(errno == 0){
-        this.$message(data.message);
-        Bus.$emit('registersuccess', 'OK');
-      }else{
-        this.$message.error(data.message);
-      }
-    },
     register:function(){
-      let api = new restAPI();
       this.regLoading = true;
-	    api.signup(this.username, this.pwd,this.parseRep);
+	    this.$restAPI.signup(this.username, this.pwd,
+        (data)=>{
+          this.loginLoading = false;
+          let errno = data.errno;
+          this.regLoading = false;
+          if(errno == 0){
+            this.$message(data.message);
+            this.Bus.$emit('registersuccess', 'OK');
+          }else{
+            this.$message.error(data.message);
+          }
+        });
     }
   }
 }

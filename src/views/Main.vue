@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import Bus from '../libs/eventBus.js';
 export default {
   name: 'main',
   data () {
@@ -24,10 +23,10 @@ export default {
     }
   },
   created(){
-    Bus.$on('godisk',uk=>{
+    this.Bus.$on('godisk',uk=>{
       this.$router.push({path:"/disk"});
     });
-    Bus.$on('isbinding',msg=>{
+    this.Bus.$on('isbinding',msg=>{
       this.binding = (msg!=0);
     })
   }

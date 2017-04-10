@@ -12,8 +12,6 @@ el-form.login-form
 </template>
 
 <script>
-import restAPI from '../libs/restAPI.js';
-import Bus from '../libs/eventBus.js';
 export default {
   name: 'loginform',
   data () {
@@ -26,24 +24,23 @@ export default {
     }
   },
   methods:{
-    parseRep:function(data){
-      this.loginLoading = false;
-      let errno = data.errno;
-      if(errno == 0){
-        let token = data.token;
-        sessionStorage.setItem('accessToken', token);
-        Bus.$emit('loginsuccess', 'OK');
-      }else{
-        this.$message.error(data.message);
-      }
-    },
     register:function(){
-      Bus.$emit('wantregister', 'OK');
+      this.Bus.$emit('wantregister', 'OK');
     },
     login:function(){
       this.loginLoading = true;
-      let api = new restAPI();
-	    api.login(this.username, this.pwd,this.parseRep);
+	    this.$restAPI.login(this.username, this.pwd,
+        (data)=>{
+          this.loginLoading = false;
+          let errno = data.errno;
+          if(errno == 0){
+            let token = data.token;
+            sessionStorage.setItem('accessToken', token);
+            this.Bus.$emit('loginsuccess', 'OK');
+          }else{
+            this.$message.error(data.message);
+          }
+        });
     }
   }
 }

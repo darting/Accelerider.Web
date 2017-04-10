@@ -7,12 +7,10 @@
   el-button(@click='goMainForm',icon='menu') MAIN
   el-button(type='text',@click='backFileList',icon='arrow-left') BACK
   .disk-table(v-loading="isLoading")
-    file-list
+    file-list(pre_='')
 </template>
 
 <script>
-import restAPI from '../libs/restAPI.js';
-import Bus from '../libs/eventBus.js';
 export default {
   name: 'webdisk',
   data () {
@@ -38,26 +36,24 @@ export default {
       this.isLoading = true;
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-      let api = new restAPI();
-	    api.filelist(token,uk,path,(data)=>{this.$message.error(data.message)})
+	    this.$restAPI.filelist(token,uk,path,(data)=>{this.$message.error(data.message)})
       .then(list=>{
         this.curPath.push(path);
         this.filescount = list.length;
-        Bus.$emit('showfilelist', list);
+        this.Bus.$emit('showfilelist', list);
         this.isLoading = false;
       });
     },
     downfiles:function(files){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-      let api = new restAPI();
-	    api.downfiles(token,uk,files,(data)=>{this.$message.error(data.message)})
+	    this.$restAPI.downfiles(token,uk,files,(data)=>{this.$message.error(data.message)})
       .then(data=>{
-        Bus.$emit('showdownlinks', data);
+        this.Bus.$emit('showdownlinks', data);
       });
     },
     goMainForm:function(){
-      Bus.$emit('gomain','back');
+      this.Bus.$emit('gomain','back');
     },
     backFileList:function(){
       let pathStack = this.curPath;
@@ -70,10 +66,10 @@ export default {
     },
   },
   created(){
-    Bus.$on('changepath',file=>{
+    this.Bus.$on('changepath',file=>{
       this.goFileList(file.path);
     });
-    Bus.$on('downfiles',files=>{
+    this.Bus.$on('downfiles',files=>{
       this.downfiles(files);
     });
   },

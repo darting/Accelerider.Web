@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import Bus from '../libs/eventBus.js';
 export default {
   name: 'login',
   data(){
@@ -16,13 +15,13 @@ export default {
     }
   },
   created(){
-    Bus.$on('loginsuccess',msg=>{
+    this.Bus.$on('loginsuccess',msg=>{
       this.$router.push({path:"/main"});
     });
-    Bus.$on('registersuccess',msg=>{
+    this.Bus.$on('registersuccess',msg=>{
       this.isReg = false;
     });
-    Bus.$on('wantregister',msg=>{
+    this.Bus.$on('wantregister',msg=>{
       this.$confirm('你想注册?','提示',{type:'info',
         confirmButtonText: '我想!',
         cancelButtonText: '算了..',})

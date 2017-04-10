@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import restAPI from '../libs/restAPI.js';
-import Bus from '../libs/eventBus.js';
 import Utils from '../libs/utils.js';
 let utils = new Utils();
 export default {
@@ -28,25 +26,25 @@ export default {
     gotoDisk:function(uk){
       let token = this.getToken();
       sessionStorage.setItem('accessUk', uk);
-      Bus.$emit('godisk', uk);
+      this.Bus.$emit('godisk', uk);
     },
     getToken:function(){
       return sessionStorage.getItem('accessToken')
     },
-    parseRep:function(data){
-      this.infoLoading = false;
-      let errno = data.errno;
-      if(errno == 0){
-        Bus.$emit('isbinding', data.userlist.length);
-      }else{
-        this.$message.error(data.message);
-      }
-    },
     getUserList:function(){
       this.userInfos = [];
       const token = this.getToken();
-      let api = new restAPI();
-	    api.userlist(token,this.parseRep).then(reps=>{
+	    this.$restAPI.userlist(token,
+        (data)=>{
+          this.infoLoading = false;
+          let errno = data.errno;
+          if(errno == 0){
+            this.Bus.$emit('isbinding', data.userlist.length);
+          }else{
+            this.$message.error(data.message);
+          }
+        })
+      .then(reps=>{
         for (let i in reps)
           reps[i].then(data => {this.userInfos.push(data);})
       });

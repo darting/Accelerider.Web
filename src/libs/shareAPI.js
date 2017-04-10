@@ -7,7 +7,7 @@ class ShareAPI{
       headers: {}
     });
   }
-  getsharelist(token,path) {
+  getsharelist(token,path,callback) {
     const url = '/sharefiles';
     return this.$ajax({
       method: 'GET',
@@ -17,7 +17,7 @@ class ShareAPI{
         "path": path
       }
     })
-    .then(data => data.data)
+    .then(response => response.data)
     .catch(err=>{
       if(err.response){
         callback(err.response.data);

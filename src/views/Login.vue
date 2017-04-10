@@ -1,7 +1,12 @@
 <template lang="pug">
 .container
-  .content(align='center')
-    login-form
+  el-row
+    el-col(type='flex',v-bind:md='{span:8,offset:8}',v-bind:lg='{span:8,offset:8}')
+      el-card.content
+        div.clearfix(slot="header")
+         | 登录
+        div
+          login-form
   el-dialog(v-model='isReg')
     register-form
 </template>
@@ -34,3 +39,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.content{
+    text-align:center;
+    margin-top: 48px;
+    margin-bottom: 48px;
+}
+</style>

@@ -1,9 +1,11 @@
 <template lang="pug">
 .container
-  .content(align='center')
-    el-button(type='primary',@click='GO') {{linkMsg}}
-  .content(align='center')
-    el-button(@click='SHARE') SHARE
+  el-row
+    el-col.content(type='flex',v-bind:md='{span:8,offset:8}',v-bind:lg='{span:8,offset:8}')
+      el-button(type='primary',@click='GO') {{linkMsg}}
+  el-row
+    el-col.content(type='flex',v-bind:md='{span:8,offset:8}',v-bind:lg='{span:8,offset:8}')
+      el-button(@click='SHARE') SHARE
   el-dialog(v-model='share')
     share-list
 </template>
@@ -30,5 +32,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@import './css/index.css';
+.content{
+    text-align:center;
+    margin-top: 48px;
+}
 </style>

@@ -1,10 +1,15 @@
 <template lang="pug">
 .container
-  .err-info(v-if='! binding')
-   | {{errMsg}}
-  .info(v-if='binding')
-    user-info
-  el-button(@click='loginout()',type='text') 返回登录
+  el-card
+    div.clearfix(slot="header") 用户列表
+    el-row(v-if='! binding')
+      el-col(type='flex')
+        span {{errMsg}}
+    el-row(v-if='binding')
+      el-col(type='flex')
+        user-info
+    el-row
+      el-button(@click='loginout()',type='text') 返回登录
 </template>
 
 <script>
@@ -32,3 +37,6 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+</style>

@@ -1,6 +1,6 @@
 <template lang="pug">
 .fileList
-  el-table.disk-table(v-bind:data='fileList')
+  el-table.disk-table(v-bind:data='fileList',height='600')
     el-table-column(label='文件名',min-width='100')
       template(scope="scope")
         div.filename(v-if='scope.row.isdir == 0')

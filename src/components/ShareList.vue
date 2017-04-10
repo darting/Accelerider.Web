@@ -25,7 +25,10 @@ export default {
   },
   methods:{
     getsharelist:function(path){
-      this.$shareAPI.getsharelist(this.sharetoken,path)
+      this.$shareAPI.getsharelist(this.sharetoken,path,(data)=>{
+        this.isLoading = false;
+        this.$message.error(data.message);
+      })
       .then(filelist=>{
         this.isLoading = false;
         if(filelist.errno == 0)

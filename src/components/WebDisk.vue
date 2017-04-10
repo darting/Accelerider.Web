@@ -1,13 +1,17 @@
 <template lang="pug">
 .disk
-  el-breadcrumb(separator=">",v-bind:replace='true')
-    el-breadcrumb-item(v-for='p in parseBreadCrumb(curPath)',key = 'p')
-      | {{p}}
-    | Total: {{filescount}}
-  el-button(@click='goMainForm',icon='menu') MAIN
-  el-button(type='text',@click='backFileList',icon='arrow-left') BACK
-  .disk-table(v-loading="isLoading")
-    file-list(pre_='')
+  el-row
+    el-col(v-bind:span='8')
+      el-breadcrumb(separator=">",v-bind:replace='true')
+        el-breadcrumb-item(v-for='p in parseBreadCrumb(curPath)',key = 'p')
+          | {{p}}
+    el-col(v-bind:span='4')
+      span Total: {{filescount}}
+  el-row
+    el-button(type='text',@click='backFileList',icon='arrow-left') BACK
+  el-row
+    el-col.flist(v-loading="isLoading")
+      file-list(pre_='')
 </template>
 
 <script>
@@ -52,9 +56,6 @@ export default {
         this.Bus.$emit('showdownlinks', data);
       });
     },
-    goMainForm:function(){
-      this.Bus.$emit('gomain','back');
-    },
     backFileList:function(){
       let pathStack = this.curPath;
       let cur = '/';
@@ -78,3 +79,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.flist{
+  height:100%;
+  overflow: auto;
+}
+</style>

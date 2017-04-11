@@ -34,20 +34,16 @@ export default {
     getUserList:function(){
       this.userInfos = [];
       const token = this.getToken();
-	    this.$restAPI.userlist(token,
-        (data)=>{
-          this.infoLoading = false;
-          let errno = data.errno;
-          if(errno == 0){
-            this.Bus.$emit('isbinding', data.userlist.length);
-          }else{
-            this.$message.error(data.message);
-          }
-        })
+	    this.$restAPI.userlist(token)
       .then(reps=>{
+        this.infoLoading = false;
+        if(reps.length==0)this.Bus.$emit('isbinding', reps.length);
         for (let i in reps)
           reps[i].then(data => {this.userInfos.push(data);})
-      });
+      })
+      .catch((msg)=>{
+        this.infoLoading = false;
+        this.$message.error(msg)});
     },
     transeSize:function(size){
       return utils.transeSize(size);

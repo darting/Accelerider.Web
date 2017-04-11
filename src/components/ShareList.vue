@@ -40,28 +40,25 @@ export default {
     },
     getsharelist:function(path){
       this.isLoading = true;
-      this.$shareAPI.getsharelist(this.sharetoken,path,(data)=>{
-        this.isLoading = false;
-        this.$message.error(data.message);
-      })
+      this.$shareAPI.getsharelist(this.sharetoken,path)
       .then(filelist=>{
         this.isLoading = false;
         this.curPath.push(path);
         this.filescount = filelist.length;
-        if(filelist.errno == 0)
-        {
-          this.Bus.$emit('share_showfilelist', filelist.list);
-        }
+        this.Bus.$emit('share_showfilelist', filelist);
       })
+      .catch(msg=>{
+        this.isLoading = false;
+        this.$message.error(msg)});
     },
     getShare:function(){
       this.parseUrl = false;
       this.isLoading = true;
-      this.$shareAPI.getshare(this.shareurl,this.pwd,(data)=>{
+      this.$shareAPI.getshare(this.shareurl,this.pwd)
+      .then(token=>{this.sharetoken=token; this.getsharelist('/')})
+      .catch(msg=>{
         this.isLoading = false;
-        this.$message.error(data.message);
-      })
-      .then(token=>{this.sharetoken=token; this.getsharelist('/')});
+        this.$message.error(msg)});
     }
   },
   mounted(){

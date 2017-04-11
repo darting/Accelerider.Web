@@ -8,9 +8,9 @@ class M4API{
       headers: {}
     });
   }
-  signup(username,password,callback) {
+  signup(username,password) {
     const url="/signup";
-    this.$ajax({
+    return this.$ajax({
       method: 'POST',
       url: url,
       params: { "security": "md5" },
@@ -26,18 +26,16 @@ class M4API{
         "password": MD5(password).toString()
       }
     })
-    .then(response =>callback(response.data))
-    .catch(err=>{
-      if(err.response){
-        callback(err.response.data);
-      }else{
-        console.log('Error',err.message)
-      }
+    .then(response =>response.data).then(data=>data.message)
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message;}
+      throw msg;
     });
   }
-  login(username,password,callback) {
+  login(username,password) {
     const url="/login";
-    this.$ajax({
+    return this.$ajax({
       method: 'POST',
       url: url,
       params: { "security": "md5" },
@@ -53,13 +51,15 @@ class M4API{
         "password": MD5(password).toString()
       }
     })
-    .then(response =>callback(response.data))
-    .catch(err=>{
-      if(err.response){
-        callback(err.response.data);
-      }else{
-        console.log('Error',err.message)
-      }
+    .then(response =>response.data)
+    .then(data=>{
+      if(data.errno!=0) {throw new Error(data.message)}
+      return data.token;
+    })
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message}
+      throw msg;
     });
   }
   _userinfo(token,uk) {
@@ -80,34 +80,29 @@ class M4API{
       return info;
     })
   }
-  userlist(token,callback) {
+  userlist(token) {
     const url='/userlist';
     return this.$ajax({
       method: 'GET',
       url: url,
       params: { token: token }
     })
-    .then(response => {
-      let data = response.data;
-      callback(data);
-      if (data.userlist.length != 0) {
-        data.userlist.map(item => {
+    .then(response =>response.data)
+    .then(data => {
+      data.userlist.map(item => {
         item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
         item.Token = token;
-        });
-      }
+        })
       return data.userlist;
     })
-    .then(data => data.map(item => this._userinfo(token,item.Uk)))
-    .catch(err => {
-      if (err.response) {
-        callback(err.response.data);
-      } else {
-        console.log('Error', err.message)
-      }
+    .then(list => list.map(item => this._userinfo(token,item.Uk)))
+    .catch(err => {let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message;}
+      throw msg;
     });
   }
-  filelist(token,uk,path,callback) {
+  filelist(token,uk,path) {
     const url='/filelist';
     return this.$ajax({
       method: 'GET',
@@ -118,13 +113,11 @@ class M4API{
         path: encodeURIComponent(path)
       }
     })
-    .then(response => response.data.list)
-    .catch(err => {
-      if (err.response) {
-        callback(err.response.data);
-      }else{
-        console.log('Error',err.message)
-      }
+    .then(response =>response.data.list)
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message}
+      throw msg;
     });
   }
   downfiles(token, uk, files) {
@@ -152,14 +145,11 @@ class M4API{
         "files": `[${JSON.stringify(file)}]`
       }
     })
-    .then(response => response.data)
-    .catch(err => {
-      if (err.response) {
-        let data = err.response.data;
-        callback(data.errno,data);
-      }else{
-        console.log('Error',err.message)
-      }
+    .then(response => response.data.links)
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message}
+      throw msg;
     });
   }
 }

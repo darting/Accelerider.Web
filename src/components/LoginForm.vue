@@ -29,18 +29,15 @@ export default {
     },
     login:function(){
       this.loginLoading = true;
-	    this.$restAPI.login(this.username, this.pwd,
-        (data)=>{
-          this.loginLoading = false;
-          let errno = data.errno;
-          if(errno == 0){
-            let token = data.token;
-            sessionStorage.setItem('accessToken', token);
-            this.Bus.$emit('loginsuccess', 'OK');
-          }else{
-            this.$message.error(data.message);
-          }
-        });
+	    this.$restAPI.login(this.username, this.pwd)
+      .then((token)=>{
+        this.loginLoading = false;
+        sessionStorage.setItem('accessToken', token);
+        this.Bus.$emit('loginsuccess', 'OK');
+      })
+      .catch((msg)=>{
+        this.loginLoading = false;
+        this.$message.error(msg)});
     }
   }
 }

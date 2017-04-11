@@ -57,20 +57,15 @@ export default {
       this.curFile = file;
       this.dialogProP = true;
     },
-    parseDownLinks:function(data){
-      if(data.errno == 0){
-        this.dialogDL = true;
-        this.downlinks = [];
-        let links = data.links;
-        for(let key in links){
-          let obj ={
-            "name":decodeURIComponent(key),
-            "urls":links[key]
-          };
-          this.downlinks.push(obj);
-        }
-      }else{
-        this.$message.error(data.message);
+    parseDownLinks:function(links){
+      this.dialogDL = true;
+      this.downlinks = [];
+      for(let key in links){
+        let obj ={
+          "name":decodeURIComponent(key),
+          "urls":links[key]
+        };
+        this.downlinks.push(obj);
       }
     },
     openDownLinks:function(file){
@@ -88,8 +83,8 @@ export default {
     }
   },
   created(){
-    this.Bus.$on(`${this.pre_}showdownlinks`,data=>{
-      this.parseDownLinks(data);
+    this.Bus.$on(`${this.pre_}showdownlinks`,links=>{
+      this.parseDownLinks(links);
     });
     this.Bus.$on(`${this.pre_}showfilelist`,fl=>{
       this.fileList = fl;

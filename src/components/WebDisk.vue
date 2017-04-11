@@ -40,21 +40,25 @@ export default {
       this.isLoading = true;
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-	    this.$restAPI.filelist(token,uk,path,(data)=>{this.$message.error(data.message)})
+	    this.$restAPI.filelist(token,uk,path)
       .then(list=>{
         this.curPath.push(path);
         this.filescount = list.length;
         this.Bus.$emit('showfilelist', list);
         this.isLoading = false;
-      });
+      })
+      .catch((msg)=>{
+        this.isLoading = false;
+        this.$message.error(msg)});
     },
     downfiles:function(files){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-	    this.$restAPI.downfiles(token,uk,files,(data)=>{this.$message.error(data.message)})
-      .then(data=>{
-        this.Bus.$emit('showdownlinks', data);
-      });
+	    this.$restAPI.downfiles(token,uk,files)
+      .then(linksObj=>{
+        this.Bus.$emit('showdownlinks', linksObj);
+      })
+      .catch((msg)=>this.$message.error(msg));
     },
     backFileList:function(){
       let pathStack = this.curPath;

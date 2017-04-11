@@ -23,18 +23,15 @@ export default {
   methods:{
     register:function(){
       this.regLoading = true;
-	    this.$restAPI.signup(this.username, this.pwd,
-        (data)=>{
-          this.loginLoading = false;
-          let errno = data.errno;
-          this.regLoading = false;
-          if(errno == 0){
-            this.$message(data.message);
-            this.Bus.$emit('registersuccess', 'OK');
-          }else{
-            this.$message.error(data.message);
-          }
-        });
+	    this.$restAPI.signup(this.username, this.pwd)
+      .then((rlt)=>{
+        this.regLoading = false;
+        this.$message(rlt);
+        this.Bus.$emit('registersuccess', 'OK');
+      })
+      .catch((msg)=>{
+        this.regLoading = false;
+        this.$message.error(msg)});
     }
   }
 }

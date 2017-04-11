@@ -7,7 +7,7 @@ class ShareAPI{
       headers: {}
     });
   }
-  getsharelist(token,path,callback) {
+  getsharelist(token,path) {
     const url = '/sharefiles';
     return this.$ajax({
       method: 'GET',
@@ -18,15 +18,17 @@ class ShareAPI{
       }
     })
     .then(response => response.data)
-    .catch(err=>{
-      if(err.response){
-        callback(err.response.data);
-      }else{
-        console.log('Error',err.message)
-      }
+    .then(data=>{
+      if(data.errno!=0) {throw new Error(data.message)}
+      return data.list;
+    })
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message}
+      throw msg;
     });
   }
-  getshare(shareUrl,password,callback) {
+  getshare(shareUrl,password) {
     const url="/sharefiles";
     return this.$ajax({
       method: 'GET',
@@ -34,12 +36,10 @@ class ShareAPI{
       params: { "shareurl": shareUrl, "pass": password}
     })
     .then(response => response.data.token)
-    .catch(err=>{
-      if(err.response){
-        callback(err.response.data);
-      }else{
-        console.log('Error',err.message)
-      }
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message}
+      throw msg;
     });
   }
 }

@@ -31,8 +31,8 @@ export default {
         confirmButtonText: '我想!',
         cancelButtonText: '算了..',})
       .then(()=>{
-        this.$msgbox({message:'我不想...',confirmButtonText:'好吧..'});
-        //this.isReg = true;
+        //this.$msgbox({message:'我不想...',confirmButtonText:'好吧..'});
+        this.isReg = true;
         })
       .catch(()=>{});
     });

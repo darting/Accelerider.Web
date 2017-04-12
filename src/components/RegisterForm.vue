@@ -29,9 +29,9 @@ export default {
         this.$message(rlt);
         this.Bus.$emit('registersuccess', 'OK');
       })
-      .catch((msg)=>{
+      .catch((err)=>{
         this.regLoading = false;
-        this.$message.error(msg)});
+        this.$message.error(err.message)});
     }
   }
 }

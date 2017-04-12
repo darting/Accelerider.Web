@@ -35,9 +35,10 @@ export default {
         sessionStorage.setItem('accessToken', token);
         this.Bus.$emit('loginsuccess', 'OK');
       })
-      .catch((msg)=>{
+      .catch((err)=>{
         this.loginLoading = false;
-        this.$message.error(msg)});
+        this.$message.error(err.message)
+      });
     }
   }
 }

@@ -41,9 +41,9 @@ export default {
         for (let i in reps)
           reps[i].then(data => {this.userInfos.push(data);})
       })
-      .catch((msg)=>{
+      .catch((err)=>{
         this.infoLoading = false;
-        this.$message.error(msg)});
+        this.$message.error(err.message)});
     },
     transeSize:function(size){
       return utils.transeSize(size);

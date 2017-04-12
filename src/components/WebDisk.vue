@@ -47,9 +47,9 @@ export default {
         this.Bus.$emit('showfilelist', list);
         this.isLoading = false;
       })
-      .catch((msg)=>{
+      .catch((e)=>{
         this.isLoading = false;
-        this.$message.error(msg)});
+        this.$message.error(e.message)});
     },
     downfiles:function(files){
       const token = sessionStorage.getItem('accessToken');
@@ -58,7 +58,7 @@ export default {
       .then(linksObj=>{
         this.Bus.$emit('showdownlinks', linksObj);
       })
-      .catch((msg)=>this.$message.error(msg));
+      .catch((e)=>this.$message.error(e.message));
     },
     backFileList:function(){
       let pathStack = this.curPath;

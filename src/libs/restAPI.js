@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs';
 import MD5 from './cryptos.js';
 
 class M4API{
@@ -7,6 +8,15 @@ class M4API{
       baseURL: 'http://api.pescn.top/',
       headers: {}
     });
+    this.$ajax.interceptors.response.use(
+      (config)=>{return config},
+      (err)=>{
+        let msg = '';
+        if(err.response){msg = err.response.data.message}
+          else{msg=err.message}
+        throw new Error(msg);
+        }
+      );
   }
   signup(username,password) {
     const url="/signup";
@@ -15,23 +25,15 @@ class M4API{
       url: url,
       params: { "security": "md5" },
       transformRequest: [function (data) {
-        let ret = ''
-        for (let it in data) {
-          ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`
-        }
-        return ret
+        return qs.stringify(data);
       }],
       data: {
         "name": encodeURIComponent(username),
         "password": MD5(password).toString()
       }
     })
-    .then(response =>response.data).then(data=>data.message)
-    .catch(err=>{let msg = '';
-      if(err.response){msg = err.response.data.message}
-        else{msg=err.message;}
-      throw msg;
-    });
+    .then(response =>response.data)
+    .then(data=>data.message);
   }
   login(username,password) {
     const url="/login";
@@ -40,11 +42,7 @@ class M4API{
       url: url,
       params: { "security": "md5" },
       transformRequest: [function (data) {
-        let ret = ''
-        for (let it in data) {
-          ret += `${encodeURIComponent(it)}=${encodeURIComponent(data[it])}&`
-        }
-        return ret
+        return qs.stringify(data);
       }],
       data: {
         "name": encodeURIComponent(username),
@@ -55,11 +53,6 @@ class M4API{
     .then(data=>{
       if(data.errno!=0) {throw new Error(data.message)}
       return data.token;
-    })
-    .catch(err=>{let msg = '';
-      if(err.response){msg = err.response.data.message}
-        else{msg=err.message}
-      throw msg;
     });
   }
   _userinfo(token,uk) {
@@ -113,21 +106,16 @@ class M4API{
         path: encodeURIComponent(path)
       }
     })
-    .then(response =>response.data.list)
-    .catch(err=>{let msg = '';
-      if(err.response){msg = err.response.data.message}
-        else{msg=err.message}
-      throw msg;
-    });
+    .then(response =>response.data.list);
   }
   downfiles(token, uk, files) {
     const url = '/filelinks';
     const FILESIZE_30M = 30*1024*1024;
     const method = "APPID";// file.size>FILESIZE_30M ? "DEFAULT" : "APPID";
-    let file = {
+    let file = [{
       "path":encodeURIComponent(files.path),
       "id": files.fs_id
-    };
+    }];
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -138,19 +126,14 @@ class M4API{
       },
       transformRequest: [function (data) {
         let ret = '';
-        for (let it in data) { ret += `${it}=${data[it]}` }
+        for (let it in data) { ret += `${it}=${data[it]}&` }
         return ret;
       }],
       data: {
-        "files": `[${JSON.stringify(file)}]`
+        "files": JSON.stringify(file)
       }
     })
-    .then(response => response.data.links)
-    .catch(err=>{let msg = '';
-      if(err.response){msg = err.response.data.message}
-        else{msg=err.message}
-      throw msg;
-    });
+    .then(response => response.data.links);
   }
 }
 

@@ -51,10 +51,14 @@ export default {
         this.isLoading = false;
         this.$message.error(e.message)});
     },
-    downfiles:function(files){
+    downfiles:function(file){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-	    this.$restAPI.downfiles(token,uk,files)
+      let files = {
+        "path":encodeURIComponent(file.path),
+        "id": file.fs_id
+      };
+	    this.$restAPI.downfiles(token,uk,[files])
       .then(linksObj=>{
         this.Bus.$emit('showdownlinks', linksObj);
       })

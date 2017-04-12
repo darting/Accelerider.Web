@@ -24,13 +24,7 @@ class M4API{
       method: 'POST',
       url: url,
       params: { "security": "md5" },
-      transformRequest: [function (data) {
-        return qs.stringify(data);
-      }],
-      data: {
-        "name": encodeURIComponent(username),
-        "password": MD5(password).toString()
-      }
+      data: qs.stringify({name:username,password:MD5(password).toString()})
     })
     .then(response =>response.data)
     .then(data=>data.message);
@@ -41,13 +35,7 @@ class M4API{
       method: 'POST',
       url: url,
       params: { "security": "md5" },
-      transformRequest: [function (data) {
-        return qs.stringify(data);
-      }],
-      data: {
-        "name": encodeURIComponent(username),
-        "password": MD5(password).toString()
-      }
+      data: qs.stringify({name:username,password:MD5(password).toString()})
     })
     .then(response =>response.data)
     .then(data=>{
@@ -112,10 +100,8 @@ class M4API{
     const url = '/filelinks';
     const FILESIZE_30M = 30*1024*1024;
     const method = "APPID";// file.size>FILESIZE_30M ? "DEFAULT" : "APPID";
-    let file = [{
-      "path":encodeURIComponent(files.path),
-      "id": files.fs_id
-    }];
+    let file = files;
+    //let f = files.map(qs.stringify).map(s=>`{${s}}`).toString();
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -126,12 +112,11 @@ class M4API{
       },
       transformRequest: [function (data) {
         let ret = '';
-        for (let it in data) { ret += `${it}=${data[it]}&` }
+        for (let it in data) { ret += `${it}=${data[it]}` }
         return ret;
       }],
-      data: {
-        "files": JSON.stringify(file)
-      }
+      //data: { files: `[${f.toString()}]` },
+      data: {"files": JSON.stringify(file)}
     })
     .then(response => response.data.links);
   }

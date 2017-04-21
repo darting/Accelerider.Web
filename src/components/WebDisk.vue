@@ -54,11 +54,7 @@ export default {
     downfiles:function(file){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
-      let files = {
-        "path":encodeURIComponent(file.path),
-        "id": file.fs_id
-      };
-	    this.$restAPI.downfiles(token,uk,[files])
+	    this.$restAPI.downfiles(token,uk,[file])
       .then(linksObj=>{
         this.Bus.$emit('showdownlinks', linksObj);
       })

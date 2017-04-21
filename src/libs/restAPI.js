@@ -98,24 +98,19 @@ class M4API{
   }
   downfiles(token, uk, files) {
     const url = '/filelinks';
-    const FILESIZE_30M = 30*1024*1024;
-    const method = "APPID";// file.size>FILESIZE_30M ? "DEFAULT" : "APPID";
-    let file = files;
-    //let f = files.map(qs.stringify).map(s=>`{${s}}`).toString();
+    let file =files
     return this.$ajax({
       method: 'POST',
       url: url,
       params: {
         token: token,
-        uk: uk,
-        method: method
+        uk: uk
       },
       transformRequest: [function (data) {
         let ret = '';
-        for (let it in data) { ret += `${it}=${data[it]}` }
+        for (let it in data) { ret += `${it}=${encodeURIComponent(data[it])}&` }
         return ret;
       }],
-      //data: { files: `[${f.toString()}]` },
       data: {"files": JSON.stringify(file)}
     })
     .then(response => response.data.links);

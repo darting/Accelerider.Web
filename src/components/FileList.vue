@@ -23,7 +23,7 @@
        p {{item.name}}
        ul
          li(v-for='url in item.urls')
-           a(v-bind:href='url',target='_blank') 链接
+           a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
     el-dialog(v-model='dialogProP',title='文件属性')
       p 文件名： {{curFile.server_filename}}
       p 文件大小： {{transeSize(curFile)}}

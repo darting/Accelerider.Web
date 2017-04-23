@@ -19,22 +19,52 @@ class M4API{
       );
   }
   signup(username,password) {
-    const url="/signup";
+    const url = "/signup";
+    let data = {name:username,password:MD5(password).toString()}
+    try { data.code = code}catch(e){}
     return this.$ajax({
       method: 'POST',
       url: url,
-      params: { "security": "md5" },
-      data: qs.stringify({name:username,password:MD5(password).toString()})
+      params: { security: "md5" },
+      data: qs.stringify(data)
     })
     .then(response =>response.data)
     .then(data=>data.message);
+  }
+  vertifyco(cookies,json) { 
+    const url = 'http://localhost/api/checo'
+    let cookie  = cookies
+    if (json) { cookie = '';
+      let c = JSON.parse(cookies)
+      for (let it in c) { cookie += `${it}=${c[it]};`}
+    }
+    return this.$ajax({
+      method: 'POST',
+      url: url,
+      data: {cookie:cookie}
+    })
+    .then(response =>response.data)
+  }
+  binding(token, cookies) {
+    const url="/binding";
+    return this.$ajax({
+      method: 'POST',
+      url: url,
+      params: { token: token },
+      data: qs.stringify({ cookies:cookies })
+    })
+    .then(response =>response.data)
+    .then(data=>{
+      if(data.errno!=0) {throw new Error(data.message)}
+      return data.errno;
+    });
   }
   login(username,password) {
     const url="/login";
     return this.$ajax({
       method: 'POST',
       url: url,
-      params: { "security": "md5" },
+      params: { security: "md5" },
       data: qs.stringify({name:username,password:MD5(password).toString()})
     })
     .then(response =>response.data)
@@ -83,7 +113,7 @@ class M4API{
       throw msg;
     });
   }
-  filelist(token,uk,path) {
+  filelist(token, uk, path) {
     const url='/filelist';
     return this.$ajax({
       method: 'GET',
@@ -91,7 +121,7 @@ class M4API{
       params: {
         token: token,
         uk: uk,
-        path: encodeURIComponent(path)
+        path: path
       }
     })
     .then(response =>response.data.list);
@@ -113,7 +143,7 @@ class M4API{
       }],
       data: {"files": JSON.stringify(file)}
     })
-    .then(response => response.data.links);
+    .then(response => response.data);
   }
 }
 

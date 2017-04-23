@@ -55,6 +55,11 @@ export default {
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
 	    this.$restAPI.downfiles(token,uk,[file])
+      .then(data=>{
+        if(data.links){this.$restAPI.vertifyco(data.cookies,true);
+          return data.links
+        }else{throw new Error(data.message)}
+      })
       .then(linksObj=>{
         this.Bus.$emit('showdownlinks', linksObj);
       })

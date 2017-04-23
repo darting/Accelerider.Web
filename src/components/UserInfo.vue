@@ -37,13 +37,13 @@ export default {
 	    this.$restAPI.userlist(token)
       .then(reps=>{
         this.infoLoading = false;
-        if(reps.length==0)this.Bus.$emit('isbinding', reps.length);
+        this.Bus.$emit('isbinding', reps.length);
         for (let i in reps)
           reps[i].then(data => {this.userInfos.push(data);})
       })
       .catch((err)=>{
         this.infoLoading = false;
-        this.$message.error(err.message)});
+        this.$message.error(err)});
     },
     transeSize:function(size){
       return utils.transeSize(size);

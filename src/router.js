@@ -8,6 +8,7 @@ import Share from '@/views/Share'
 
 import RegisterForm from '@/components/RegisterForm'
 import LoginForm from '@/components/LoginForm'
+import BindingForm from '@/components/BindingForm'
 import UserInfo from '@/components/UserInfo'
 import WebDisk from '@/components/WebDisk'
 import DiskFileList from '@/components/FileList'
@@ -66,7 +67,8 @@ const router = new Router({
 });
 
 Vue.component('register-form',RegisterForm)
-Vue.component('login-form',LoginForm)
+Vue.component('login-form', LoginForm)
+Vue.component('bind-form', BindingForm)
 Vue.component('user-info',UserInfo)
 Vue.component('file-list',DiskFileList)
 Vue.component('web-disk',WebDisk)

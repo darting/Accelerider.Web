@@ -16,6 +16,7 @@ import ShareList from '@/components/ShareList'
 
 Vue.use(Router)
 const router = new Router({
+  mode:'history',
   routes: [
     {
       path: '/',
@@ -39,6 +40,7 @@ const router = new Router({
             query: { redirect: to.fullPath }
           })
         } else {
+          sessionStorage.removeItem('accessUk');
           next()
         }
       }
@@ -47,10 +49,13 @@ const router = new Router({
       path:'/disk',
       name:'disk',
       component:Disk,
-      beforeEnter :(to, from, next) => {
-        if (!sessionStorage.getItem('accessToken') && !sessionStorage.getItem('accessUk')) {
+      beforeEnter: (to, from, next) => {
+        if (!to.query.path) {
+          next({ path: '/disk', query: {path:'/'}})
+        }
+        if (!sessionStorage.getItem('accessToken') || !sessionStorage.getItem('accessUk')) {
           next({
-            path: '/login',
+            path: '/main',
             query: { redirect: to.fullPath }
           })
         } else {

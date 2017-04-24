@@ -1,3 +1,5 @@
+import queryString from 'query-string'
+
 class Utils{
   transeSize(size){
     const k = 1024;
@@ -10,6 +12,10 @@ class Utils{
     let newDate = new Date();
     newDate.setTime(mtime * 1000); 
     return newDate.toLocaleString();
+  }
+
+  parseQuery() {
+    return queryString.parse(window.location.search)
   }
 }
 

@@ -33,8 +33,6 @@
 </template>
 
 <script>
-import Utils from '../libs/utils.js';
-let utils = new Utils();
 export default {
   name: 'filelist',
   props:{
@@ -75,11 +73,11 @@ export default {
       if (file.isdir == 1) {
         return '--';
       }else{
-        return utils.transeSize(file.size);
+        return this.utils.transeSize(file.size);
       }
     },
     transeTime:function(mtime){
-      return utils.transeTime(mtime);
+      return this.utils.transeTime(mtime);
     }
   },
   created(){

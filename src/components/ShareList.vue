@@ -5,7 +5,7 @@
   el-row.disk-table
     file-list(pre_='share_')
   el-dialog(v-model='parseUrl')
-    el-form.sharelist(v-loading='infoLoading')
+    el-form.sharelist
       el-form-item(label='分享链接')
         el-input#shareurl(v-model='shareurl')
       el-form-item(label='密码(没有就不填)')

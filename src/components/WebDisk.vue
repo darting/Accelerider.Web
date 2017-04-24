@@ -3,8 +3,8 @@
   el-row
     el-col(v-bind:span='8')
       el-breadcrumb(separator=">",v-bind:replace='true')
-        el-breadcrumb-item(v-for='p in parseBreadCrumb(curPath)',key = 'p')
-          | {{p}}
+        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{path:'/disk',query:p.path}",key = 'p')
+          | {{p.name}}
     el-col(v-bind:span='4')
       span Total: {{filescount}}
   el-row
@@ -20,21 +20,23 @@ export default {
   data () {
     return {
       filescount:0,
-      isLoading:true,
-      curPath:[]
+      isLoading:true
     }
   },
   methods:{
-    parseBreadCrumb:function(pathStack){
-      let path = '全部文件';
-      if(pathStack.length > 1){
-        path = pathStack[pathStack.length-1];
+    _getBreadCrumb:function(){
+      let path = [{name:'全部文件',path:'/'}];
+      const q = this.utils.parseQuery()
+      const sq = q.path.split('/');
+      for(let i in sq){
+        //console.log(sq[i])
+        //console.log(cp)
+        //cp = sq.pop()
       }
-      path=path.split('/');
-      path[0] = '全部文件';
       return path;
     },
-    goFileList:function(path){
+    goFileList:function(){
+      const path = this.utils.parseQuery().path
       let curTitle = `网盘 ${path}`;
       this.downlinks = [];
       this.isLoading = true;
@@ -42,18 +44,21 @@ export default {
       const uk = sessionStorage.getItem('accessUk');
 	    this.$restAPI.filelist(token,uk,path)
       .then(list=>{
-        this.curPath.push(path);
         this.filescount = list.length;
         this.Bus.$emit('showfilelist', list);
         this.isLoading = false;
       })
       .catch((e)=>{
         this.isLoading = false;
-        this.$message.error(e.message)});
+        if(e.message.indexOf('代码 -9') > 0)
+            {this.$router.push({path:"/disk",query:{path:'/'}})}
+        else{this.$message.error(e.message)}
+        });
     },
     downfiles:function(file){
       const token = sessionStorage.getItem('accessToken');
       const uk = sessionStorage.getItem('accessUk');
+      this.isLoading = true;
 	    this.$restAPI.downfiles(token,uk,[file])
       .then(data=>{
         if(data.links){this.$restAPI.vertifyco(data.cookies,true);
@@ -61,30 +66,32 @@ export default {
         }else{throw new Error(data.message)}
       })
       .then(linksObj=>{
+        this.isLoading = false;
         this.Bus.$emit('showdownlinks', linksObj);
       })
       .catch((e)=>this.$message.error(e.message));
     },
     backFileList:function(){
-      let pathStack = this.curPath;
+      const q = this.utils.parseQuery()
+      const sq = q.path.split('/');sq.pop()
       let cur = '/';
-      if(pathStack.length > 1){
-        pathStack.pop();
-      }
-      cur = pathStack.pop();
-      this.goFileList(cur);
+      if(sq.length>1)cur = sq.join('/')
+      this.$router.push({path:"/disk",query:{path:cur}});
     },
   },
   created(){
     this.Bus.$on('changepath',file=>{
-      this.goFileList(file.path);
+      this.$router.push({path:"/disk",query:{path:file.path}});
     });
     this.Bus.$on('downfiles',files=>{
       this.downfiles(files);
     });
   },
-  mounted(){
-    this.goFileList('/');
+  mounted:function(){
+    this.goFileList();
+  },
+  watch: {
+     "$route": "goFileList"
   }
 }
 </script>

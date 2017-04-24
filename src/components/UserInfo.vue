@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import Utils from '../libs/utils.js';
-let utils = new Utils();
 export default {
   name: 'userinfo',
   data () {
@@ -46,7 +44,7 @@ export default {
         this.$message.error(err)});
     },
     transeSize:function(size){
-      return utils.transeSize(size);
+      return this.utils.transeSize(size);
     }
   },
   mounted(){

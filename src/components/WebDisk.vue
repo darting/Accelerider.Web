@@ -69,7 +69,9 @@ export default {
         this.isLoading = false;
         this.Bus.$emit('showdownlinks', linksObj);
       })
-      .catch((e)=>this.$message.error(e.message));
+      .catch((e)=>{
+        this.isLoading = false;
+        this.$message.error(e.message)});
     },
     backFileList:function(){
       const q = this.utils.parseQuery()

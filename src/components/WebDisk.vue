@@ -3,7 +3,7 @@
   el-row
     el-col(v-bind:span='8')
       el-breadcrumb(separator=">",v-bind:replace='true')
-        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{path:'/disk',query:p.path}",key = 'p')
+        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{path:'/disk',query:{path:p.path}}",key = 'p')
           | {{p.name}}
     el-col(v-bind:span='4')
       span Total: {{filescount}}

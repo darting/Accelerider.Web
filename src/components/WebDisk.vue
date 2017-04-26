@@ -25,19 +25,11 @@ export default {
   },
   methods:{
     _getBreadCrumb:function(){
-      let path = [{name:'全部文件',path:'/'}];
-      const q = this.utils.parseQuery()
-      const sq = q.path.split('/');
-      for(let i in sq){
-        //console.log(sq[i])
-        //console.log(cp)
-        //cp = sq.pop()
-      }
+      let path = this.utils.pathmanager().pathSegmtt();
       return path;
     },
     goFileList:function(){
-      const path = this.utils.parseQuery().path
-      let curTitle = `网盘 ${path}`;
+      const path = this.utils.pathmanager().getPath()
       this.downlinks = [];
       this.isLoading = true;
       const token = sessionStorage.getItem('accessToken');
@@ -74,10 +66,8 @@ export default {
         this.$message.error(e.message)});
     },
     backFileList:function(){
-      const q = this.utils.parseQuery()
-      const sq = q.path.split('/');sq.pop()
-      let cur = '/';
-      if(sq.length>1)cur = sq.join('/')
+      const pm = this.utils.pathmanager()
+      let cur = pm.getBackPath();
       this.$router.push({path:"/disk",query:{path:cur}});
     },
   },

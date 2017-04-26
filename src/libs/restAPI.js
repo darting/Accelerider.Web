@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import MD5 from './cryptos.js';
+import MD5 from './cryptos';
 
 class M4API{
   constructor() {

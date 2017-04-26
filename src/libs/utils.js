@@ -1,4 +1,4 @@
-import queryString from 'query-string'
+import PM from './pathmanager'
 
 class Utils{
   transeSize(size){
@@ -14,9 +14,8 @@ class Utils{
     return newDate.toLocaleString();
   }
 
-  parseQuery() {
-    return queryString.parse(window.location.search)
-  }
+  pathmanager(){ return new PM() }
+
 }
 
 export default Utils;

@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'main',
   data () {
@@ -26,8 +27,14 @@ export default {
       bindDlg:false
     }
   },
+  computed:{
+    ...mapGetters({
+      count:'count',
+    })
+  },
   methods:{
     binding:function(){
+      this.$store.dispatch('increment')
       this.bindDlg = true
     },
     loginout:function(){

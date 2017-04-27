@@ -9,9 +9,10 @@ export default {
   name: 'app',
   data () {
     return {
-      version:"2.2.8"
+      version:"2.3.0"
     }
   },
+  computed:{},
   methods:{
     testFunc:function(){}
   },

@@ -1,6 +1,6 @@
 {
   "name": "nodebdp-vue",
-  "version": "2.2.8",
+  "version": "2.3.0",
   "description": "A Vue.js project",
   "author": "combo",
   "private": true,
@@ -11,7 +11,8 @@
   "dependencies": {
     "normalize.css": "^6.0.0",
     "vue": "^2.2.2",
-    "vue-router": "^2.2.0"
+    "vue-router": "^2.2.0",
+    "vuex": "^2.3.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",

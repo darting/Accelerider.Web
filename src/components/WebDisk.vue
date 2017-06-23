@@ -11,17 +11,24 @@
     el-button(type='text',@click='backFileList',icon='arrow-left') BACK
   el-row
     el-col.flist(v-loading="isLoading")
-      file-list(pre_='')
+      file-list
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'webdisk',
   data () {
     return {
       filescount:0,
-      isLoading:true
+      isLoading:false
     }
+  },
+  computed:{
+    ...mapGetters ({
+      uk:'uk',
+      downloadfiles:'downfiles'
+    })
   },
   methods:{
     _getBreadCrumb:function(){
@@ -33,11 +40,10 @@ export default {
       this.downlinks = [];
       this.isLoading = true;
       const token = sessionStorage.getItem('accessToken');
-      const uk = sessionStorage.getItem('accessUk');
-	    this.$restAPI.filelist(token,uk,path)
+	    this.$restAPI.filelist(token,this.uk,path)
       .then(list=>{
         this.filescount = list.length;
-        this.Bus.$emit('showfilelist', list);
+        this.$store.dispatch('filelist',list);
         this.isLoading = false;
       })
       .catch((e)=>{
@@ -47,11 +53,10 @@ export default {
         else{this.$message.error(e.message)}
         });
     },
-    downfiles:function(file){
-      const token = sessionStorage.getItem('accessToken');
-      const uk = sessionStorage.getItem('accessUk');
+    downfiles:function(){
       this.isLoading = true;
-	    this.$restAPI.downfiles(token,uk,[file])
+      const token = sessionStorage.getItem('accessToken');
+	    this.$restAPI.downfiles(token,this.uk,[this.downloadfiles])
       .then(data=>{
         if(data.links){this.$restAPI.vertifyco(data.cookies,true);
           return data.links
@@ -59,7 +64,7 @@ export default {
       })
       .then(linksObj=>{
         this.isLoading = false;
-        this.Bus.$emit('showdownlinks', linksObj);
+        this.$store.dispatch('showdownlinks',linksObj);
       })
       .catch((e)=>{
         this.isLoading = false;
@@ -71,19 +76,14 @@ export default {
       this.$router.push({path:"/disk",query:{path:cur}});
     },
   },
-  created(){
-    this.Bus.$on('changepath',file=>{
-      this.$router.push({path:"/disk",query:{path:file.path}});
-    });
-    this.Bus.$on('downfiles',files=>{
-      this.downfiles(files);
-    });
-  },
-  mounted:function(){
-    this.goFileList();
-  },
   watch: {
-     "$route": "goFileList"
+    uk(){
+      this.goFileList();
+    },
+    downloadfiles(){
+      this.downfiles();
+    },
+    "$route": "goFileList"
   }
 }
 </script>

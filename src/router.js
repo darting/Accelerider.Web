@@ -1,49 +1,37 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/views/Index'
-import Login from '@/views/Login'
-import Main from '@/views/Main'
+import Index from '@/views/Index'
+import Register from '@/views/Register'
 import Disk from '@/views/Disk'
-import Share from '@/views/Share'
 
 import RegisterForm from '@/components/RegisterForm'
 import LoginForm from '@/components/LoginForm'
-import BindingForm from '@/components/BindingForm'
 import UserInfo from '@/components/UserInfo'
+import BindingForm from '@/components/BindingForm'
 import WebDisk from '@/components/WebDisk'
 import DiskFileList from '@/components/FileList'
-import ShareList from '@/components/ShareList'
 
 Vue.use(Router)
 const router = new Router({
-  mode:'history',
+  //mode:'history',
   routes: [
     {
       path: '/',
       name: 'Index',
-      component: index,
-      children:[]
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    },
-    {
-      path: '/main',
-      name: 'main',
-      component: Main,
+      component: Index,
+      children:[],
       beforeEnter :(to, from, next) => {
-        if (!sessionStorage.getItem('accessToken')) {
-          next({
-            path: '/login',
-            query: { redirect: to.fullPath }
-          })
+        if (sessionStorage.getItem('accessToken')) { 
+          next({ path: '/disk', query: {path:'/'}})
         } else {
-          sessionStorage.removeItem('accessUk');
           next()
         }
       }
+    },
+    {
+      path: '/reg',
+      name: 'register',
+      component: Register
     },
     {
       path:'/disk',
@@ -53,30 +41,26 @@ const router = new Router({
         if (!to.query.path) {
           next({ path: '/disk', query: {path:'/'}})
         }
-        if (!sessionStorage.getItem('accessToken') || !sessionStorage.getItem('accessUk')) {
-          next({
-            path: '/main',
-            query: { redirect: to.fullPath }
-          })
+        if (!sessionStorage.getItem('accessToken') ){
+          next({ path: '/'})
         } else {
           next()
         }
       }
     },
-    {
-      path:'/share',
-      name:'share',
-      component:Share
-    }
+    // {
+    //   path:'/share',
+    //   name:'share',
+    //   component:Share
+    // }
   ]
 });
 
 Vue.component('register-form',RegisterForm)
 Vue.component('login-form', LoginForm)
+Vue.component('user-info', UserInfo)
 Vue.component('bind-form', BindingForm)
-Vue.component('user-info',UserInfo)
 Vue.component('file-list',DiskFileList)
 Vue.component('web-disk',WebDisk)
-Vue.component('share-list',ShareList)
 
 export default router

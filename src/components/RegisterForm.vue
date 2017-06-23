@@ -1,8 +1,8 @@
 <template lang="pug">
 el-form.register-form(label='注册',v-loading='regLoading')
-  el-form-item(label='username')
+  el-form-item(label='用户名')
     el-input#username(v-model='username')
-  el-form-item(label='password')
+  el-form-item(label='密码')
     el-input#password(type='password',v-model='pwd')
   el-form-item
     el-button(type='primary', @click='register')
@@ -27,7 +27,6 @@ export default {
       .then((rlt)=>{
         this.regLoading = false;
         this.$message(rlt);
-        this.Bus.$emit('registersuccess', 'OK');
       })
       .catch((err)=>{
         this.regLoading = false;

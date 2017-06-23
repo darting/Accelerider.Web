@@ -5,7 +5,7 @@ import MD5 from './cryptos';
 class M4API{
   constructor() {
     this.$ajax = axios.create({
-      baseURL: 'http://api.pescn.top/',
+      baseURL: 'http://api.usmusic.cn/',
       headers: {}
     });
     this.$ajax.interceptors.response.use(

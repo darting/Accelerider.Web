@@ -46,7 +46,8 @@ export default {
         .catch(()=>sessionStorage.getItem('accessToken'))
         .then((token)=> this.$restAPI.binding(token, this.bdcookie))
         .then((errno)=>{this.loading = false;
-          this.Bus.$emit('bindingsuccess', errno)})
+          // this.Bus.$emit('bindingsuccess', errno)
+        })
         .catch((e)=>{this.loading = false;
           this.$message.error(e.msg || e.message)})
     }

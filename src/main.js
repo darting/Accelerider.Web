@@ -5,7 +5,6 @@ import store from './vuex'
 import 'normalize.css'
 import App from './App'
 import router from './router'
-import Bus from './libs/eventBus'
 import restAPI from './libs/restAPI'
 import shareAPI from './libs/shareAPI'
 import Utils from './libs/utils'
@@ -13,13 +12,16 @@ import Utils from './libs/utils'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
+// import MuseUI from 'muse-ui'
+// import 'muse-ui/dist/muse-ui.css'
+
 Vue.config.productionTip = false
 Vue.prototype.$restAPI = new restAPI();
 Vue.prototype.$shareAPI = new shareAPI();
 Vue.prototype.utils = new Utils();
-Vue.prototype.Bus = Bus;
 
 Vue.use(ElementUI)
+// Vue.use(MuseUI)
 
 /* eslint-disable no-new */
 new Vue({

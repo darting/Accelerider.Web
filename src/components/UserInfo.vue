@@ -8,7 +8,7 @@
     el-table-column(label='操作')
       template(scope="scope")
         el-button.operation-menu(@click="gotoDisk(scope.row.uk)")
-          | DISK
+          | CHOICE
 </template>
 
 <script>
@@ -16,15 +16,14 @@ export default {
   name: 'userinfo',
   data () {
     return {
-      userInfos:[],
-      infoLoading:true
+       userInfos:[],
+       infoLoading:true
     }
   },
   methods:{
     gotoDisk:function(uk){
-      let token = this.getToken();
       sessionStorage.setItem('accessUk', uk);
-      this.Bus.$emit('godisk', uk);
+      this.$store.dispatch('BDuser',uk)
     },
     getToken:function(){
       return sessionStorage.getItem('accessToken')
@@ -35,7 +34,6 @@ export default {
 	    this.$restAPI.userlist(token)
       .then(reps=>{
         this.infoLoading = false;
-        this.Bus.$emit('isbinding', reps.length);
         for (let i in reps)
           reps[i].then(data => {this.userInfos.push(data);})
       })
@@ -53,7 +51,7 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
-@import './css/userinfo.css';
+
 </style>

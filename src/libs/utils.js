@@ -1,6 +1,9 @@
 import PM from './pathmanager'
 
 class Utils{
+  percentSize(a,b){
+    return `${((a/b)*100).toFixed(2)}%`;
+  }
   transeSize(size){
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];

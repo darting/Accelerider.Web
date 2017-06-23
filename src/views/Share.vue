@@ -20,7 +20,7 @@ export default {
         this.$router.push({path:"/"});
       },
       shareurl:function(){
-        this.Bus.$emit('share_shareurl');
+        // this.Bus.$emit('share_shareurl');
       }
     }
 }

@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-//import fileviewStore from './modules/fileview'
-import testStore from './modules/test'
+import fileviewStore from './modules/fileview'
+import acountStore from './modules/acount'
 
 Vue.use(Vuex)
 
@@ -20,7 +20,7 @@ export default new Vuex.Store({
 	state,
 	getters,
 	modules: {
-		//fileviewStore,
-		testStore
+		fileviewStore,
+		acountStore
 	}
 })

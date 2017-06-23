@@ -1,7 +1,7 @@
 <template lang="pug">
-  #app
-    transition
-      router-view
+#app
+  transition
+    router-view
 </template>
 
 <script>
@@ -9,7 +9,7 @@ export default {
   name: 'app',
   data () {
     return {
-      version:"2.3.0"
+      version:"3.0.0-alpha3"
     }
   },
   computed:{},
@@ -34,4 +34,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 @import './assets/css/App.css';
+html,body,#app{
+  width: 100%; height: 100%
+}
 </style>

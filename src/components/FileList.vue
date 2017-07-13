@@ -9,10 +9,11 @@
           el-button(type='text',@click='changefilepath(scope.row)')
             | {{scope.row.server_filename}}
         div.option-buttons
-          el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)',@command="downloadCommand", trigger="click") 下载
+          el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
             el-dropdown-menu(slot="dropdown")
-              el-dropdown-item(command='m4s') 发送到坐骑
-          el-button(type='text',icon='more',@click='fileProperty(scope.row)')
+              el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
+              el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
+              el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
     el-table-column(label='大小',min-width='28')
       template(scope="scope")
         | {{transeSize(scope.row)}}
@@ -61,6 +62,18 @@ export default {
       this.curFile = file;
       this.dialogProP = true;
     },
+    deleteFile:function(file) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('deletefile',file.path);
+        }).catch(() => {
+          this.$message.warning('删除操作已取消');          
+        });
+      
+    },
     parseDownLinks:function(links){
       this.dialogDL = true;
       this.downlinks = [];
@@ -76,8 +89,9 @@ export default {
       this.$store.dispatch('downfiles',{});
       this.$store.dispatch('downfiles',file);
     },
-    downloadCommand(cmd){
-      this.$msgbox({message:'开发中。。。',confirmButtonText:'好吧..'});
+    downloadFromM4s(file){
+      this.$store.dispatch('downfilesM4s',{});
+      this.$store.dispatch('downfilesM4s',file);
     },
     transeSize:function(file){
       if (file.isdir == 1) {

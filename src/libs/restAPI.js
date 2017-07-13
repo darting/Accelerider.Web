@@ -65,7 +65,11 @@ class M4API{
       method: 'POST',
       url: url,
       params: { security: "md5" },
-      data: qs.stringify({name:username,password:MD5(password).toString()})
+      data: qs.stringify({
+        name:username,
+        password:MD5(password).toString(),
+        clienttype: 'web'
+      })
     })
     .then(response =>response.data)
     .then(data=>{
@@ -126,6 +130,32 @@ class M4API{
     })
     .then(response =>response.data.list);
   }
+  createFolder(token, uk, path) {
+    const url = '/cFolder';
+    return this.$ajax({
+      method:'GET',
+      url: url,
+      params: {
+        token: token,
+        uk: uk,
+        path: path
+      }
+    })
+    .then(response => response.data);
+  }
+  deletefile(token, uk, path) {
+    const url = '/deleteFile';
+    return this.$ajax({
+      method:'GET',
+      url: url,
+      params: {
+        token: token,
+        uk: uk,
+        path: path
+      }
+    })
+    .then(response => response.data);
+  }
   downfiles(token, uk, files) {
     const url = '/filelinks';
     let file =files
@@ -144,6 +174,26 @@ class M4API{
       data: {"files": JSON.stringify(file)}
     })
     .then(response => response.data);
+  }
+  zqdownfiles(files) { 
+    const url = 'http://127.0.0.1:10000/guanjia'
+    let data  = {
+      "filelist":[{"server_path":files.path}]
+    };
+    return this.$ajax({
+      method: 'POST',
+      url: url,
+      params: {
+        method: 'DownloadSelfOwnItems',
+      },
+      transformRequest: [function (data) {
+        let ret = '';
+        for (let it in data) { ret += `${it}=${encodeURIComponent(data[it])}&` }
+        return ret;
+      }],
+      data: {"filelist":JSON.stringify(data)}
+    })
+    .then(response =>response.data);
   }
 }
 

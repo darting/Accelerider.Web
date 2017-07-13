@@ -20,7 +20,6 @@ export default {
 <style scoped>
 .content{
     text-align:center;
-    margin-top: 48px;
-    margin-bottom: 48px;
+    margin-top: 20%;
 }
 </style>

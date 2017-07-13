@@ -1,13 +1,15 @@
 const state = {
+    autologin:false,
     user: '',
     token:'',
     uk: '',
 }
 
 const getters = {
+    autologin: state => state.autologin,
     user: state => state.user,
     token: state => state.token,
-    uk: state => state.uk
+    uk: state => state.uk,
 }
 
 const mutations = {

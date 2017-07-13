@@ -4,14 +4,14 @@
     el-col(type='flex',v-bind:sm='{span:8,offset:12}',v-bind:md='{span:8,offset:12}',v-bind:lg='{span:8,offset:12}')
       el-card.content
         div.clearfix(slot="header")
-         | 注册账户
+         | 注册
         register-form
 </template>
 
 <script>
 export default {
   name: 'reg',
-  data(){
+  methods:{
   }
 }
 </script>
@@ -19,7 +19,6 @@ export default {
 <style scoped>
 .content{
     text-align:center;
-    margin-top: 48px;
-    margin-bottom: 48px;
+    margin-top: 20%;
 }
 </style>

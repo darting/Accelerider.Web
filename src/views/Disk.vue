@@ -7,9 +7,13 @@
       el-menu-item(index='2', @click='m4s')
         el-col(type='flex')
           span 四酱云
-      el-menu-item(index='3', v-if='! isbind', @click='binding')
-        el-col(type='flex')
-          span 尚未绑定百度账号，点击绑定!
+      el-submenu(index='3', v-if='! isbind')
+        template(slot='title') 
+         | 尚未绑定百度账号
+        el-menu-item(index='2-1', @click='binding')
+         | 点击绑定!
+        el-menu-item(index='2-2', @click='logout')
+         | Logout
       el-submenu(index='3',v-if='isbind')
         template(slot='title') 
          | {{userInfo.Name}}
@@ -31,7 +35,9 @@
         div
          | 3.给作者来杯咖啡钱，更有动力更新哟~
         div
-          img(src='../assets/wechat.png',title='请在新窗口打开以查看大图',alt='微信支付',height=350)
+          img(src='../assets/wechat.png',title='请在新窗口打开以查看大图',alt='微信支付',height=330)
+        div
+          img(src='../assets/alipay.png',title='请在新窗口打开以查看大图',alt='支付宝支付',height=330)
     el-col(type='flex',v-bind:sm='{span:18}',v-bind:md='{span:18}',v-bind:lg='{span:18}')
       el-card.card
         web-disk
@@ -62,7 +68,7 @@ export default {
       this.ukDlg = true;
     },
     m4s:function(){
-      this.$msgbox({message:'开发中。。。',confirmButtonText:'好吧..'});
+      this.$message('开发中。。。欢迎提出改进意见~');
     },
     getToken:function(){
       return sessionStorage.getItem('accessToken');

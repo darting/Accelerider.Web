@@ -95,6 +95,7 @@ export default {
     logout:function(){
       sessionStorage.removeItem('accessToken');
       sessionStorage.removeItem('accessUk');
+      localStorage.removeItem('autologin');
       this.$router.push({path:"/"});
     }
   },

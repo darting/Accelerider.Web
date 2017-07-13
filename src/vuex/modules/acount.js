@@ -22,6 +22,9 @@ const mutations = {
 }
 
 const actions = {
+    autologin({commit, state, rootState},obj) {
+        localStorage.setItem('autologin', JSON.stringify(obj));
+    },
     login ({commit, state, rootState},token) {
         sessionStorage.setItem('accessToken', token);
         commit('login',{'token':token});

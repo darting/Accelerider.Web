@@ -6,7 +6,7 @@ el-form.login-form(label='登录',v-loading='loginLoading')
     el-input#password(type='password',v-model='pwd')
   el-form-item
     //- el-checkbox(label='记住密码')
-    el-checkbox(label='下次自动登录',@change='autoLogin')
+    el-checkbox(label='下次自动登录', v-model="autologin")
   el-form-item
     el-button(type='primary', @click='login')
       | {{sumitstr}}
@@ -23,12 +23,8 @@ export default {
       registerstr: 'REGISTER',
       username:'',
       pwd:'',
+      autologin: false,
       loginLoading:false
-    }
-  },
-  computed:{
-    autologin(){
-      return this.$store.state.autologin
     }
   },
   methods:{
@@ -36,13 +32,15 @@ export default {
       // this.$msgbox({message:'暂未开放',confirmButtonText:'好吧..'});
       this.$router.push({path:"/reg"});
     },
-    autoLogin:function(){
-      console.log(this.autologin)
-    },
     login:function(){
       this.loginLoading = true;
 	    this.$restAPI.login(this.username, this.pwd)
       .then((token)=>{
+        if(this.autologin){
+          this.$store.dispatch('autologin',{
+            username:this.username,
+            pwd:this.pwd});
+        }
         this.loginLoading = false;
         this.$store.dispatch('login',token);
         this.$router.push({path:"/disk"});
@@ -52,6 +50,15 @@ export default {
         this.$message.error(err.message)
       });
     }
-  }
+  },
+    mounted:function(){
+    let a = localStorage.getItem('autologin');
+    if(a){
+      a = JSON.parse(a);
+      this.username = a.username;
+      this.pwd = a.pwd;
+      this.login();
+    }
+  },
 }
 </script>

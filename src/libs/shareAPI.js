@@ -3,7 +3,7 @@ import axios from 'axios';
 class ShareAPI{
   constructor() {
     this.$ajax = axios.create({
-      baseURL: 'http://api.pescn.top/',
+      baseURL: 'http://api.usmusic.cn/',
       headers: {}
     });
   }

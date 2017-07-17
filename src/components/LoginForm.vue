@@ -3,7 +3,7 @@ el-form.login-form(label='登录',v-loading='loginLoading')
   el-form-item(label='用户名')
     el-input#username(v-model='username')
   el-form-item(label='密码')
-    el-input#password(type='password',v-model='pwd')
+    el-input#password(type='password',v-model='pwd',@keyup.enter.native='login')
   el-form-item
     //- el-checkbox(label='记住密码')
     el-checkbox(label='下次自动登录', v-model="autologin")

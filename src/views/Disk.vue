@@ -7,21 +7,24 @@
       el-menu-item(index='2', @click='m4s')
         el-col(type='flex')
           span 四酱云
-      el-submenu(index='3', v-if='! isbind')
+      //- el-menu-item(index='3', @click='square')
+      //-   el-col(type='flex')
+      //-     span 文件广场
+      el-submenu(index='4', v-if='! isbind')
         template(slot='title') 
          | 尚未绑定百度账号
-        el-menu-item(index='2-1', @click='binding')
+        el-menu-item(index='4-1', @click='binding')
          | 点击绑定!
-        el-menu-item(index='2-2', @click='logout')
+        el-menu-item(index='4-2', @click='logout')
          | Logout
-      el-submenu(index='3',v-if='isbind')
+      el-submenu(index='4',v-if='isbind')
         template(slot='title') 
          | {{userInfo.Name}}
-        el-menu-item(index='2-1')
+        el-menu-item(index='4-1')
          | 用量:{{percentSize(userInfo.used,userInfo.total)}}
-        el-menu-item(index='2-2',@click='changeUser')
+        el-menu-item(index='4-2',@click='changeUser')
          | 更换绑定
-        el-menu-item(index='2-3',@click='logout')
+        el-menu-item(index='4-3',@click='logout')
          | Logout
   el-row
     el-col(type='flex',v-bind:sm='{span:6}',v-bind:md='{span:6}',v-bind:lg='{span:6}')
@@ -69,6 +72,9 @@ export default {
     },
     m4s:function(){
       this.$message('开发中。。。欢迎提出改进意见~');
+    },
+    square:function(){
+      this.$router.push({path:"/square"});
     },
     getToken:function(){
       return sessionStorage.getItem('accessToken');

@@ -4,7 +4,8 @@ const state = {
     filelist: [],
     downfiles:{},
     downlinks:{},
-    downfilesM4s:{}
+    downfilesM4s:{},
+    share2squareItems:{},
 }
 
 const getters = {
@@ -14,6 +15,7 @@ const getters = {
     downfiles: state => state.downfiles,
     downfilesM4s: state => state.downfilesM4s,
     downlinks: state => state.downlinks,
+    share2squareItems: state => state.share2squareItems,
 }
 
 const mutations = {
@@ -36,6 +38,9 @@ const mutations = {
     showdownlinks(state,msg){
         state.downlinks = msg.links;
     },
+    share2square(state,msg){
+        state.share2squareItems = msg;
+    },
 }
 
 const actions = {
@@ -56,7 +61,10 @@ const actions = {
     },
     showdownlinks({commit, state, rootState},links) {
         commit('showdownlinks',{'links':links});
-    }
+    },
+    share2square({commit, state, rootState},fileObj) {
+        commit('share2square',{'file':fileObj.file,'msg':fileObj.msg});
+    },
 }
 
 export default {

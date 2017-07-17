@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Index from '@/views/Index'
 import Register from '@/views/Register'
 import Disk from '@/views/Disk'
+import Square from '@/views/Square'
 
 import RegisterForm from '@/components/RegisterForm'
 import LoginForm from '@/components/LoginForm'
@@ -48,11 +49,11 @@ const router = new Router({
         }
       }
     },
-    // {
-    //   path:'/share',
-    //   name:'share',
-    //   component:Share
-    // }
+    {
+      path:'/square',
+      name:'square',
+      component:Square
+    }
   ]
 });
 

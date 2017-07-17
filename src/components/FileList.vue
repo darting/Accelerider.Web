@@ -12,6 +12,7 @@
           el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
+              el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
               el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
               el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
     el-table-column(label='大小',min-width='28')
@@ -89,9 +90,19 @@ export default {
       this.$store.dispatch('downfiles',{});
       this.$store.dispatch('downfiles',file);
     },
-    downloadFromM4s(file){
+    downloadFromM4s:function(file){
       this.$store.dispatch('downfilesM4s',{});
       this.$store.dispatch('downfilesM4s',file);
+    },
+    add2square:function(file){
+      this.$prompt('请输入留言', '分享到文件广场', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({ value }) => {
+          this.$store.dispatch('share2square',{
+            'file':file,
+            'msg':value});
+        }).catch((e)=>{});
     },
     transeSize:function(file){
       if (file.isdir == 1) {

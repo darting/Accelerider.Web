@@ -32,7 +32,8 @@ export default {
       uk:'uk',
       deletePath: 'deletePath',
       downloadfiles:'downfiles',
-      downfilesM4s:'downfilesM4s'
+      downfilesM4s:'downfilesM4s',
+      share2squareItems:'share2squareItems',
     })
   },
   methods:{
@@ -104,8 +105,26 @@ export default {
       this.$router.push({path:"/disk",query:{path:cur}});
     },
     createFolder:function(){
-      // this.cFolderDL = true;
-      this.$message('开发中。。。欢迎提出改进意见~');
+      this.$prompt('请输入文件夹名称', '新建文件夹', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({ value }) => {
+          const path = this.utils.pathmanager().getPath() +'/' + value;
+          const token = sessionStorage.getItem('accessToken');
+          this.$restAPI.createFolder(token,this.uk,path)
+          .then(data=>{
+            this.$message.success('创建成功!');
+            this.goFileList();
+          });
+        }).catch((e)=>{});
+    },
+    add2square:function(){
+      const item = this.share2squareItems;
+      const token = sessionStorage.getItem('accessToken');
+      this.$restAPI.add2square(token, item.file, item.msg)
+      .then(msg=>{
+        this.$message.success(msg);
+      });
     },
   },
   watch: {
@@ -120,6 +139,9 @@ export default {
     },
     downfilesM4s(){
       this.downFromM4s();
+    },
+    share2squareItems(){
+      this.add2square();
     },
     "$route": "goFileList"
   }

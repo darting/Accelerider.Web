@@ -70,12 +70,15 @@ export default {
       this.dialogProP = true;
     },
     fileTypeUri:function(file){
+      const avalibleType = this.utils.getAvalibleType();
       const movie = ['rmvb','mkv']
       const filename=file.server_filename;
       let type = this.utils.fileType(filename);
+      type =  this.utils.ArrContains(avalibleType, type) ? type : 'default';
       type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
       const filetype = file.isdir==0 ? type : 'folder_mac2';
-      return `./static/icons/${filetype}.png`;
+      const typeUri = `./static/icons/${filetype}.png`;
+      return typeUri;
     },
     mediable:function(filename){
       const a = ['mp4','rmvb','mkv']

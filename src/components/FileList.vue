@@ -75,7 +75,7 @@ export default {
       let type = this.utils.fileType(filename);
       type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
       const filetype = file.isdir==0 ? type : 'folder_mac2';
-      return `/static/icons/${filetype}.png`;
+      return `./static/icons/${filetype}.png`;
     },
     mediable:function(filename){
       const a = ['mp4','rmvb','mkv']

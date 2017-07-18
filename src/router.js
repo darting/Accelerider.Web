@@ -1,67 +1,72 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/views/Index'
+
+import NotFound from '@/views/404.vue'
 import Register from '@/views/Register'
+import Login from '@/views/Login'
+import Home from '@/views/Home'
+
 import Disk from '@/views/Disk'
 import Square from '@/views/Square'
 
-import RegisterForm from '@/components/RegisterForm'
-import LoginForm from '@/components/LoginForm'
 import UserInfo from '@/components/UserInfo'
 import BindingForm from '@/components/BindingForm'
-import WebDisk from '@/components/WebDisk'
 import DiskFileList from '@/components/FileList'
 
 Vue.use(Router)
+
+Vue.component('user-info', UserInfo)
+Vue.component('bind-form', BindingForm)
+Vue.component('file-list',DiskFileList)
+
 const router = new Router({
   //mode:'history',
   routes: [
     {
-      path: '/',
-      name: 'Index',
-      component: Index,
-      children:[],
-      beforeEnter :(to, from, next) => {
-        if (sessionStorage.getItem('accessToken')) { 
-          next({ path: '/disk', query: {path:'/'}})
-        } else {
-          next()
-        }
-      }
+      path: '/login',
+      component: Login,
+      name: '',
+      hidden: true
     },
     {
-      path: '/reg',
-      name: 'register',
-      component: Register
+      path: '/404',
+      component: NotFound,
+      name: '',
+      hidden: true
     },
     {
-      path:'/disk',
-      name:'disk',
-      component:Disk,
-      beforeEnter: (to, from, next) => {
-        if (!to.query.path) {
-          next({ path: '/disk', query: {path:'/'}})
-        }
-        if (!sessionStorage.getItem('accessToken') ){
-          next({ path: '/', query: {redirect: to.fullPath} })
-        } else {
-          next()
-        }
-      }
+      path: '/signup',
+      component: Register,
+      name: '',
+      hidden: true
     },
     {
-      path:'/square',
-      name:'square',
-      component:Square
+      path:'/',
+      component:Home,
+      name:'HOME',
+      children:[
+        { path: '/', redirect: '/disk', hidden: true },
+        {
+          path: '/disk', component: Disk, name: '网盘',
+          beforeEnter: (to, from, next) => {
+            if (!to.query.path) {
+              next({ path: '/disk', query: {path:'/'}})
+            } if (!sessionStorage.getItem('accessToken') ){
+              next({ path: '/login', query: {redirect: to.fullPath} })
+            } else {
+              next()
+            }
+          }
+        },
+        { path:'/square', component:Square, name:'广场' },
+      ],
+    },
+    {
+      path: '*',
+      hidden: true,
+      redirect: { path: '/404' }
     }
   ]
 });
-
-Vue.component('register-form',RegisterForm)
-Vue.component('login-form', LoginForm)
-Vue.component('user-info', UserInfo)
-Vue.component('bind-form', BindingForm)
-Vue.component('file-list',DiskFileList)
-Vue.component('web-disk',WebDisk)
 
 export default router

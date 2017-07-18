@@ -1,118 +1,185 @@
 <template lang="pug">
-.container
+.disk
   el-row
-    el-menu(mode="horizontal")
-      el-menu-item(index='1')
-        | LOGO
-      el-menu-item(index='2', @click='m4s')
-        el-col(type='flex')
-          span 四酱云
-      //- el-menu-item(index='3', @click='square')
-      //-   el-col(type='flex')
-      //-     span 文件广场
-      el-submenu(index='4', v-if='! isbind')
-        template(slot='title') 
-         | 尚未绑定百度账号
-        el-menu-item(index='4-1', @click='binding')
-         | 点击绑定!
-        el-menu-item(index='4-2', @click='logout')
-         | Logout
-      el-submenu(index='4',v-if='isbind')
-        template(slot='title') 
-         | {{userInfo.Name}}
-        el-menu-item(index='4-1')
-         | 用量:{{percentSize(userInfo.used,userInfo.total)}}
-        el-menu-item(index='4-2',@click='changeUser')
-         | 更换绑定
-        el-menu-item(index='4-3',@click='logout')
-         | Logout
+    el-button(type="primary",@click='upload') 上传
+    el-button(@click='createFolder') 新建文件夹
   el-row
-    el-col(type='flex',v-bind:sm='{span:6}',v-bind:md='{span:6}',v-bind:lg='{span:6}')
-      el-card
-        div.clearfix(slot="header")
-         | 关于坐骑网页版
-        div
-         | 1.本平台基于百度云，部分文件下载可能限速
-        div
-         | 2.官方QQ群 553683933
-        div
-         | 3.给作者来杯咖啡钱，更有动力更新哟~
-        div
-          img(src='../assets/wechat.png',title='请在新窗口打开以查看大图',alt='微信支付',height=330)
-        div
-          img(src='../assets/alipay.png',title='请在新窗口打开以查看大图',alt='支付宝支付',height=330)
-    el-col(type='flex',v-bind:sm='{span:18}',v-bind:md='{span:18}',v-bind:lg='{span:18}')
-      el-card.card
-        web-disk
-  el-dialog(v-model='bindDlg')
-    bind-form
-  el-dialog(v-model='ukDlg')
-    user-info
+    el-col(v-bind:span='3')
+      el-button(type='text',@click='backFileList',icon='arrow-left') BACK
+    el-col.filebread(v-bind:span='12')
+      el-breadcrumb(separator=">",v-bind:replace='true')
+        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{path:'/disk',query:{path:p.path}}",key = 'p')
+          | {{p.name}}
+    el-col.filebread(v-bind:span='4')
+      span Total: {{filescount}}
+  el-row
+    el-col.flist(v-loading="isLoading")
+      file-list
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  name: 'disk',
+  name: 'webdisk',
   data () {
     return {
-      isbind:false,
-      userInfo:{},
-      bindDlg:false,
-      ukDlg:false
+      isrootpath:true,
+      filescount:0,
+      isLoading:false,
+      playersrc:'',
     }
+  },
+  computed:{
+    ...mapGetters ({
+      uk:'uk',
+      deletePath: 'deletePath',
+      downloadfiles:'downfiles',
+      downfilesM4s:'downfilesM4s',
+      share2squareItems:'share2squareItems',
+      videofile:'videofile',
+    })
   },
   methods:{
-    binding:function(){
-      this.bindDlg = true;
-      // this.$store.dispatch('binding');
-      // this.$router.go(0);//refresh
+    _getBreadCrumb:function(){
+      let path = this.utils.pathmanager().pathSegmtt();
+      return path;
     },
-    changeUser:function(){
-      this.ukDlg = true;
+    goFileList:function(){
+      const path = this.utils.pathmanager().getPath()
+      this.downlinks = [];
+      this.isLoading = true;
+      const token = sessionStorage.getItem('accessToken');
+	    this.$restAPI.filelist(token,this.uk,path)
+      .then(list=>{
+        this.filescount = list.length;
+        this.$store.dispatch('filelist',list);
+        this.isLoading = false;
+      })
+      .catch((e)=>{
+        this.isLoading = false;
+        if(e.message.indexOf('代码 -9') > 0)
+            {this.$router.push({path:"/disk",query:{path:'/'}})}
+        else{this.$message.error(e.message)}
+        });
     },
-    m4s:function(){
+    deleteFile:function(){
+      const token = sessionStorage.getItem('accessToken');
+	    this.$restAPI.deletefile(token,this.uk,this.deletePath)
+       .then((data)=>{
+        this.$message({type: 'success',
+            message: '删除成功!' });
+        this.goFileList();
+       })
+       .catch((e)=>{this.$message.error('删除失败。')});
+    },
+    downFromM4s:function(){
+       this.$restAPI.zqdownfiles(this.downfilesM4s)
+       .then((data)=>{
+         if(data!='error'){
+           this.$message({
+             message: '恭喜！发送成功~快去看看吧！',type: 'success'});
+         }else{
+           this.$message.error('阿哦，发送失败。。大侠请重新来过。');
+         }
+       })
+       .catch((e)=>{
+        this.$message.error('阿哦，出错了诶？是不是没有打开坐骑呢?')});
+    },
+    downfiles:function(){
+      this.isLoading = true;
+      const token = sessionStorage.getItem('accessToken');
+	    this.$restAPI.downfiles(token,this.uk,[this.downloadfiles])
+      .then(data=>{
+        if(data.links){this.$restAPI.vertifyco(data.cookies,true);
+          return data.links
+        }else{throw new Error(data.message)}
+      })
+      .then(linksObj=>{
+        this.isLoading = false;
+        this.$store.dispatch('showdownlinks',linksObj);
+      })
+      .catch((e)=>{
+        this.isLoading = false;
+        this.$message.error(e.message)});
+    },
+    showvideo:function(){
+      this.isLoading = true;
+      const token = sessionStorage.getItem('accessToken');
+      this.$restAPI.downfiles(token,this.uk,[this.videofile])
+      .then(data=>{
+        if(data.links){return data.links}
+        else{throw new Error(data.message)}
+      })
+      .then(links=>{
+        this.isLoading = false;
+        for(let key in links){this.playersrc= links[key][0];}
+        // console.log(this.playersrc);
+      }).catch(e=>this.isLoading = false);
+    },
+    backFileList:function(){
+      const pm = this.utils.pathmanager()
+      let cur = pm.getBackPath();
+      this.$router.push({path:"/disk",query:{path:cur}});
+    },
+    upload:function(){
       this.$message('开发中。。。欢迎提出改进意见~');
     },
-    square:function(){
-      this.$router.push({path:"/square"});
+    createFolder:function(){
+      this.$prompt('请输入文件夹名称', '新建文件夹', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({ value }) => {
+          const path = this.utils.pathmanager().getPath() +'/' + value;
+          const token = sessionStorage.getItem('accessToken');
+          this.$restAPI.createFolder(token,this.uk,path)
+          .then(data=>{
+            this.$message.success('创建成功!');
+            this.goFileList();
+          });
+        }).catch((e)=>{});
     },
-    getToken:function(){
-      return sessionStorage.getItem('accessToken');
+    add2square:function(){
+      const item = this.share2squareItems;
+      const token = sessionStorage.getItem('accessToken');
+      this.$restAPI.add2square(token, item.file, item.msg)
+      .then(msg=>{
+        this.$message.success(msg);
+      });
     },
-    getUserList:function(){
-      this.userInfo  = {};
-      const token = this.getToken();
-	    this.$restAPI.userlist(token)
-      .then(reps=>{
-        this.infoLoading = false;
-        this.isbind = reps.length>0;
-        if(this.isbind)
-          reps[0].then(data => {
-            this.$store.dispatch('BDuser',data.uk);
-            this.userInfo=data;})
-      })
-      .catch((err)=>{
-        this.infoLoading = false;
-        this.$message.error(err)});
-    },
-    percentSize:function(a,b){
-      return this.utils.percentSize(a,b);
-    },
-    logout:function(){
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('accessUk');
-      localStorage.removeItem('autologin');
-      this.$router.push({path:"/"});
-    }
   },
-  mounted(){
-    this.getUserList();
+  watch: {
+    videoDL(){
+      if(!this.videoDL){this.playersrc = '';}
+    },
+    uk(){
+      this.goFileList();
+    },
+    deletePath(){
+      this.deleteFile();
+    },
+    downloadfiles(){
+      this.downfiles();
+    },
+    downfilesM4s(){
+      this.downFromM4s();
+    },
+    share2squareItems(){
+      this.add2square();
+    },
+    videofile(){
+      this.showvideo();
+    },
+    "$route": "goFileList"
   }
 }
 </script>
 
 <style scoped>
-.card{
+.flist{
   height:100%;
+  overflow: auto;
+}
+.filebread{
+  padding-top: 10px
 }
 </style>

@@ -1,6 +1,6 @@
 <template lang="pug">
 .fileList
-  el-table.disk-table(v-bind:data='fileList',height='500')
+  el-table.disk-table(v-bind:data='fileList')
     el-table-column(label='文件名',min-width='120')
       template(scope="scope")
         el-col(v-bind:span='1')
@@ -9,9 +9,10 @@
           el-button(type='text', @click='changefilepath(scope.row)',v-if='scope.row.isdir == 1')
             | {{scope.row.server_filename}}
           div(v-if='scope.row.isdir == 0')
-            el-button(type='text', @click='playmovie(scope.row)',v-if='mediable(scope.row.server_filename)')
-              | {{scope.row.server_filename}}
-            span(v-if='!mediable(scope.row.server_filename)')
+            //- el-button(type='text', @click='playmovie(scope.row)',v-if='mediable(scope.row.server_filename)')
+            //-   | {{scope.row.server_filename}}
+            //- span(v-if='!mediable(scope.row.server_filename)')
+            span
               | {{scope.row.server_filename}}
         el-col(type='flex', justify="end", v-bind:span='3', v-bind:offset='1')
           el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载

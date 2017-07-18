@@ -1,15 +1,7 @@
 <template lang="pug">
 .container
   el-row
-    el-menu(mode="horizontal")
-      el-menu-item(index='1')
-        | LOGO
-      el-menu-item(index='2', @click='m4s')
-        el-col(type='flex')
-          span 四酱云
-      el-menu-item(index='3', @click='disk')
-        el-col(type='flex')
-          span 网盘
+    span 开发中
 </template>
 
 <script>

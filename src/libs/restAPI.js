@@ -88,6 +88,7 @@ class M4API{
       let info = {}
       info.uk = uk;
       info.Name = data.username;
+      info.avatar_url = data.avatar_url;
       info.nick_name = data.nick_name;
       info.total = data.total;
       info.free = data.free;

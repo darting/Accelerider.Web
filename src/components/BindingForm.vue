@@ -55,7 +55,6 @@ export default {
 }
 </script>
 
-
 <style scoped>
 .cookietip{
   color:red;

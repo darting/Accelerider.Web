@@ -11,6 +11,22 @@ class Utils{
     return `${(size / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
   }
 
+  ArrContains(arr, obj) {
+    var i = arr.length;
+    while (i--) {
+        if (arr[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+} 
+
+  fileType(filename){
+      const index1=filename.lastIndexOf(".");
+      const postf=filename.substring(index1+1,filename.length);
+      return postf;
+  }
+
   transeTime(mtime){
     let newDate = new Date();
     newDate.setTime(mtime * 1000); 

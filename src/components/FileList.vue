@@ -3,12 +3,17 @@
   el-table.disk-table(v-bind:data='fileList',height='500')
     el-table-column(label='文件名',min-width='120')
       template(scope="scope")
-        div.filename(v-if='scope.row.isdir == 0')
-          span {{scope.row.server_filename}}
-        div.foldername(v-if='scope.row.isdir == 1')
-          el-button(type='text',@click='changefilepath(scope.row)')
+        el-col(v-bind:span='1')
+          img.fileicon(v-bind:src='fileTypeUri(scope.row)',height=20)
+        el-col(v-bind:span='19')
+          el-button(type='text', @click='changefilepath(scope.row)',v-if='scope.row.isdir == 1')
             | {{scope.row.server_filename}}
-        div.option-buttons
+          div(v-if='scope.row.isdir == 0')
+            el-button(type='text', @click='playmovie(scope.row)',v-if='mediable(scope.row.server_filename)')
+              | {{scope.row.server_filename}}
+            span(v-if='!mediable(scope.row.server_filename)')
+              | {{scope.row.server_filename}}
+        el-col(type='flex', justify="end", v-bind:span='3', v-bind:offset='1')
           el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
             el-dropdown-menu(slot="dropdown")
               el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
@@ -51,7 +56,8 @@ export default {
   computed:{
     ...mapGetters ({
       fileList:'filelist',
-      downlinksObj:'downlinks'
+      downlinksObj:'downlinks',
+      videopath:'videopath',
     })
   },
   methods:{
@@ -63,7 +69,29 @@ export default {
       this.curFile = file;
       this.dialogProP = true;
     },
-    deleteFile:function(file) {
+    fileTypeUri:function(file){
+      const movie = ['rmvb','mkv']
+      const filename=file.server_filename;
+      let type = this.utils.fileType(filename);
+      type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
+      const filetype = file.isdir==0 ? type : 'folder_mac2';
+      return `/static/icons/${filetype}.png`;
+    },
+    mediable:function(filename){
+      const a = ['mp4','rmvb','mkv']
+      return this.utils.ArrContains(a,this.utils.fileType(filename));
+    },
+    playmovie:function(file){
+      this.$confirm('确定要播放当前视频吗?如确认播放请自行修改浏览器UA标识', '提示', {
+          confirmButtonText: '播放',
+          cancelButtonText: '取消',
+          type: 'info'
+        }).then(() => {
+          this.$store.dispatch('playmovie',{});
+          this.$store.dispatch('playmovie',file);
+        }).catch(()=>{});
+    },
+    deleteFile:function(file){
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -71,9 +99,8 @@ export default {
         }).then(() => {
           this.$store.dispatch('deletefile',file.path);
         }).catch(() => {
-          this.$message.warning('删除操作已取消');          
+          this.$message.warning('删除操作已取消');
         });
-      
     },
     parseDownLinks:function(links){
       this.dialogDL = true;
@@ -118,12 +145,17 @@ export default {
   watch: {
     downlinksObj(){
       this.parseDownLinks(this.downlinksObj);
-    }
+    },
+    videopath(){
+      console.log(this.videopath);
+    },
   }
 
 }
 </script>
 
 <style scoped>
-@import './css/filelist.css';
+.fileicon{
+  margin-top: 6px;
+}
 </style>

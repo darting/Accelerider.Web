@@ -114,6 +114,5 @@ export default {
 <style scoped>
 .card{
   height:100%;
-  /*margin-left: 15%;*/
 }
 </style>

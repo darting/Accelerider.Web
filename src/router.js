@@ -43,7 +43,7 @@ const router = new Router({
           next({ path: '/disk', query: {path:'/'}})
         }
         if (!sessionStorage.getItem('accessToken') ){
-          next({ path: '/'})
+          next({ path: '/', query: {redirect: to.fullPath} })
         } else {
           next()
         }

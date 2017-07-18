@@ -1,6 +1,7 @@
 <template lang="pug">
 .disk
   el-row
+    el-button(type="primary",@click='upload') 上传
     el-button(@click='createFolder') 新建文件夹
   el-row
     el-col(v-bind:span='3')
@@ -25,6 +26,7 @@ export default {
       isrootpath:true,
       filescount:0,
       isLoading:false,
+      playersrc:'',
     }
   },
   computed:{
@@ -34,6 +36,7 @@ export default {
       downloadfiles:'downfiles',
       downfilesM4s:'downfilesM4s',
       share2squareItems:'share2squareItems',
+      videofile:'videofile',
     })
   },
   methods:{
@@ -99,10 +102,27 @@ export default {
         this.isLoading = false;
         this.$message.error(e.message)});
     },
+    showvideo:function(){
+      this.isLoading = true;
+      const token = sessionStorage.getItem('accessToken');
+      this.$restAPI.downfiles(token,this.uk,[this.videofile])
+      .then(data=>{
+        if(data.links){return data.links}
+        else{throw new Error(data.message)}
+      })
+      .then(links=>{
+        this.isLoading = false;
+        for(let key in links){this.playersrc= links[key][0];}
+        // console.log(this.playersrc);
+      }).catch(e=>this.isLoading = false);
+    },
     backFileList:function(){
       const pm = this.utils.pathmanager()
       let cur = pm.getBackPath();
       this.$router.push({path:"/disk",query:{path:cur}});
+    },
+    upload:function(){
+      this.$message('开发中。。。欢迎提出改进意见~');
     },
     createFolder:function(){
       this.$prompt('请输入文件夹名称', '新建文件夹', {
@@ -128,6 +148,9 @@ export default {
     },
   },
   watch: {
+    videoDL(){
+      if(!this.videoDL){this.playersrc = '';}
+    },
     uk(){
       this.goFileList();
     },
@@ -142,6 +165,9 @@ export default {
     },
     share2squareItems(){
       this.add2square();
+    },
+    videofile(){
+      this.showvideo();
     },
     "$route": "goFileList"
   }

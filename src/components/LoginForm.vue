@@ -5,7 +5,6 @@ el-form.login-form(label='登录',v-loading='loginLoading')
   el-form-item(label='密码')
     el-input#password(type='password',v-model='pwd',@keyup.enter.native='login')
   el-form-item
-    //- el-checkbox(label='记住密码')
     el-checkbox(label='下次自动登录', v-model="autologin")
   el-form-item
     el-button(type='primary', @click='login')
@@ -29,7 +28,6 @@ export default {
   },
   methods:{
     register:function(){
-      // this.$msgbox({message:'暂未开放',confirmButtonText:'好吧..'});
       this.$router.push({path:"/reg"});
     },
     login:function(){
@@ -43,7 +41,10 @@ export default {
         }
         this.loginLoading = false;
         this.$store.dispatch('login',token);
-        this.$router.push({path:"/disk"});
+        const q = this.utils.pathmanager().getQuery();
+        const redirect = q.redirect || '/disk'
+        this.$router.push({path:redirect});
+        //
       })
       .catch((err)=>{
         this.loginLoading = false;

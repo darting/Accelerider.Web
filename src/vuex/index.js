@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import fileviewStore from './modules/fileview'
+import mediaStore from './modules/mediaplay'
 import acountStore from './modules/acount'
 
 Vue.use(Vuex)
@@ -21,6 +22,7 @@ export default new Vuex.Store({
 	getters,
 	modules: {
 		fileviewStore,
-		acountStore
+		mediaStore,
+		acountStore,
 	}
 })

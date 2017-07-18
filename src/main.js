@@ -12,16 +12,12 @@ import Utils from './libs/utils'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
-// import MuseUI from 'muse-ui'
-// import 'muse-ui/dist/muse-ui.css'
-
 Vue.config.productionTip = false
 Vue.prototype.$restAPI = new restAPI();
 Vue.prototype.$shareAPI = new shareAPI();
 Vue.prototype.utils = new Utils();
 
 Vue.use(ElementUI)
-// Vue.use(MuseUI)
 
 /* eslint-disable no-new */
 new Vue({

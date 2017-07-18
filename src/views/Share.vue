@@ -11,16 +11,11 @@
 <script>
 export default {
     name:'share',
-    data () {
-      return {
-      }
-    },
     methods:{
       backIndex:function(){
         this.$router.push({path:"/"});
       },
       shareurl:function(){
-        // this.Bus.$emit('share_shareurl');
       }
     }
 }
@@ -29,6 +24,5 @@ export default {
 <style scoped>
 .card{
   height:100%;
-  margin-left: 15%;
 }
 </style>

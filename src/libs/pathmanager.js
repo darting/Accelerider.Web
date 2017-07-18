@@ -2,11 +2,17 @@ import queryString from 'query-string'
 
 class PathManager {
   constructor(){
+    //1
     let c = window.location.hash
     c = c.split('?')[1]
+    //2
     //let c = window.location.search
-    this.path = queryString.parse(c).path || '/'
+    c = queryString.parse(c);
+    this.query = c;
+    this.path = c.path || '/'
   }
+  getQuery(){ return this.query}
+
   getPath(){ return this.path }
 
   getBackPath(){

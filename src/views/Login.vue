@@ -3,7 +3,7 @@
   el-row
     el-col.blurheader
       span 坐骑WEB
-    el-col(type='flex',v-bind:span='8',v-bind:offset='14')
+    el-col(type='flex',v-bind:sm='{span:10,offset:12}',v-bind:md='{span:9,offset:14}',v-bind:lg='{span:6,offset:16}')
       el-card.login-container
         el-form(v-bind:model='loginForm')
           h3.title 登录坐骑
@@ -77,7 +77,7 @@ export default {
 .container1 {
   height: 100%;
   line-height: 60px;
-  background-image: url('../../static/background.jpg');
+  background-image: url('http://static.mmtrix.com/g1/M00/F3/79/CgpkEllvA_GANHrSAA0MnogOs5U39.jpeg');
   background-repeat:no-repeat;
   background-size:cover;
   .blurheader{

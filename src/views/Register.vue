@@ -3,7 +3,7 @@
   el-row
     el-col.blurheader
       span 坐骑WEB
-    el-col(type='flex',v-bind:span='8',v-bind:offset='14')
+    el-col(type='flex',v-bind:sm='{span:10,offset:12}',v-bind:md='{span:9,offset:14}',v-bind:lg='{span:6,offset:16}')
       el-card.login-container
         el-form(v-bind:model='signupForm')
           h3.title 注册坐骑

@@ -1,7 +1,8 @@
 <template lang="pug">
 .fileList
   el-table.disk-table(v-bind:data='fileList')
-    el-table-column(label='文件名',min-width='120')
+    el-table-column(type='selection',min-width="15")
+    el-table-column(label='文件名',show-overflow-tooltip,min-width='120')
       template(scope="scope")
         el-col(v-bind:span='1')
           img.fileicon(v-bind:src='fileTypeUri(scope.row)',height=20)
@@ -9,6 +10,7 @@
           el-button(type='text', @click='changefilepath(scope.row)',v-if='scope.row.isdir == 1')
             | {{scope.row.server_filename}}
           div(v-if='scope.row.isdir == 0')
+            //- TODO
             //- el-button(type='text', @click='playmovie(scope.row)',v-if='mediable(scope.row.server_filename)')
             //-   | {{scope.row.server_filename}}
             //- span(v-if='!mediable(scope.row.server_filename)')
@@ -21,10 +23,10 @@
               el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
               el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
               el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
-    el-table-column(label='大小',min-width='28')
+    el-table-column(label='大小',show-overflow-tooltip,min-width='28')
       template(scope="scope")
         | {{transeSize(scope.row)}}
-    el-table-column(label='修改日期',min-width='40')
+    el-table-column(label='修改日期',show-overflow-tooltip,min-width='40')
       template(scope="scope")
         | {{transeTime(scope.row.server_mtime)}}
   .dialog

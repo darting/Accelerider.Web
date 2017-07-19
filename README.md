@@ -19,3 +19,4 @@ npm run build
 # Acknowledgements
 
 * [Vue.js](https://github.com/vuejs/vue)
+* [Element UI](https://github.com/ElemeFE/element)

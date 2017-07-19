@@ -6,15 +6,14 @@ el-row.container
       //- el-menu-item(index='3', @click='square')
       //-   el-col(type='flex') 文件广场
       el-col.userinfo(v-bind:span='4')
-        .zerouser(v-if='! isbind',@click='binding')
-          span 尚未绑定百度账号
+        el-button.zerouser(type='text',v-if='!isbind',@click='binding') 尚未绑定百度账号
         el-dropdown(trigger="hover", v-if='isbind')
           span.el-dropdown-link.userinfo-inner
             img(v-bind:src='userInfo.avatar_url')
             | {{userInfo.Name}}
           el-dropdown-menu(slot="dropdown")
             el-dropdown-item 用量:{{percentSize(userInfo.used,userInfo.total)}}
-            el-dropdown-item(@click.native='changeUser') 更换绑定
+            el-dropdown-item(@click.native='changeUser') 切换帐号
             el-dropdown-item(divided, @click.native='logout') 退出登录
     el-col.main
       aside
@@ -39,18 +38,25 @@ el-row.container
       bind-form
     el-dialog(v-model='ukDlg')
       user-info
+      el-button(type='text',@click='binding') 新增绑定
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'disk',
   data () {
     return {
       isbind:false,
-      userInfo:{},
       bindDlg:false,
       ukDlg:false
     }
+  },
+  computed:{
+    ...mapGetters ({
+      uk:'uk',
+      userInfo:'userInfo',
+    })
   },
   methods:{
     binding:function(){
@@ -66,12 +72,11 @@ export default {
     },
     square:function(){
       this.$router.push({path:"/square"});
-    },
+    }, 
     getToken:function(){
       return sessionStorage.getItem('accessToken');
     },
     getUserList:function(){
-      this.userInfo  = {};
       const token = this.getToken();
       this.$restAPI.userlist(token)
       .then(reps=>{
@@ -80,21 +85,38 @@ export default {
         if(this.isbind)
           reps[0].then(data => {
             this.$store.dispatch('BDuser',data.uk);
-            this.userInfo=data;})
+            })
       })
       .catch((err)=>{
         this.infoLoading = false;
         this.$message.error(err)});
     },
+    getUserInfo:function(){
+      this.ukDlg = false;
+      const token = this.getToken();
+      this.$restAPI._userinfo(token,this.uk)
+      .then(info=>{
+        this.$store.dispatch('BDuserInfo',info);
+      });
+    },
     percentSize:function(a,b){
       return this.utils.percentSize(a,b);
     },
     logout:function(){
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('accessUk');
-      localStorage.removeItem('autologin');
-      this.$router.push({path:"/login"});
+      this.$confirm('确认退出吗?', '提示', {
+        //type: 'warning'
+      }).then(() => {
+        sessionStorage.removeItem('accessToken');
+        localStorage.removeItem('autologin');
+        this.$router.push({path:"/login"});
+      }).catch(() => {
+      });
     }
+  },
+  watch: {
+    uk(){
+      this.getUserInfo();
+    },
   },
   mounted(){
     this.getUserList();
@@ -120,9 +142,9 @@ $color-primary: #20a0ff;//#18c79c
         padding-right: 3%;
         float: right;
         .zerouser{
-            cursor: pointer;
             color: #fff;
             height: 40px;
+            margin: 10px;
             float: right;
         }
         .userinfo-inner {
@@ -147,9 +169,6 @@ $color-primary: #20a0ff;//#18c79c
             width: 40px;
             float: left;
             margin: 10px 10px 10px 18px;
-        }
-        .txt {
-            color:#fff;
         }
     }
   }

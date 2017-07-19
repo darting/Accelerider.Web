@@ -1,7 +1,9 @@
 <template lang="pug">
-.container
+.container1
   el-row
-    el-col(type='flex',v-bind:sm='{span:10,offset:12}',v-bind:md='{span:8,offset:12}',v-bind:lg='{span:8,offset:12}')
+    el-col.blurheader
+      span 坐骑WEB
+    el-col(type='flex',v-bind:span='8',v-bind:offset='14')
       el-card.login-container
         el-form(v-bind:model='loginForm')
           h3.title 登录坐骑
@@ -11,8 +13,8 @@
             el-input#password(type='password',v-model='loginForm.password', placeholder="密码", @keyup.enter.native='login')
           el-form-item
             el-checkbox(label='自动登录', v-model="autologin")
-          el-form-item(style='width:100%')
-            el-button(type='primary', @click='login', style='width:100%',v-bind:loading='logining')
+          el-form-item.full-width
+            el-button.full-width(type='primary', @click='login',v-bind:loading='logining')
               | 登录
           el-form-item
             el-button(type='text',@click='register')
@@ -71,20 +73,33 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.container {
+<style lang="scss">
+.container1 {
   height: 100%;
+  line-height: 60px;
   background-image: url('../../static/background.jpg');
+  background-repeat:no-repeat;
+  background-size:cover;
+  .blurheader{
+    height: 60px;
+    color: #505458;
+    font-size: 22px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .login-container {
+    margin-top: 15%;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-clip: padding-box;
+    padding: 35px 35px 15px 35px;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 0 25px #cac6c6;
+  }
 }
-.login-container {
-  margin-top: 20%;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  background-clip: padding-box;
-  padding: 35px 35px 15px 35px;
-  border: 1px solid #eaeaea;
-  box-shadow: 0 0 25px #cac6c6;
+.full-width{
+  width:100%
 }
 .title {
   margin: 0px auto 40px auto;

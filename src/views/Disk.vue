@@ -141,7 +141,7 @@ export default {
     add2square:function(){
       const item = this.share2squareItems;
       const token = sessionStorage.getItem('accessToken');
-      this.$restAPI.add2square(token, item.file, item.msg)
+      this.$squareAPI.add2square(token, item.file, item.msg)
       .then(msg=>{
         this.$message.success(msg);
       });

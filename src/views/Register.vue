@@ -1,16 +1,18 @@
 <template lang="pug">
-.container
+.container1
   el-row
-    el-col(type='flex',v-bind:sm='{span:10,offset:12}',v-bind:md='{span:8,offset:12}',v-bind:lg='{span:8,offset:12}')
-      el-card.signup-container
+    el-col.blurheader
+      span 坐骑WEB
+    el-col(type='flex',v-bind:span='8',v-bind:offset='14')
+      el-card.login-container
         el-form(v-bind:model='signupForm')
           h3.title 注册坐骑
           el-form-item(prop="account")
             el-input#username(v-model='signupForm.account', placeholder="帐号")
           el-form-item(prop="password")
             el-input#password(type='password',v-model='signupForm.password', placeholder="密码")
-          el-form-item
-            el-button(type='primary', @click='register', style='width:100%', v-bind:loading='regLoading')
+          el-form-item.full-width
+            el-button.full-width(type='primary', @click='register', v-bind:loading='regLoading')
               | 注册帐号
           el-form-item
             el-button(type='text',@click='login')
@@ -47,27 +49,3 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.container {
-  height: 100%;
-  background-image: url('../../static/background.jpg');
-}
-.signup-container {
-  margin-top: 20%;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  background-clip: padding-box;
-  padding: 35px 35px 15px 35px;
-  background: #fff;
-  border: 1px solid #eaeaea;
-  box-shadow: 0 0 25px #cac6c6;
-}
-.title {
-  margin: 0px auto 40px auto;
-  text-align: center;
-  color: #505458;
-}
-</style>

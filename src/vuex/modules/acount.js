@@ -3,6 +3,7 @@ const state = {
     user: '',
     token:'',
     uk: '',
+    info:{},
 }
 
 const getters = {
@@ -10,6 +11,7 @@ const getters = {
     user: state => state.user,
     token: state => state.token,
     uk: state => state.uk,
+    userInfo: state => state.info,
 }
 
 const mutations = {
@@ -18,6 +20,9 @@ const mutations = {
     },
     BDuser(state,msg){
         state.uk = msg.uk;
+    },
+    BDuserInfo(state,msg){
+        state.info = msg.info;
     }
 }
 
@@ -32,6 +37,9 @@ const actions = {
     BDuser({commit, state, rootState},uk) {
         sessionStorage.setItem('accessUk', uk);
         commit('BDuser',{'uk':uk});
+    },
+    BDuserInfo({commit, state, rootState},userInfo) {
+        commit('BDuserInfo',{'info':userInfo});
     }
 }
 

@@ -1,7 +1,9 @@
 <template lang="pug">
 el-row.container
     el-col.header(v-bind:span='24')
-      el-col.logo(v-bind:span='10') 坐骑WEB
+      el-col.logo(v-bind:span='10')
+        //- img(src='static/logo.png')
+        span 坐骑WEB
       //- el-col(v-bind:span='10', @click='m4s') 四酱云
       //- el-menu-item(index='3', @click='square')
       //-   el-col(type='flex') 文件广场
@@ -20,20 +22,18 @@ el-row.container
         el-col.adside
           el-card
             div(slot="header") 关于坐骑网页版
-            div 关于坐骑网页版
             div 1.本平台基于百度云，部分文件下载可能限速
             div 2.官方QQ群 553683933
             div 3.给作者来杯咖啡钱，更有动力更新哟~
             div
-                img(src='../assets/wechat.png',title='请在新窗口打开以查看大图',alt='微信支付',height=330)
+                img(src='../assets/wechat.png',title='请在新窗口打开以查看大图',alt='微信支付',height=300)
             div
-                img(src='../assets/alipay.png',title='请在新窗口打开以查看大图',alt='支付宝支付',height=330)
+                img(src='../assets/alipay.png',title='请在新窗口打开以查看大图',alt='支付宝支付',height=300)
       section.content-container
-        .grid-content.bg-purple-light
-          el-col.content-wrapper(type='flex', v-bind:span='24')
-            el-card
-                transition
-                    router-view
+        el-col.content-wrapper(type='flex', v-bind:span='24')
+          el-card
+              transition
+                  router-view
     el-dialog(v-model='bindDlg')
       bind-form
     el-dialog(v-model='ukDlg')
@@ -177,7 +177,6 @@ $color-primary: #20a0ff;//#18c79c
     position: absolute;
     top: 60px;
     bottom: 0px;
-    overflow: hidden;
     aside {
         width: 24%;
         overflow-y: scroll;
@@ -187,7 +186,8 @@ $color-primary: #20a0ff;//#18c79c
     }
     .content-container{
         flex:1;
-        overflow-y: scroll;
+        height: 100%;
+        overflow: auto;
         .content-wrapper {
             background-color: #fff;
             box-sizing: border-box;

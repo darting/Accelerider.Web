@@ -4,7 +4,7 @@
     el-button(type="primary",@click='upload') 上传
     el-button(@click='createFolder') 新建文件夹
   el-row
-    el-col(v-bind:span='3')
+    el-col(v-bind:span='4')
       el-button(type='text',@click='backFileList',icon='arrow-left') BACK
     el-col.filebread(v-bind:span='12')
       el-breadcrumb(separator=">",v-bind:replace='true')
@@ -12,8 +12,8 @@
           | {{p.name}}
     el-col.filebread(v-bind:span='4')
       span Total: {{filescount}}
-  el-row
-    el-col.flist(v-loading="isLoading")
+  el-row.flist
+    el-col(v-loading="isLoading")
       file-list
 </template>
 
@@ -174,12 +174,14 @@ export default {
 }
 </script>
 
-<style scoped>
-.flist{
-  height:100%;
-  overflow: auto;
+<style scoped lang="scss">
+.disk{
+  .filebread{
+    padding-top: 10px
+  }
+  .flist{
+    height:100%;
+  }
 }
-.filebread{
-  padding-top: 10px
-}
+
 </style>

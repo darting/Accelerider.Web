@@ -1,32 +1,32 @@
 <template lang="pug">
 .fileList
-  el-table.disk-table(v-bind:data='fileList')
-    el-table-column(type='selection',min-width="15")
-    el-table-column(label='文件名',show-overflow-tooltip,min-width='120')
+  el-table.disk-table(v-bind:data='fileList', style='width:100%')
+    el-table-column(type='selection')
+    el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
       template(scope="scope")
-        el-col(v-bind:span='1')
+        el-col(v-bind:span='19').file-name
           img.fileicon(v-bind:src='fileTypeUri(scope.row)',height=20)
-        el-col(v-bind:span='19')
-          el-button(type='text', @click='changefilepath(scope.row)',v-if='scope.row.isdir == 1')
-            | {{scope.row.server_filename}}
-          div(v-if='scope.row.isdir == 0')
-            //- TODO
-            //- el-button(type='text', @click='playmovie(scope.row)',v-if='mediable(scope.row.server_filename)')
-            //-   | {{scope.row.server_filename}}
-            //- span(v-if='!mediable(scope.row.server_filename)')
-            span
+          span(v-bind:class="scope.row.isdir == 1? 'open-enable': 'normal'", @click='changefilepath(scope.row)')
               | {{scope.row.server_filename}}
-        el-col(type='flex', justify="end", v-bind:span='3', v-bind:offset='1')
-          el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
-            el-dropdown-menu(slot="dropdown")
-              el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
-              el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
-              el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
-              el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
-    el-table-column(label='大小',show-overflow-tooltip,min-width='28')
+        //- el-col(type='flex', justify="end", v-bind:span='3', v-bind:offset='1')
+        //-   el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
+        //-     el-dropdown-menu(slot="dropdown")
+        //-       el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
+        //-       el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
+        //-       el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
+        //-       el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
+    el-table-column(label='操作',show-overflow-tooltip,width='100')
+      template(scope="scope")
+        el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
+          el-dropdown-menu(slot="dropdown")
+            el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
+            el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
+            el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
+            el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
+    el-table-column(label='大小',show-overflow-tooltip,width='130')
       template(scope="scope")
         | {{transeSize(scope.row)}}
-    el-table-column(label='修改日期',show-overflow-tooltip,min-width='40')
+    el-table-column(label='修改日期',show-overflow-tooltip,width='160')
       template(scope="scope")
         | {{transeTime(scope.row.server_mtime)}}
   .dialog
@@ -65,6 +65,7 @@ export default {
   },
   methods:{
     changefilepath:function(file){
+      if(file.isdir==0)return;
       this.$router.push({path:"/disk",query:{path:file.path}});
       this.$store.dispatch('changepath',file.path);
     },
@@ -79,7 +80,7 @@ export default {
       let type = this.utils.fileType(filename);
       type =  this.utils.ArrContains(avalibleType, type) ? type : 'default';
       type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
-      const filetype = file.isdir==0 ? type : 'folder_mac2';
+      const filetype = file.isdir==0 ? type : 'folder_win10';
       const typeUri = `./static/icons/${filetype}.png`;
       return typeUri;
     },
@@ -160,8 +161,21 @@ export default {
 }
 </script>
 
-<style scoped>
-.fileicon{
-  margin-top: 6px;
+<style scoped lang="scss">
+.fileList{
+    height:100%;
+    // overflow-y: scroll;
+}
+.file-name{ 
+  line-height: 40px;
+  .fileicon{
+    vertical-align:middle;
+  }
+  .open-enable{
+    cursor: pointer;
+  }
+  .normal{
+    cursor: default;
+  }
 }
 </style>

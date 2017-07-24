@@ -9,7 +9,7 @@ export default {
   name: 'app',
   data () {
     return {
-      version:"3.1.2"
+      version:"3.1.3"
     }
   },
   computed:{},
@@ -35,6 +35,25 @@ body {
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+}
+::-webkit-scrollbar {
+  width: 12px;
+  height: 10px;
+}
+::-webkit-scrollbar-button{
+  display: none;
+}
+::-webkit-scrollbar-thumb {
+  height: 30px;
+  background-color: #999;
+  -webkit-border-radius: 7px;
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+  border: 2px solid #fff;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: #fff;
+  -webkit-border-radius: 3px;
 }
 #app{
   -moz-osx-font-smoothing: grayscale;

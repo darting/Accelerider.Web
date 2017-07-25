@@ -8,13 +8,6 @@
           img.fileicon(v-bind:src='fileTypeUri(scope.row)',height=20)
           span(v-bind:class="scope.row.isdir == 1? 'open-enable': 'normal'", @click='changefilepath(scope.row)')
               | {{scope.row.server_filename}}
-        //- el-col(type='flex', justify="end", v-bind:span='3', v-bind:offset='1')
-        //-   el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载
-        //-     el-dropdown-menu(slot="dropdown")
-        //-       el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
-        //-       el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
-        //-       el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
-        //-       el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
     el-table-column(label='操作',show-overflow-tooltip,width='100')
       template(scope="scope")
         el-dropdown(type='text',split-button,@click='openDownLinks(scope.row)', trigger="click") 下载

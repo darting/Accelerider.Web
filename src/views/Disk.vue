@@ -1,20 +1,20 @@
 <template lang="pug">
 .disk
-  el-row
+  el-row(type="flex")
     el-button(type="primary",@click='upload') 上传
     el-button(@click='createFolder') 新建文件夹
-  el-row
+  el-row(type="flex")
     el-col(v-bind:span='4')
       el-button(type='text',@click='backFileList',icon='arrow-left') BACK
     el-col.filebread(v-bind:span='12')
       el-breadcrumb(separator=">",v-bind:replace='true')
-        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{path:'/disk',query:{path:p.path}}",key = 'p')
+        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{query:{path:p.path}}",key = 'p')
           | {{p.name}}
     el-col.filebread(v-bind:span='4')
       span Total: {{filescount}}
-  el-row.flist
-    el-col(v-loading="isLoading")
-      file-list
+  el-row.frame-main(type="flex")
+    transition
+      router-view(v-loading='isLoading')
 </template>
 
 <script>
@@ -119,7 +119,7 @@ export default {
     backFileList:function(){
       const pm = this.utils.pathmanager()
       let cur = pm.getBackPath();
-      this.$router.push({path:"/disk",query:{path:cur}});
+      this.$router.push({query:{path:cur}});
     },
     upload:function(){
       this.$message('开发中。。。欢迎提出改进意见~');
@@ -176,12 +176,15 @@ export default {
 
 <style scoped lang="scss">
 .disk{
+  top: 0px;
+  bottom: 0px;
+  height: 100%;
+  width: 100%;
   .filebread{
     padding-top: 10px
   }
-  .flist{
-    height:100%;
+  .frame-main{
+    flex:1;
   }
 }
-
 </style>

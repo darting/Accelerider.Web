@@ -4,11 +4,11 @@ el-row.container
       el-col.logo(v-bind:span='10')
         //- img(src='static/logo.png')
         span 坐骑WEB
-      //- el-col(v-bind:span='10', @click='m4s') 四酱云
-      //- el-menu-item(index='3', @click='square')
-      //-   el-col(type='flex') 文件广场
+      //- el-col(v-bind:span='6')
+      //-   el-button.zerouser(@click='m4s') 四酱云
+      //-   el-button.zerouser(@click='disk') 网盘
       el-col.userinfo(v-bind:span='4')
-        el-button.zerouser(type='text',v-if='!isbind',@click='binding') 尚未绑定百度账号
+        el-button.zerouser(v-if='!isbind',@click='binding') 尚未绑定百度账号
         el-dropdown(trigger="hover", v-if='isbind')
           span.el-dropdown-link.userinfo-inner
             img(v-bind:src='userInfo.avatar_url')
@@ -30,7 +30,7 @@ el-row.container
             div
                 img(src='../assets/alipay.png',title='请在新窗口打开以查看大图',alt='支付宝支付',height=300)
       section.content-container
-        el-col.content-wrapper(type='flex', v-bind:span='24')
+        .content-wrapper(type='flex', v-bind:span='24')
           el-card
               transition
                   router-view
@@ -68,10 +68,10 @@ export default {
       this.ukDlg = true;
     },
     m4s:function(){
-      this.$message('开发中。。。欢迎提出改进意见~');
+      this.$router.push({path:"/disk/m4s"});
     },
-    square:function(){
-      this.$router.push({path:"/square"});
+    disk:function(){
+      this.$router.push({path:"/disk/home"});
     }, 
     getToken:function(){
       return sessionStorage.getItem('accessToken');
@@ -164,7 +164,7 @@ $color-primary: #20a0ff;//#18c79c
         font-size: 22px;
         padding-left:20px;
         padding-right:20px;
-        width:16%;
+        width:25%;
         img {
             width: 40px;
             float: left;

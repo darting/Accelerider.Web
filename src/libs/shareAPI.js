@@ -7,6 +7,20 @@ class ShareAPI{
       headers: {}
     });
   }
+  getsharetoken(shareUrl,password) {
+    const url="/sharefiles";
+    return this.$ajax({
+      method: 'GET',
+      url: url,
+      params: { "shareurl": shareUrl, "pass": password}
+    })
+    .then(response => response.data.token)
+    .catch(err=>{let msg = '';
+      if(err.response){msg = err.response.data.message}
+        else{msg=err.message}
+      throw msg;
+    });
+  }
   getsharelist(token,path) {
     const url = '/sharefiles';
     return this.$ajax({
@@ -28,19 +42,23 @@ class ShareAPI{
       throw msg;
     });
   }
-  getshare(shareUrl,password) {
-    const url="/sharefiles";
+  downsharelinks(token, files){
+    const url = '/sharelinks';
+    let file =files
     return this.$ajax({
-      method: 'GET',
+      method: 'POST',
       url: url,
-      params: { "shareurl": shareUrl, "pass": password}
+      params: {
+        token: token,
+      },
+      transformRequest: [function (data) {
+        let ret = '';
+        for (let it in data) { ret += `${it}=${encodeURIComponent(data[it])}&` }
+        return ret;
+      }],
+      data: {"filelist": JSON.stringify(file)}
     })
-    .then(response => response.data.token)
-    .catch(err=>{let msg = '';
-      if(err.response){msg = err.response.data.message}
-        else{msg=err.message}
-      throw msg;
-    });
+    .then(response => response.data);
   }
 }
 

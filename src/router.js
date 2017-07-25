@@ -7,7 +7,9 @@ import Login from '@/views/Login'
 import Home from '@/views/Home'
 
 import Disk from '@/views/Disk'
-import Square from '@/views/Square'
+import DDisk from '@/views/disk/BDDisk'
+import DM4s from '@/views/disk/M4sDisk'
+// import Square from '@/views/Square'
 
 import UserInfo from '@/components/UserInfo'
 import BindingForm from '@/components/BindingForm'
@@ -29,12 +31,6 @@ const router = new Router({
       hidden: true
     },
     {
-      path: '/404',
-      component: NotFound,
-      name: '',
-      hidden: true
-    },
-    {
       path: '/signup',
       component: Register,
       name: '',
@@ -47,19 +43,42 @@ const router = new Router({
       children:[
         { path: '/', redirect: '/disk', hidden: true },
         {
-          path: '/disk', component: Disk, name: '网盘',
-          beforeEnter: (to, from, next) => {
-            if (!to.query.path) {
-              next({ path: '/disk', query: {path:'/'}})
-            } if (!sessionStorage.getItem('accessToken') ){
-              next({ path: '/login', query: {redirect: to.fullPath} })
-            } else {
-              next()
-            }
-          }
+          path: '/disk', redirect: '/disk/home', hidden: true,
+          component:Disk,
+          children:[
+          {
+            path:'home', component:DDisk, name:'百度云',
+            beforeEnter: (to, from, next) => {
+              if (!to.query.path) {
+                next({query: {path:'/'}})
+              } if (!sessionStorage.getItem('accessToken') ){
+                next({ path: '/login', query: {redirect: to.fullPath} })
+              } else {
+                next()
+              }
+            },
+          },
+          {
+            path:'m4s', component:DM4s, name:'四酱云',
+            beforeEnter: (to, from, next) => {
+              if (!to.query.path) {
+                next({query: {path:'/'}})
+              } if (!sessionStorage.getItem('accessToken') ){
+                next({ path: '/login', query: {redirect: to.fullPath} })
+              } else {
+                next()
+              }
+            },
+          },
+          ]
         },
-        { path:'/square', component:Square, name:'广场' },
       ],
+    },
+    {
+      path: '/404',
+      component: NotFound,
+      name: '',
+      hidden: true
     },
     {
       path: '*',

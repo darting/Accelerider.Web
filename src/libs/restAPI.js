@@ -68,7 +68,7 @@ class M4API{
       data: qs.stringify({
         name:username,
         password:MD5(password).toString(),
-        clienttype: 'web'
+        clienttype: process.env.CLIENT_TYPE
       })
     })
     .then(response =>response.data)

@@ -41,6 +41,19 @@ class M4sAPI{
     })
     .then(response => response.data);
   }
+  copyFile(token, from, to) {
+    const url = '/copy';
+    return this.$ajax({
+      method:'POST',
+      url: url,
+      params: { token: token },
+      data: qs.stringify({
+        from: from,
+        to: to,
+      })
+    })
+    .then(response => response.data);
+  }
   deletefile(token, path) {
     const url = '/delete';
     return this.$ajax({
@@ -53,14 +66,14 @@ class M4sAPI{
     })
     .then(response => response.data);
   }
-  downfiles(token, file) {
+  downfiles(token, path) {
     const url = 'filelink';
     return this.$ajax({
       method:'POST',
       url: url,
       params: {
         token: token,
-        path: file.path,
+        path: path,
       },
     })
     .then(response => response.data);

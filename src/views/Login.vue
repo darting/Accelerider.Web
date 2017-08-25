@@ -65,10 +65,9 @@ export default {
       });
     }
   },
-  mounted:function(){
+  mounted(){
     let a = localStorage.getItem('autologin');
-    if(a){
-      a = JSON.parse(a);
+    if(a){ a = JSON.parse(a);
       this.loginForm.account = a.username;
       this.loginForm.password = a.pwd;
       this.login();

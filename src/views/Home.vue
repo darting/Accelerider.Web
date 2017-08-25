@@ -11,30 +11,23 @@ el-row.container
           img(v-bind:src='userInfo.avatar_url')
           | {{userInfo.Name}}
         el-dropdown-menu(slot="dropdown")
-          el-dropdown-item 用量:{{percentSize(userInfo.used,userInfo.total)}}
+          el-dropdown-item 用量:{{percentSize(userInfo.used,userInfo.total)}}%
           el-dropdown-item(@click.native='changeUser') 切换帐号
           el-dropdown-item(divided, @click.native='logout') 退出登录
   el-col.main
     aside
-      el-menu(default-active="/disk/home", v-bind:router='true')
-        el-submenu(index="1")
-          template(slot="title")
-            i(class='el-icon-plus')
-            | 网盘
-          el-menu-item(index="/disk/home")
-            i(class='el-icon-upload')
-            | 百度云
-          el-menu-item(index='/disk/m4s')
-            i(class='el-icon-document')
-            | 四酱云
-          //- el-menu-item-group
-          //-   el-menu-item
-        el-menu-item(index='/square')
-          i(class="el-icon-view")
-          | 文件广场
-        el-menu-item(index='/about')
-          i(class='el-icon-information')
-          | 关于
+      el-menu(v-bind:default-active="$route.path", router)
+        template(v-for="(item,index) in $router.options.routes[2].children")
+          el-submenu(v-bind:index="index+''", v-if="item.children&&item.children.length>0")
+            template(slot="title")
+              i(v-bind:class="item.iconCls") {{item.name}}
+            el-menu-item(v-for="child in item.children", key='child', v-bind:index="item.path + '/' + child.path")
+              i(v-bind:class='child.iconCls')
+              | {{child.name}}
+          el-menu-item(v-bind:index="item.path", v-if="!item.children")
+            i(v-bind:class="item.iconCls") {{item.name}}
+      el-row
+        el-progress(type="circle", v-bind:percentage="percentSize(userInfo.used,userInfo.total)")
     section.content-container
       .content-wrapper(type='flex', v-bind:span='24')
         el-card

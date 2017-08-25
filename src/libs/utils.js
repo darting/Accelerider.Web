@@ -2,7 +2,7 @@ import PM from './pathmanager'
 
 class Utils{
   percentSize(a,b){
-    return `${((a/b)*100).toFixed(2)}%`;
+    return Number(((a/b)*100).toFixed(2));
   }
   transeSize(size){
     const k = 1024;

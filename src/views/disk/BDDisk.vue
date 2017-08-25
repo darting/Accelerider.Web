@@ -1,23 +1,24 @@
 <template lang="pug">
 .disk
   el-row(type="flex")
+    el-col
+      el-breadcrumb(separator=">",v-bind:replace='true')
+        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{query:{path:p.path}}",key = 'p')
+          | {{p.name}}
+  el-row(type="flex")
     //- el-upload(action='', v-bind:show-file-list='false')
     //-   el-button(type="primary") 上传
     el-col
       el-button(@click='createFolder', icon='document') 新建文件夹
-      el-button(@click='deleteFiles', icon='delete') 删除
+      //- el-button(@click='deleteFiles', icon='delete') 删除
   el-row(type="flex")
     el-col(v-bind:span='4')
       el-button(type='text',@click='backFileList',icon='arrow-left') BACK
-    el-col.filebread(v-bind:span='12')
-      el-breadcrumb(separator=">",v-bind:replace='true')
-        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{query:{path:p.path}}",key = 'p')
-          | {{p.name}}
     el-col.filebread(v-bind:span='4')
       span Total: {{fileList.length}}
-  el-row.frame-main(type="flex")
+  el-row.frame-main
     el-col(v-loading='isLoading')
-      el-table.disk-table(v-bind:data='fileList', empty-text='文件夹是空的哟', style='width:100%')
+      el-table(v-bind:data='fileList', empty-text='文件夹是空的哟', style='width:100%')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
@@ -32,10 +33,10 @@
                 el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
                 el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
                 el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
-                el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
-        el-table-column(label='大小',show-overflow-tooltip,width='130')
+                el-dropdown-item(divided, @click.native.prevent='deleteFile(scope.row)') 删除
+        el-table-column(label='大小',width='120')
           template(scope="scope")
-            | {{transeSize(scope.row)}}
+            | {{transeSize(scope.row.size)}}
         el-table-column(label='修改日期',show-overflow-tooltip,width='180')
           template(scope="scope")
             | {{transeTime(scope.row.server_mtime)}}
@@ -136,16 +137,15 @@ export default {
     },
     downloadFile:function(file){
       this.$store.commit('viewloading',true);
-      const files = [file];
-	    this.$restAPI.downfiles(this.token,this.uk,files)
+	    this.$restAPI.downfiles(this.token,this.uk,[file])
       .then(data=>{
         if(data.links){this.$restAPI.vertifyco(data.cookies,true);
           return data.links
         }else{throw new Error(data.message)}
       })
-      .then(linksObj=>{
+      .then(links=>{
         this.$store.commit('viewloading',false);
-        this.parseDownLinks(linksObj);
+        this.parseDownLinks(links);
       })
       .catch((e)=>{
         this.$store.commit('viewloading',false);
@@ -155,8 +155,7 @@ export default {
       this.$restAPI.zqdownfiles(file)
        .then((data)=>{
          if(data!='error'){
-           this.$message({
-             message: '恭喜！发送成功~快去看看吧！',type: 'success'});
+           this.$message.success('恭喜！发送成功~快去看看吧！');
          }else{
            this.$message.error('阿哦，发送失败。。大侠请重新来过。');
          }
@@ -165,7 +164,7 @@ export default {
         this.$message.error('阿哦，出错了诶？是不是没有打开坐骑呢?')});
     },
     createFolder:function(){
-      this.$prompt('请输入文件夹名称', '新建文件夹', {
+      this.$prompt('默认新建在当前目录，请输入文件夹名称：', '新建文件夹', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({ value }) => {
@@ -181,7 +180,7 @@ export default {
       this.$message.info('开发中。。。欢迎提出改进建议~');
     },
     deleteFile:function(file){
-      this.$confirm(`确认将文件'${file.server_filename}'放入回收站?`, '提示', {
+      this.$confirm(`确认将文件(夹)'${file.server_filename}'放入回收站?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -202,22 +201,16 @@ export default {
           this.$squareAPI.add2square(this.token, file, value)
           .then(msg=>{
             this.$message.success(msg);
-          });
+          })
+          .catch(e=>this.$message.error(e.message));
         }).catch((e)=>{});
     },
-    transeSize:function(file){
-      if (file.isdir == 1) {
-        return '--';
-      }else{
-        return this.utils.transeSize(file.size);
-      }
+    transeSize:function(size){
+      return size==0 ? '--' : this.utils.transeSize(size);
     },
     transeTime:function(mtime){
       return this.utils.transeTime(mtime);
     }
-  },
-  mounted(){
-    this.goFileList();
   },
   watch: {
     uk(){
@@ -225,19 +218,13 @@ export default {
     },
     "$route": "goFileList"
   },
+  mounted(){
+    this.goFileList();
+  },
 }
 </script>
 
 <style scoped lang="scss">
-.disk{
-  top: 0px;
-  bottom: 0px;
-  height: 100%;
-  width: 100%;
-  .filebread{
-    padding-top: 10px
-  }
-}
 .file-name{ 
   line-height: 40px;
   .fileicon{

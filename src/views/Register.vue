@@ -41,6 +41,7 @@ export default {
       .then((rlt)=>{
         this.regLoading = false;
         this.$message(rlt);
+        this.$router.push({path:"/login"});
       })
       .catch((err)=>{
         this.regLoading = false;

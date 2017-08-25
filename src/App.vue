@@ -9,23 +9,23 @@ export default {
   name: 'app',
   data () {
     return {
-      version:"3.1.8"
+      version:"3.2.0"
     }
   },
   computed:{},
   methods:{
     testFunc:function(){}
   },
-  beforeCreate:function(){},//组件实例化之前
-  created:function(){},//组件实例化了
-  beforeMount:function(){},//组件写入dom结构之前
-  mounted:function(){//组件写入dom结构了
+  beforeCreate(){},//组件实例化之前
+  created(){},//组件实例化了
+  beforeMount(){},//组件写入dom结构之前
+  mounted(){//组件写入dom结构了
     console.log(`VERSION:${this.version}`);
   },
-  beforeUpdate:function(){},//组件更新前
-  updated:function(){},//组件更新比如修改了文案
-  beforeDestroy:function(){},//组件销毁之前
-  destroyed:function(){}//组件已经销毁
+  beforeUpdate(){},//组件更新前
+  updated(){},//组件更新比如修改了文案
+  beforeDestroy(){},//组件销毁之前
+  destroyed(){}//组件已经销毁
 }
 </script>
 

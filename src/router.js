@@ -39,19 +39,21 @@ const router = new Router({
       path:'/',
       component:Home,
       name:'',
-      hidden: true,
       redirect: { path: '/disk' },
       meta: { requiresAuth: true },
       children:[
         {
           path: '/disk', component:Disk, name:'网盘',
+          iconCls: 'el-icon-plus',
           redirect: { path: '/disk/home' },
           children:[
             {
               path:'home', component:DDisk, name:'百度云',
+              iconCls: 'el-icon-upload',
             },
             {
               path:'m4s', component:DM4s, name:'四酱云',
+              iconCls: 'el-icon-document',
             },
           ]
         },
@@ -59,11 +61,13 @@ const router = new Router({
           path: '/square',
           component: Square,
           name: '广场',
+          iconCls: 'el-icon-view',
         },
         {
           path: '/about',
           component: About,
           name: '关于',
+          iconCls: 'el-icon-information',
         },
       ]
     },

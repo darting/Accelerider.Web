@@ -9,8 +9,10 @@ export default {
   name: 'disk',
   data () {
     return {
+      discrimination: 'every web disk is here!',
     }
   },
   methods:{},
+  mounted(){},
 }
 </script>

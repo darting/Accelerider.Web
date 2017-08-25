@@ -1,10 +1,10 @@
 <template lang="pug">
 el-col
-  span 开发中。。。
+  span 施工重地，闲人免进。
+  el-button(type='text',@click='backToHome') 返回
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 export default {
   name: 'webdisk',
   data () {
@@ -13,9 +13,13 @@ export default {
   },
   computed:{
   },
-  methods:{}
+  methods:{
+    backToHome:function(){
+      this.$router.push({path:'/disk'});
+    }
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 </style>

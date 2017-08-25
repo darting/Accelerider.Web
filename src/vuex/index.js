@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as actions from './actions'
 
+import accountStore from './modules/acount'
 import fileviewStore from './modules/fileview'
-import mediaStore from './modules/mediaplay'
-import acountStore from './modules/acount'
 
 Vue.use(Vuex)
 
@@ -20,9 +20,9 @@ const getters = {
 export default new Vuex.Store({
 	state,
 	getters,
+	actions,
 	modules: {
-		fileviewStore,
-		mediaStore,
-		acountStore,
+		account:accountStore,
+		filemgr:fileviewStore,
 	}
 })

@@ -7,6 +7,15 @@ class SquareAPI{
       baseURL: 'http://api.usmusic.cn/square',
       headers: {}
     });
+    this.$ajax.interceptors.response.use(
+      (config)=>{return config},
+      (err)=>{
+        let msg = '';
+        if(err.response){msg = err.response.data.message}
+          else{msg=err.message}
+        throw new Error(msg);
+        }
+      );
   }
   filelist(number, page){
     const url = '/list';
@@ -16,7 +25,6 @@ class SquareAPI{
       params: { n: number, p:page },
     })
     .then(response => response.data.items)
-    .then(data => data.message);
   }
   add2square(token, file, msg){
     const url = '/add';
@@ -31,8 +39,19 @@ class SquareAPI{
         message: msg
       })
     })
-    .then(response => response.data)
-    .then(data => data.message);
+    .then(response => response.data.message);
+  }
+  comment(token, md5, msg){
+    const url = '/comment';
+    return this.$ajax({
+      method: 'POST',
+      url: url,
+      params: { token: token, md5:md5 },
+      data: qs.stringify({
+        comment: msg
+      })
+    })
+    .then(response => response.data);
   }
   downfiles(md5){
     const url = '/link';
@@ -41,8 +60,7 @@ class SquareAPI{
       url: url,
       params: { md5: md5 },
     })
-    .then(response => response.data.links)
-    .then(data => data.message);
+    .then(response => response.data.links);
   }
 }
 

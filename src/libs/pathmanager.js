@@ -10,10 +10,13 @@ class PathManager {
     c = queryString.parse(c);
     this.query = c;
     this.path = c.path || '/'
+    this.page = c.page || 1
   }
   getQuery(){ return this.query}
 
   getPath(){ return this.path }
+
+  getPage(){ return this.page }
 
   getBackPath(){
     const sq = this.path.split('/');sq.pop()

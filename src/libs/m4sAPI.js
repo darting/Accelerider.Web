@@ -45,6 +45,18 @@ class M4sAPI{
     })
     .then(response => response.data);
   }
+  downfiles(token, file) {
+    const url = 'filelink';
+    return this.$ajax({
+      method:'POST',
+      url: url,
+      params: {
+        token: token,
+        path: file.path,
+      },
+    })
+    .then(response => response.data);
+  }
 }
 
-export default SquareAPI;
+export default M4sAPI;

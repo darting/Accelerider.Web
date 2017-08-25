@@ -6,8 +6,8 @@ import 'normalize.css'
 import App from './App'
 import router from './router'
 import restAPI from './libs/restAPI'
+import m4sAPI from './libs/m4sAPI'
 import squareAPI from './libs/squareAPI'
-import shareAPI from './libs/shareAPI'
 import Utils from './libs/utils'
 
 import ElementUI from 'element-ui'
@@ -15,8 +15,8 @@ import 'element-ui/lib/theme-default/index.css'
 
 Vue.config.productionTip = false
 Vue.prototype.$restAPI = new restAPI();
+Vue.prototype.$m4sAPI = new m4sAPI();
 Vue.prototype.$squareAPI = new squareAPI();
-Vue.prototype.$shareAPI = new shareAPI();
 Vue.prototype.utils = new Utils();
 
 Vue.use(ElementUI)

@@ -1,44 +1,50 @@
 <template lang="pug">
 el-row.container
-    el-col.header(v-bind:span='24')
-      el-col.logo(v-bind:span='10')
-        //- img(src='static/logo.png')
-        span 坐骑WEB
-      //- el-col(v-bind:span='6')
-      //-   el-button.zerouser(@click='m4s') 四酱云
-      //-   el-button.zerouser(@click='disk') 网盘
-      el-col.userinfo(v-bind:span='4')
-        el-button.zerouser(v-if='!isbind',@click='binding') 尚未绑定百度账号
-        el-dropdown(trigger="hover", v-if='isbind')
-          span.el-dropdown-link.userinfo-inner
-            img(v-bind:src='userInfo.avatar_url')
-            | {{userInfo.Name}}
-          el-dropdown-menu(slot="dropdown")
-            el-dropdown-item 用量:{{percentSize(userInfo.used,userInfo.total)}}
-            el-dropdown-item(@click.native='changeUser') 切换帐号
-            el-dropdown-item(divided, @click.native='logout') 退出登录
-    el-col.main
-      aside
-        el-col.adside
-          el-card
-            div(slot="header") 关于坐骑网页版
-            div 1.本平台基于百度云，部分文件下载可能限速
-            div 2.官方QQ群 553683933
-            div 3.给作者来杯咖啡钱，更有动力更新哟~
-            div
-                img(src='../assets/wechat.png',title='请在新窗口打开以查看大图',alt='微信支付',height=300)
-            div
-                img(src='../assets/alipay.png',title='请在新窗口打开以查看大图',alt='支付宝支付',height=300)
-      section.content-container
-        .content-wrapper(type='flex', v-bind:span='24')
-          el-card
-              transition
-                  router-view
-    el-dialog(v-model='bindDlg')
-      bind-form
-    el-dialog(v-model='ukDlg')
-      user-info
-      el-button(type='text',@click='binding') 新增绑定
+  el-col.header(v-bind:span='24')
+    el-col.logo(v-bind:span='10')
+      //- img(src='static/logo.png')
+      span 坐骑WEB
+    el-col.userinfo(v-bind:span='4')
+      el-button.zerouser(v-if='!isbind',@click='binding') 尚未绑定百度账号
+      el-dropdown(trigger="hover", v-if='isbind')
+        span.el-dropdown-link.userinfo-inner
+          img(v-bind:src='userInfo.avatar_url')
+          | {{userInfo.Name}}
+        el-dropdown-menu(slot="dropdown")
+          el-dropdown-item 用量:{{percentSize(userInfo.used,userInfo.total)}}
+          el-dropdown-item(@click.native='changeUser') 切换帐号
+          el-dropdown-item(divided, @click.native='logout') 退出登录
+  el-col.main
+    aside
+      el-menu(default-active="/disk/home", v-bind:router='true')
+        el-submenu(index="1")
+          template(slot="title")
+            i(class='el-icon-plus')
+            | 网盘
+          el-menu-item(index="/disk/home")
+            i(class='el-icon-upload')
+            | 百度云
+          el-menu-item(index='/disk/m4s')
+            i(class='el-icon-document')
+            | 四酱云
+          //- el-menu-item-group
+          //-   el-menu-item
+        el-menu-item(index='/square')
+          i(class="el-icon-view")
+          | 文件广场
+        el-menu-item(index='/about')
+          i(class='el-icon-information')
+          | 关于
+    section.content-container
+      .content-wrapper(type='flex', v-bind:span='24')
+        el-card
+          transition
+            router-view
+  el-dialog(v-model='bindDlg')
+    bind-form
+  el-dialog(v-model='ukDlg')
+    user-info
+    el-button(type='text',@click='binding') 新增绑定
 </template>
 
 <script>
@@ -80,7 +86,6 @@ export default {
       const token = this.getToken();
       this.$restAPI.userlist(token)
       .then(reps=>{
-        this.infoLoading = false;
         this.isbind = reps.length>0;
         if(this.isbind)
           reps[0].then(data => {
@@ -88,7 +93,6 @@ export default {
             })
       })
       .catch((err)=>{
-        this.infoLoading = false;
         this.$message.error(err)});
     },
     getUserInfo:function(){
@@ -178,20 +182,17 @@ $color-primary: #20a0ff;//#18c79c
     top: 60px;
     bottom: 0px;
     aside {
-        width: 24%;
+        width: 20%;
         overflow-y: scroll;
-        .adside{
-            height: 100%;
-        }
     }
     .content-container{
-        flex:1;
-        height: 100%;
-        overflow: auto;
-        .content-wrapper {
-            background-color: #fff;
-            box-sizing: border-box;
-        }
+      flex:1;
+      height: 100%;
+      overflow: auto;
+      .content-wrapper {
+        background-color: #fff;
+        box-sizing: border-box;
+      }
     }
   }
 }

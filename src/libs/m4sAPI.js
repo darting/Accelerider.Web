@@ -7,6 +7,15 @@ class M4sAPI{
       baseURL: 'http://api.usmusic.cn/cloud',
       headers: {}
     });
+    this.$ajax.interceptors.response.use(
+      (config)=>{return config},
+      (err)=>{
+        let msg = '';
+        if(err.response){msg = err.response.data.message}
+          else{msg=err.message}
+        throw new Error(msg);
+        }
+      );
   }
   filelist(token, path){
     const url = '/filelist';
@@ -18,8 +27,7 @@ class M4sAPI{
         path: path
       }
     })
-    .then(response =>response.data.list)
-    .then(data => data.message);
+    .then(response =>response.data.list);
   }
   createFolder(token, path) {
     const url = '/cFolder';

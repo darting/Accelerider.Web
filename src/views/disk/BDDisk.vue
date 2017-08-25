@@ -1,14 +1,11 @@
 <template lang="pug">
-.disk(v-loading='isLoading')
+.disk
   el-row(type="flex")
     //- el-upload(action='', v-bind:show-file-list='false')
     //-   el-button(type="primary") 上传
     el-col
       el-button(@click='createFolder', icon='document') 新建文件夹
       el-button(@click='deleteFiles', icon='delete') 删除
-    el-col
-      el-button(@click='toM4s') 四酱云
-      el-button(@click='toSquare') 文件广场
   el-row(type="flex")
     el-col(v-bind:span='4')
       el-button(type='text',@click='backFileList',icon='arrow-left') BACK
@@ -19,8 +16,8 @@
     el-col.filebread(v-bind:span='4')
       span Total: {{fileList.length}}
   el-row.frame-main(type="flex")
-    el-col
-      el-table.disk-table(ref="filetable", v-bind:data='fileList', style='width:100%')
+    el-col(v-loading='isLoading')
+      el-table.disk-table(v-bind:data='fileList', empty-text='文件夹是空的哟', style='width:100%')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
@@ -42,19 +39,19 @@
         el-table-column(label='修改日期',show-overflow-tooltip,width='180')
           template(scope="scope")
             | {{transeTime(scope.row.server_mtime)}}
-      .dialog
-        el-dialog(v-model='dialogDL',title='下载链接')
-          div(v-for='item in downlinks',key = 'item')
-            p {{item.name}}
-            ul
-              li(v-for='url in item.urls',key = 'url')
-                a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
-        el-dialog(v-model='dialogProP',title='文件属性')
-          p 文件名： {{curFile.server_filename}}
-          p 文件大小： {{transeSize(curFile)}}
-          p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
-          p 修改时间： {{transeTime(curFile.server_mtime)}}
-          p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
+  .dialog
+    el-dialog(v-model='dialogDL',title='下载链接')
+      div(v-for='item in downlinks',key = 'item')
+        p {{item.name}}
+        ul
+          li(v-for='url in item.urls',key = 'url')
+            a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
+    el-dialog(v-model='dialogProP',title='文件属性')
+      p 文件名： {{curFile.server_filename}}
+      p 文件大小： {{transeSize(curFile)}}
+      p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
+      p 修改时间： {{transeTime(curFile.server_mtime)}}
+      p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
 </template>
 
 <script>
@@ -196,12 +193,6 @@ export default {
           })
           .catch((e)=>{this.$message.error('删除失败。')});
         }).catch(() => {});
-    },
-    toM4s:function(){
-      this.$router.push({path:'m4s'});
-    },
-    toSquare:function(){
-      this.$router.push({path:'/square'});
     },
     add2square:function(file){
       this.$prompt('请输入留言', '分享到文件广场', {

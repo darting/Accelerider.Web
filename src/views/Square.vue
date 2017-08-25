@@ -1,10 +1,16 @@
 <template lang="pug">
-.square(v-loading='isLoading')
+.square
   el-row(type="flex")
     el-col
-      el-button(icon='arrow-left', @click='toWebdisk') 回到百度云
-  el-row(type="flex")
-    el-table.disk-table(ref="filetable", v-bind:data='filelist', style='width:100%')
+      el-button-group
+        el-button(type="info", icon="arrow-left", @click='prePage()') 上一页
+        el-button(type="info", @click='nextPage()') 下一页
+          i(class='el-icon-arrow-right el-icon--right')
+    el-col
+      span 当前页码:
+      el-input-number(v-model='page', v-bind:min="1")
+  el-row(type="flex", v-loading='isLoading')
+    el-table(v-bind:data='filelist', empty-text='你来到了空无一人的广场', style='width:100%')
         el-table-column(label='文件名',prop='FileName',show-overflow-tooltip,min-width='200')
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
@@ -17,30 +23,33 @@
         el-table-column(label='评论数',width='90')
           template(scope='scope')
             el-button(type='text', @click='showComments(scope.row.Comments)') {{scope.row.Comments.length}}
-    .dialog
-      el-dialog(v-model='dialogDL',title='下载链接')
-        div()
-          p {{downName}}
-          ul
-            li(v-for='url in downlinks',key = 'url')
-              a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
-      el-dialog(v-model='dialogCm',title='评论区')
-        el-table(v-bind:data='comments', empty-text='此文件还没有人评论', height='260')
-          el-table-column(label='评论',prop='Message')
-          el-table-column(label='评论人',prop='From', width='130')
-          el-table-column(label='评论时间')
-            template(scope="scope")
-              span {{transeTime(scope.row.Time)}}
-        //- el-row
-        //-   el-col
-        //-     el-input(v-model='mycomment', placeholder="说点什么...")
-        //-     el-button(@click='comment') 评论
   el-row(type="flex")
     el-col
-      el-button(@click='prePage()') PRE PAGE
-      el-button(@click='nextPage()') NEXT PAGE
+      el-button-group
+        el-button(type="info", icon="arrow-left", @click='prePage()') 上一页
+        el-button(type="info", @click='nextPage()') 下一页
+          i(class='el-icon-arrow-right el-icon--right')
+    el-col
+      span 当前页码:
       el-input-number(v-model='page', v-bind:min="1")
-      span 当前页码: {{page}}
+  .dialog
+    el-dialog(v-model='dialogDL',title='下载链接')
+      div()
+        p {{downName}}
+        ul
+          li(v-for='url in downlinks',key = 'url')
+            a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
+    el-dialog(v-model='dialogCm',title='评论区')
+      el-table(v-bind:data='comments', empty-text='此文件还没有人评论', height='260')
+        el-table-column(label='评论',prop='Message')
+        el-table-column(label='评论人',prop='From', width='130')
+        el-table-column(label='评论时间')
+          template(scope="scope")
+            span {{transeTime(scope.row.Time)}}
+      //- el-row
+      //-   el-col
+      //-     el-input(v-model='mycomment', placeholder="说点什么...")
+      //-     el-button(@click='comment') 评论
 </template>
 
 <script>
@@ -50,7 +59,7 @@ export default {
   data () {
     return {
       number: 15,
-      page: 0,
+      page: 1,
       filelist: [],
       dialogDL: false,
       downName: '',
@@ -67,9 +76,6 @@ export default {
     })
   },
   methods:{
-    toWebdisk:function(){
-      this.$router.push({path:'/disk/home'});
-    },
     getSquareList:function(){
       this.$store.commit('viewloading',true);
       this.$squareAPI.filelist(this.number, this.page - 1)
@@ -112,12 +118,10 @@ export default {
         }).catch(() => {});
     },
     prePage:function(){
-      this.page = this.page>0 ? this.page-1 : 0;
-      this.getSquareList();
+      this.page = this.page>1 ? this.page-1 : 1;
     },
     nextPage:function(){
       this.page += 1;
-      this.getSquareList();
     },
     transeTime:function(mtime){
       return this.utils.transeTime(mtime);

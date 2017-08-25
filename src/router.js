@@ -10,6 +10,7 @@ import Disk from '@/views/Disk'
 import DDisk from '@/views/disk/BDDisk'
 import DM4s from '@/views/disk/M4sDisk'
 import Square from '@/views/Square'
+import About from '@/views/About'
 
 import UserInfo from '@/components/UserInfo'
 import BindingForm from '@/components/BindingForm'
@@ -37,7 +38,8 @@ const router = new Router({
     {
       path:'/',
       component:Home,
-      name:'HOME',
+      name:'',
+      hidden: true,
       redirect: { path: '/disk' },
       meta: { requiresAuth: true },
       children:[
@@ -57,6 +59,11 @@ const router = new Router({
           path: '/square',
           component: Square,
           name: '广场',
+        },
+        {
+          path: '/about',
+          component: About,
+          name: '关于',
         },
       ]
     },

@@ -34,18 +34,18 @@
               el-button(type='text')
                 i(class='el-icon-more')
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item(@click.native.prevent='downloadFiles([scope.row])') 下载
-                el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
-                el-dropdown-item(divided, @click.native.prevent='add2plaza(scope.row)') 添加到文件广场
-                el-dropdown-item(@click.native.prevent='upload2m4s(scope.row)') 转移到四酱云
+                el-dropdown-item(@click.native.prevent='downloadFiles([scope.row])') 直链下载
+                el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 坐骑下载
+                el-dropdown-item(divided, @click.native.prevent='upload2m4s(scope.row)') 转移到四酱云
+                el-dropdown-item(@click.native.prevent='add2plaza(scope.row)') 添加到广场
                 el-dropdown-item(divided, @click.native.prevent='((f)=>{curFile=f;dialogProP=true;})(scope.row)') 属性
                 el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
-        el-table-column(label='修改日期',show-overflow-tooltip,width='180')
-          template(scope="scope")
-            | {{utils.transeTime(scope.row.server_mtime)}}
         el-table-column(label='大小',width='120')
           template(scope="scope")
             | {{utils.transeSize(scope.row.size)}}
+        el-table-column(label='修改日期',show-overflow-tooltip,width='180')
+          template(scope="scope")
+            | {{utils.transeTime(scope.row.server_mtime)}}
   .dialog
     el-dialog(v-model='dialogDL',title='下载链接')
       div(v-for='item in downlinks',key = 'item')

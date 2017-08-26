@@ -5,7 +5,7 @@ class Utils{
     return Number(((a/b)*100).toFixed(2));
   }
   transeSize(size){
-    if(size==0)return '--';
+    if(size==0)return '-';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let i = Math.floor(Math.log(size) / Math.log(k));
@@ -33,9 +33,20 @@ class Utils{
   }
 
   transeTime(mtime){
-    let newDate = new Date();
-    newDate.setTime(mtime * 1000); 
-    return newDate.toLocaleString();
+    const newDate = new Date(mtime * 1000);
+    Date.prototype.Format = function (fmt) {
+      var o = {
+          "M+": this.getMonth() + 1,
+          "d+": this.getDate(),
+          "h+": this.getHours(),
+          "m+": this.getMinutes(),
+      };
+      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+      for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+      return fmt;
+    }
+    return newDate.Format("yyyy-MM-dd hh:mm");
   }
 
   pathmanager(){ return new PM() }

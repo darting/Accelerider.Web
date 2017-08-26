@@ -175,7 +175,7 @@ $color-primary: #20a0ff;//#18c79c
     top: 60px;
     bottom: 0px;
     aside {
-        width: 20%;
+        width: 15%;
         overflow: hidden;
     }
     .content-container{

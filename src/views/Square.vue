@@ -16,13 +16,13 @@
           template(scope="scope")
             el-button(type='text', @click='downloadFile(scope.row)') 下载
         el-table-column(label='分享者',prop='From', width='130')
-        el-table-column(label='分享时间',show-overflow-tooltip,width='180')
-          template(scope='scope')
-            span {{transeTime(scope.row.Time)}}
         el-table-column(label='分享留言',prop='Message',show-overflow-tooltip,width='180')
         el-table-column(label='评论数',width='90')
           template(scope='scope')
-            el-button(type='text', @click='showComments(scope.row.Comments)') {{scope.row.Comments.length}}
+            el-button(type='text', @click='showComments(scope.row)') {{scope.row.Comments.length}}
+        el-table-column(label='分享时间',show-overflow-tooltip,width='180')
+          template(scope='scope')
+            span {{utils.transeTime(scope.row.Time)}}
   el-row(type="flex")
     el-col
       el-button-group
@@ -45,11 +45,13 @@
         el-table-column(label='评论人',prop='From', width='130')
         el-table-column(label='评论时间')
           template(scope="scope")
-            span {{transeTime(scope.row.Time)}}
-      //- el-row
-      //-   el-col
-      //-     el-input(v-model='mycomment', placeholder="说点什么...")
-      //-     el-button(@click='comment') 评论
+            span {{utils.transeTime(scope.row.Time)}}
+      el-row
+        el-form(v-bind:inline='true')
+          el-form-item
+            el-input(v-model='mycomment', placeholder="说点什么...")
+          el-form-item
+            el-button(@click='comment') 评论
 </template>
 
 <script>
@@ -65,6 +67,7 @@ export default {
       downName: '',
       downlinks: [],
       dialogCm: false,
+      commentmd5: '',
       comments: [],
       mycomment: '',
     }
@@ -100,8 +103,9 @@ export default {
         this.$store.commit('viewloading',false);
         this.$message.error(e.message)});
     },
-    showComments:function(comments){
-      this.comments = comments;
+    showComments:function(plaza){
+      this.commentmd5 = plaza.Md5;
+      this.comments = plaza.Comments;
       this.dialogCm = true;
     },
     comment:function(){
@@ -110,12 +114,13 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$squareAPI.comment(token, md5, this.mycomment)
+          const token = sessionStorage.getItem('accessToken');
+          this.$squareAPI.comment(token, this.commentmd5, this.mycomment)
           .then((data)=>{
             this.$message.success(data.message);
-          })
-          .catch((e)=>{this.$message.error('评论错误。')});
-        }).catch(() => {});
+            this.getSquareList();
+          });
+        }).catch((e) => {this.$message.error('评论错误。')});
     },
     prePage:function(){
       this.page = this.page>1 ? this.page-1 : 1;
@@ -123,9 +128,6 @@ export default {
     nextPage:function(){
       this.page += 1;
     },
-    transeTime:function(mtime){
-      return this.utils.transeTime(mtime);
-    }
   },
   watch: {
     page(){

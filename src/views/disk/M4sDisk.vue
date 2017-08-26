@@ -30,14 +30,14 @@
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item(@click.native.prevent='downloadFile(scope.row)') 下载
                 el-dropdown-item(divided, @click.native.prevent='doNothing(scope.row)') 分享
-                el-dropdown-item(@click.native.prevent='add2plaza(scope.row)') 添加到文件广场
+                el-dropdown-item(@click.native.prevent='add2plaza(scope.row)') 添加到广场
                 el-dropdown-item(divided, @click.native.prevent='deleteFile(scope.row)') 删除
-        el-table-column(label='创建时间',show-overflow-tooltip,width='180')
-          template(scope='scope')
-            span {{utils.transeTime(scope.row.ctime)}}
         el-table-column(label='大小',width='120')
           template(scope='scope')
             span {{utils.transeSize(scope.row.size)}}
+        el-table-column(label='创建时间',show-overflow-tooltip,width='180')
+          template(scope='scope')
+            span {{utils.transeTime(scope.row.ctime)}}
   .dialog
     el-dialog(v-model='dialogDL',title='下载链接')
       div

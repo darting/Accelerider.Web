@@ -35,7 +35,7 @@ class SquareAPI{
       data: qs.stringify({
         md5: file.md5,
         size: file.size,
-        filename: file.server_filename,
+        filename: file.filename,
         message: msg
       })
     })

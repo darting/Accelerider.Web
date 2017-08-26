@@ -31,8 +31,8 @@ class M4API{
     .then(response =>response.data)
     .then(data=>data.message);
   }
-  vertifyco(cookies,json) { 
-    const url = 'http://localhost/api/checo'
+  vertifyco(cookies,json) { //cloud.shekd.com/v2
+    const url = 'https://localhost/api/checo'
     let cookie  = cookies
     if (json) { cookie = '';
       let c = JSON.parse(cookies)
@@ -159,7 +159,6 @@ class M4API{
   }
   downfiles(token, uk, files) {
     const url = '/filelinks';
-    let file =files
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -172,7 +171,7 @@ class M4API{
         for (let it in data) { ret += `${it}=${encodeURIComponent(data[it])}&` }
         return ret;
       }],
-      data: {"files": JSON.stringify(file)}
+      data: {"files": JSON.stringify(files)}
     })
     .then(response => response.data);
   }

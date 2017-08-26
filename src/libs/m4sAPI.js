@@ -29,6 +29,23 @@ class M4sAPI{
     })
     .then(response =>response.data.list);
   }
+  upload2m4s(token, path, md5, size){
+    const url = '/upload';
+    return this.$ajax({
+      method:'POST',
+      url: url,
+      params: {
+        token: token,
+        path: path,
+      },
+      data: qs.stringify({
+        totalMd5: md5,
+        silceMd5: md5,
+        size: size
+      })
+    })
+    .then(response => response.data);
+  }
   createFolder(token, path) {
     const url = '/cFolder';
     return this.$ajax({

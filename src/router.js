@@ -27,13 +27,11 @@ const router = new Router({
       path: '/login',
       component: Login,
       name: '',
-      hidden: true
     },
     {
       path: '/signup',
       component: Register,
       name: '',
-      hidden: true
     },
     {
       path:'/',
@@ -75,11 +73,9 @@ const router = new Router({
       path: '/404',
       component: NotFound,
       name: '',
-      hidden: true
     },
     {
       path: '*',
-      hidden: true,
       redirect: { path: '/404' }
     }
   ]

@@ -1,24 +1,26 @@
 <template lang="pug">
 .disk
   el-row(type="flex")
-    el-col
+    el-col(v-bind:span='2', v-if='utils.pathmanager().getPath() != "/"')
+      el-button(type='text',@click='backFileList',icon='arrow-left') BACK
+    el-col.breadcrumb
       el-breadcrumb(separator=">",v-bind:replace='true')
-        el-breadcrumb-item(v-for='p in _getBreadCrumb()',v-bind:to="{query:{path:p.path}}",key = 'p')
+        el-breadcrumb-item(v-for='p in utils.pathmanager().pathSegmtt()',v-bind:to="{query:{path:p.path}}",key = 'p')
           | {{p.name}}
   el-row(type="flex")
     //- el-upload(action='', v-bind:show-file-list='false')
     //-   el-button(type="primary") 上传
     el-col
-      el-button(@click='createFolder', icon='document') 新建文件夹
-      //- el-button(@click='deleteFiles', icon='delete') 删除
-  el-row(type="flex")
+      el-button-group
+        el-button(@click='createFolder', icon='document') 新建文件夹
+      el-button-group(v-if='selectedFiles.length>0')
+        el-button(@click='downloadFiles(selectedFiles)') 下载
+        el-button(@click='delSelectedFiles', icon='delete', v-bind:disabled='selectedFiles.length>6') 删除
     el-col(v-bind:span='4')
-      el-button(type='text',@click='backFileList',icon='arrow-left') BACK
-    el-col.filebread(v-bind:span='4')
       span Total: {{fileList.length}}
   el-row.frame-main
     el-col(v-loading='isLoading')
-      el-table(v-bind:data='fileList', empty-text='文件夹是空的哟', style='width:100%')
+      el-table(v-bind:data='fileList', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}', style='width:100%')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
@@ -28,18 +30,22 @@
                   | {{scope.row.server_filename}}
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
-            el-dropdown(type='text', split-button, trigger="click", @click='downloadFile(scope.row)') 下载
+            el-dropdown(trigger="click")
+              el-button(type='text')
+                i(class='el-icon-more')
               el-dropdown-menu(slot="dropdown")
+                el-dropdown-item(@click.native.prevent='downloadFiles([scope.row])') 下载
                 el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 发送到坐骑下载
-                el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
-                el-dropdown-item(@click.native.prevent='fileProperty(scope.row)') 属性
-                el-dropdown-item(divided, @click.native.prevent='deleteFile(scope.row)') 删除
-        el-table-column(label='大小',width='120')
-          template(scope="scope")
-            | {{transeSize(scope.row.size)}}
+                el-dropdown-item(divided, @click.native.prevent='add2plaza(scope.row)') 添加到文件广场
+                el-dropdown-item(@click.native.prevent='upload2m4s(scope.row)') 转移到四酱云
+                el-dropdown-item(divided, @click.native.prevent='((f)=>{curFile=f;dialogProP=true;})(scope.row)') 属性
+                el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
         el-table-column(label='修改日期',show-overflow-tooltip,width='180')
           template(scope="scope")
-            | {{transeTime(scope.row.server_mtime)}}
+            | {{utils.transeTime(scope.row.server_mtime)}}
+        el-table-column(label='大小',width='120')
+          template(scope="scope")
+            | {{utils.transeSize(scope.row.size)}}
   .dialog
     el-dialog(v-model='dialogDL',title='下载链接')
       div(v-for='item in downlinks',key = 'item')
@@ -49,9 +55,9 @@
             a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
     el-dialog(v-model='dialogProP',title='文件属性')
       p 文件名： {{curFile.server_filename}}
-      p 文件大小： {{transeSize(curFile)}}
+      p 文件大小： {{utils.transeSize(curFile)}}
       p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
-      p 修改时间： {{transeTime(curFile.server_mtime)}}
+      p 修改时间： {{utils.transeTime(curFile.server_mtime)}}
       p(v-if='curFile.isdir==0') 文件MD5： {{curFile.md5}}
 </template>
 
@@ -66,6 +72,7 @@ export default {
       dialogProP:false,
       downlinks:[],
       curFile:{},
+      selectedFiles:[],
     }
   },
   computed: {
@@ -76,12 +83,9 @@ export default {
     })
   },
   methods:{
-    _getBreadCrumb:function(){
-      let path = this.utils.pathmanager().pathSegmtt();
-      return path;
-    },
     goFileList:function(){
-      const path = this.utils.pathmanager().getPath()
+      const path = this.utils.pathmanager().getPath();
+      this.selectedFiles = [];
       this.token = sessionStorage.getItem('accessToken');
       if(this.uk.length<1)return;
       this.$store.commit('viewloading',true);
@@ -106,8 +110,7 @@ export default {
       this.$router.push({query:{path:cur}});
     },
     fileProperty:function(file){
-      this.curFile = file;
-      this.dialogProP = true;
+      this.curFile = file;this.dialogProP = true;
     },
     _fileTypeUri:function(file){
       const avalibleType = this.utils.getAvalibleType();
@@ -135,9 +138,9 @@ export default {
         this.downlinks.push(obj);
       }
     },
-    downloadFile:function(file){
+    downloadFiles:function(files){
       this.$store.commit('viewloading',true);
-	    this.$restAPI.downfiles(this.token,this.uk,[file])
+	    this.$restAPI.downfiles(this.token,this.uk,files)
       .then(data=>{
         if(data.links){this.$restAPI.vertifyco(data.cookies,true);
           return data.links
@@ -176,7 +179,7 @@ export default {
           });
         }).catch((e)=>{});
     },
-    deleteFiles:function(files){
+    delSelectedFiles:function(files){
       this.$message.info('开发中。。。欢迎提出改进建议~');
     },
     deleteFile:function(file){
@@ -193,23 +196,15 @@ export default {
           .catch((e)=>{this.$message.error('删除失败。')});
         }).catch(() => {});
     },
-    add2square:function(file){
-      this.$prompt('请输入留言', '分享到文件广场', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(({ value }) => {
-          this.$squareAPI.add2square(this.token, file, value)
-          .then(msg=>{
-            this.$message.success(msg);
-          })
-          .catch(e=>this.$message.error(e.message));
-        }).catch((e)=>{});
+    add2plaza:function(f){
+      f.filename=f.server_filename;this.$store.dispatch("add2FilePlaza",f)
     },
-    transeSize:function(size){
-      return size==0 ? '--' : this.utils.transeSize(size);
-    },
-    transeTime:function(mtime){
-      return this.utils.transeTime(mtime);
+    upload2m4s:function(file){
+      const filename = '/' + file.server_filename
+      this.$m4sAPI.upload2m4s(this.token,filename,file.md5, file.size)
+      .then(data=>{
+        this.$message.success('转移成功!');
+      }).catch((e) => {this.$message.error(e.message)});
     }
   },
   watch: {
@@ -224,7 +219,10 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+.breadcrumb{
+  margin: 10px
+}
 .file-name{ 
   line-height: 40px;
   .fileicon{

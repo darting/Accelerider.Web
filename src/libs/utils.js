@@ -5,6 +5,7 @@ class Utils{
     return Number(((a/b)*100).toFixed(2));
   }
   transeSize(size){
+    if(size==0)return '--';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let i = Math.floor(Math.log(size) / Math.log(k));

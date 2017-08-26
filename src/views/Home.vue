@@ -176,12 +176,11 @@ $color-primary: #20a0ff;//#18c79c
     bottom: 0px;
     aside {
         width: 20%;
-        overflow-y: scroll;
+        overflow: hidden;
     }
     .content-container{
       flex:1;
-      height: 100%;
-      overflow: auto;
+      overflow-y: scroll;
       .content-wrapper {
         background-color: #fff;
         box-sizing: border-box;

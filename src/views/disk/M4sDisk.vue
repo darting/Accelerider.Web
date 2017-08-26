@@ -1,7 +1,9 @@
 <template lang="pug">
 .m4sdisk
   el-row(type="flex")
-    el-col
+    el-col(v-bind:span='2', v-if='utils.pathmanager().getPath() != "/"')
+      el-button(type='text',@click='backFileList',icon='arrow-left') BACK
+    el-col.breadcrumb
       el-breadcrumb(separator=">",v-bind:replace='true')
         el-breadcrumb-item(v-for='p in utils.pathmanager().pathSegmtt()',v-bind:to="{query:{path:p.path}}",key = 'p')
           | {{p.name}}
@@ -9,10 +11,7 @@
     el-col
       el-button(@click='createFolder', icon='document') 新建文件夹
       //- el-button(@click='deleteFiles', icon='delete') 删除
-  el-row(type="flex")
     el-col(v-bind:span='4')
-      el-button(type='text',@click='backFileList',icon='arrow-left') BACK
-    el-col.filebread(v-bind:span='4')
       span Total: {{filelist.length}}
   el-row
     el-col(v-loading='isLoading')
@@ -25,17 +24,20 @@
                   | {{scope.row.fileName}}
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
-            el-dropdown(type='text', split-button, trigger="click", @click='downloadFile(scope.row)') 下载
+            el-dropdown(trigger="click")
+              el-button(type='text')
+                i(class='el-icon-more')
               el-dropdown-menu(slot="dropdown")
-                el-dropdown-item(@click.native.prevent='doNothing(scope.row)') 分享
-                el-dropdown-item(@click.native.prevent='add2square(scope.row)') 添加到文件广场
+                el-dropdown-item(@click.native.prevent='downloadFile(scope.row)') 下载
+                el-dropdown-item(divided, @click.native.prevent='doNothing(scope.row)') 分享
+                el-dropdown-item(@click.native.prevent='add2plaza(scope.row)') 添加到文件广场
                 el-dropdown-item(divided, @click.native.prevent='deleteFile(scope.row)') 删除
-        el-table-column(label='大小',width='100')
-          template(scope='scope')
-            span {{transeSize(scope.row.size)}}
         el-table-column(label='创建时间',show-overflow-tooltip,width='180')
           template(scope='scope')
-            span {{transeTime(scope.row.ctime)}}
+            span {{utils.transeTime(scope.row.ctime)}}
+        el-table-column(label='大小',width='120')
+          template(scope='scope')
+            span {{utils.transeSize(scope.row.size)}}
   .dialog
     el-dialog(v-model='dialogDL',title='下载链接')
       div
@@ -65,7 +67,7 @@ export default {
   },
   methods:{
     goFileList:function(){
-      const path = this.utils.pathmanager().getPath()
+      const path = this.utils.pathmanager().getPath();
       this.token = sessionStorage.getItem('accessToken');
       this.$store.commit('viewloading',true);
       this.$m4sAPI.filelist(this.token,path)
@@ -139,26 +141,11 @@ export default {
           .catch((e)=>{this.$message.error('删除失败。')});
         }).catch(() => {});
     },
-    add2square:function(file){
-      this.$prompt('请输入留言', '分享到文件广场', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(({ value }) => {
-          this.$squareAPI.add2square(this.token, file, value)
-          .then(msg=>{
-            this.$message.success(msg);
-          })
-          .catch(e=>this.$message.error(e.message));
-        }).catch((e)=>{});
+    add2plaza:function(f){
+      f.filename=f.fileName;this.$store.dispatch("add2FilePlaza",f)
     },
     doNothing:function(){
       this.$message.info('没有效果哟～');
-    },
-    transeSize:function(size){
-      return size==0 ? '--' : this.utils.transeSize(size);
-    },
-    transeTime:function(mtime){
-      return this.utils.transeTime(mtime);
     }
   },
   watch: {
@@ -169,19 +156,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-.file-name{ 
-  line-height: 40px;
-  .fileicon{
-    vertical-align:middle;
-    margin-right: 5px;
-  }
-  .open-enable{
-    cursor: pointer;
-  }
-  .normal{
-    cursor: default;
-  }
-}
-</style>

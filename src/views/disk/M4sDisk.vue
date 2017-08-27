@@ -12,15 +12,15 @@
       el-button(@click='createFolder', icon='document') 新建文件夹
       //- el-button(@click='deleteFiles', icon='delete') 删除
     el-col(v-bind:span='4')
-      span Total: {{filelist.length}}
+      span Total: {{m4sfilelist.length}}
   el-row
     el-col(v-loading='isLoading')
-      el-table(v-bind:data='filelist', empty-text='文件夹是空的哟', style='width:100%')
+      el-table(v-bind:data='m4sfilelist', empty-text='文件夹是空的哟', style='width:100%')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
             el-col(v-bind:span='19').file-name
-              img.fileicon(v-bind:src='_fileTypeUri(scope.row)',height=30)
-              span(v-bind:class="scope.row.dir == 1 ? 'open-enable': 'normal'", @click='changefilepath(scope.row)')
+              img.fileicon(v-bind:src='_fileTypeUri(scope.row.fileName, scope.row.dir)',height=30)
+              span(v-bind:class="scope.row.dir == 1 ? 'open-enable': 'normal'", @click='changefilepath(scope.row,scope.row.dir)')
                   | {{scope.row.fileName}}
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
@@ -30,7 +30,7 @@
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item(@click.native.prevent='downloadFile(scope.row)') 下载
                 el-dropdown-item(divided, @click.native.prevent='doNothing(scope.row)') 分享
-                el-dropdown-item(@click.native.prevent='add2plaza(scope.row)') 添加到广场
+                el-dropdown-item(@click.native.prevent='add2plaza($squareAPI,scope.row,scope.row.fileName)') 添加到广场
                 el-dropdown-item(divided, @click.native.prevent='deleteFile(scope.row)') 删除
         el-table-column(label='大小',width='120')
           template(scope='scope')
@@ -48,22 +48,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {diskmixin} from '@/components/mixins/diskmixin'
 export default {
   name: 'webdisk',
+  mixins: [diskmixin],
   data () {
     return {
-      token: '',
-      dialogDL:false,
-      downlinks:[],
-      curFile:{},
     }
-  },
-  computed:{
-    ...mapGetters({
-      isLoading:'isLoading',
-      filelist:'m4sfilelist',
-    })
   },
   methods:{
     goFileList:function(){
@@ -73,31 +64,12 @@ export default {
       this.$m4sAPI.filelist(this.token,path)
       .then(list=>{
         this.$store.commit('viewloading',false);
-        this.$store.dispatch('m4sfilelist',list);
+        this.$store.dispatch('filelist',{list:list,ism4s:true});
       })
       .catch((e)=>{
         this.$store.commit('viewloading',false);
         this.$message.error(e.message);
       });
-    },
-    changefilepath:function(file){
-      if(file.dir==0)return;
-      this.$router.push({query:{path:file.path}});
-    },
-    backFileList:function(){
-      const cur = this.utils.pathmanager().getBackPath();
-      this.$router.push({query:{path:cur}});
-    },
-    _fileTypeUri:function(file){
-      const avalibleType = this.utils.getAvalibleType();
-      const movie = ['rmvb','mkv']
-      const filename=file.fileName;
-      let type = this.utils.fileType(filename);
-      type =  this.utils.ArrContains(avalibleType, type) ? type : 'default';
-      type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
-      const filetype = file.dir==0 ? type : 'folder_win10';
-      const typeUri = `./static/icons/${filetype}.png`;
-      return typeUri;
     },
     downloadFile:function(file){
       this.$store.commit('viewloading',true);
@@ -140,9 +112,6 @@ export default {
           })
           .catch((e)=>{this.$message.error('删除失败。')});
         }).catch(() => {});
-    },
-    add2plaza:function(f){
-      f.filename=f.fileName;this.$store.dispatch("add2FilePlaza",f)
     },
     doNothing:function(){
       this.$message.info('没有效果哟～');

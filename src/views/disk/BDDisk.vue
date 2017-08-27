@@ -17,16 +17,16 @@
         el-button(@click='downloadFiles(selectedFiles)') 下载
         el-button(@click='delSelectedFiles', icon='delete', v-bind:disabled='selectedFiles.length>6') 删除
     el-col(v-bind:span='4')
-      span Total: {{fileList.length}}
+      span Total: {{filelist.length}}
   el-row.frame-main
     el-col(v-loading='isLoading')
-      el-table(v-bind:data='fileList', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}', style='width:100%')
+      el-table(v-bind:data='filelist', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}', style='width:100%')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
             el-col(v-bind:span='19').file-name
-              img.fileicon(v-bind:src='_fileTypeUri(scope.row)',height=30)
-              span(v-bind:class="scope.row.isdir == 1? 'open-enable': 'normal'", @click='changefilepath(scope.row)')
+              img.fileicon(v-bind:src='_fileTypeUri(scope.row.server_filename,scope.row.isdir)',height=30)
+              span(v-bind:class="scope.row.isdir == 1? 'open-enable': 'normal'", @click='changefilepath(scope.row,scope.row.isdir)')
                   | {{scope.row.server_filename}}
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
@@ -37,7 +37,7 @@
                 el-dropdown-item(@click.native.prevent='downloadFiles([scope.row])') 直链下载
                 el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 坐骑下载
                 el-dropdown-item(divided, @click.native.prevent='upload2m4s(scope.row)') 转移到四酱云
-                el-dropdown-item(@click.native.prevent='add2plaza(scope.row)') 添加到广场
+                el-dropdown-item(@click.native.prevent='add2plaza($squareAPI,scope.row, scope.row.server_filename)') 添加到广场
                 el-dropdown-item(divided, @click.native.prevent='((f)=>{curFile=f;dialogProP=true;})(scope.row)') 属性
                 el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
         el-table-column(label='大小',width='120')
@@ -62,25 +62,15 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {diskmixin} from '@/components/mixins/diskmixin'
 export default {
   name: 'webdisk',
+  mixins: [diskmixin],
   data () {
     return {
-      token: '',
-      dialogDL:false,
       dialogProP:false,
-      downlinks:[],
-      curFile:{},
       selectedFiles:[],
     }
-  },
-  computed: {
-    ...mapGetters({
-      isLoading:'isLoading',
-      uk:'uk',
-      fileList:'filelist',
-    })
   },
   methods:{
     goFileList:function(){
@@ -92,7 +82,7 @@ export default {
 	    this.$restAPI.filelist(this.token,this.uk,path)
       .then(list=>{
         this.$store.commit('viewloading',false);
-        this.$store.dispatch('filelist',list);
+        this.$store.dispatch('filelist',{list:list});
       })
       .catch((e)=>{
         this.$store.commit('viewloading',false);
@@ -101,31 +91,8 @@ export default {
         }else{this.$message.error(e.message)}
         });
     },
-    changefilepath:function(file){
-      if(file.isdir==0)return;
-      this.$router.push({query:{path:file.path}});
-    },
-    backFileList:function(){
-      const cur = this.utils.pathmanager().getBackPath();
-      this.$router.push({query:{path:cur}});
-    },
     fileProperty:function(file){
       this.curFile = file;this.dialogProP = true;
-    },
-    _fileTypeUri:function(file){
-      const avalibleType = this.utils.getAvalibleType();
-      const movie = ['rmvb','mkv']
-      const filename=file.server_filename;
-      let type = this.utils.fileType(filename);
-      type =  this.utils.ArrContains(avalibleType, type) ? type : 'default';
-      type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
-      const filetype = file.isdir==0 ? type : 'folder_win10';
-      const typeUri = `./static/icons/${filetype}.png`;
-      return typeUri;
-    },
-    mediable:function(filename){
-      const a = ['mp4','rmvb','mkv']
-      return this.utils.ArrContains(a,this.utils.fileType(filename));
     },
     parseDownLinks:function(links){
       this.dialogDL = true;
@@ -195,9 +162,6 @@ export default {
           })
           .catch((e)=>{this.$message.error('删除失败。')});
         }).catch(() => {});
-    },
-    add2plaza:function(f){
-      f.filename=f.server_filename;this.$store.dispatch("add2FilePlaza",f)
     },
     upload2m4s:function(file){
       const filename = '/' + file.server_filename

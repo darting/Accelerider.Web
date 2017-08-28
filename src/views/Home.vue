@@ -11,7 +11,7 @@ el-row.container
           img(v-bind:src='userInfo.avatar_url')
           | {{userInfo.Name}}
         el-dropdown-menu(slot="dropdown")
-          el-dropdown-item 用量:{{percentSize(userInfo.used,userInfo.total)}}%
+          el-dropdown-item 用量:{{utils.percentSize(userInfo.used,userInfo.total)}}%
           el-dropdown-item(@click.native='changeUser') 切换帐号
           el-dropdown-item(divided, @click.native='logout') 退出登录
   el-col.main
@@ -27,7 +27,7 @@ el-row.container
           el-menu-item(v-bind:index="item.path", v-if="!item.children")
             i(v-bind:class="item.iconCls") {{item.name}}
       el-row
-        el-progress(type="circle", v-bind:percentage="percentSize(userInfo.used,userInfo.total)")
+        el-progress(type="circle", v-bind:percentage="utils.percentSize(userInfo.used,userInfo.total)")
     section.content-container
       .content-wrapper(type='flex', v-bind:span='24')
         el-card
@@ -96,12 +96,9 @@ export default {
         this.$store.dispatch('BDuserInfo',info);
       });
     },
-    percentSize:function(a,b){
-      return this.utils.percentSize(a,b);
-    },
     logout:function(){
       this.$confirm('确认退出吗?', '提示', {
-        //type: 'warning'
+        type: 'warning'
       }).then(() => {
         sessionStorage.removeItem('accessToken');
         localStorage.removeItem('autologin');
@@ -176,6 +173,7 @@ $color-primary: #20a0ff;//#18c79c
     bottom: 0px;
     aside {
         width: 15%;
+        min-width: 180px;
         overflow: hidden;
     }
     .content-container{
@@ -188,5 +186,4 @@ $color-primary: #20a0ff;//#18c79c
     }
   }
 }
-
 </style>

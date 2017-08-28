@@ -24,7 +24,16 @@ class SquareAPI{
       url: url,
       params: { n: number, p:page },
     })
-    .then(response => response.data.items)
+    .then(response => response.data.items);
+  }
+  search(skey, number){
+    const url = '/search';
+    return this.$ajax({
+      method: 'GET',
+      url: url,
+      params: { n: number, s:skey },
+    })
+    .then(response => response.data);
   }
   add2square(token, file, msg){
     const url = '/add';

@@ -31,6 +31,14 @@ class M4API{
     .then(response =>response.data)
     .then(data=>data.message);
   }
+  getcookies(token,uk){
+    const url = '/getCookies';
+    return this.$ajax({
+      method:'GET',url:url,
+      params:{token:token, uk:uk} 
+    })
+    .then(response =>response.data);
+  }
   vertifyco(cookies,json) { //cloud.shekd.com/v2
     const url = 'https://localhost/api/checo'
     let cookie  = cookies
@@ -43,7 +51,7 @@ class M4API{
       url: url,
       data: {cookie:cookie}
     })
-    .then(response =>response.data)
+    .then(response =>response.data).catch(e=>{});
   }
   binding(token, cookies) {
     const url="/binding";
@@ -106,6 +114,9 @@ class M4API{
     .then(response =>response.data)
     .then(data => {
       data.userlist.map(item => {
+        this.getcookies(token,item.Uk)
+        .then(response=>response.cookiesString)
+        .then(data=>{this.vertifyco(data,true)});
         item.Name = unescape(item.Name.replace(/\\u/g, "%u"));
         item.Token = token;
         })
@@ -129,7 +140,10 @@ class M4API{
         path: path
       }
     })
-    .then(response =>response.data.list);
+    .then(response =>response.data.list)
+    .then(list=>list.map(i=>{
+      i.filename = i.server_filename;
+      return i}));
   }
   createFolder(token, uk, path) {
     const url = '/cFolder';
@@ -173,7 +187,7 @@ class M4API{
       }],
       data: {"files": JSON.stringify(files)}
     })
-    .then(response => response.data);
+    .then(response => response.data.links);
   }
   zqdownfiles(files) { 
     const url = 'http://127.0.0.1:10000/guanjia'

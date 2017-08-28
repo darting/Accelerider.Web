@@ -10,18 +10,18 @@
   el-row(type="flex")
     el-col
       el-button(@click='createFolder', icon='document') 新建文件夹
-      //- el-button(@click='deleteFiles', icon='delete') 删除
+      el-button(@click='pasteHere', icon='paste', v-if='clipboard!=null') 粘贴
     el-col(v-bind:span='4')
       span Total: {{m4sfilelist.length}}
   el-row
     el-col(v-loading='isLoading')
-      el-table(v-bind:data='m4sfilelist', empty-text='文件夹是空的哟', style='width:100%')
+      el-table.filelist(v-bind:data='m4sfilelist', empty-text='文件夹是空的哟', style='width:100%')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
             el-col(v-bind:span='19').file-name
-              img.fileicon(v-bind:src='_fileTypeUri(scope.row.fileName, scope.row.dir)',height=30)
-              span(v-bind:class="scope.row.dir == 1 ? 'open-enable': 'normal'", @click='changefilepath(scope.row,scope.row.dir)')
-                  | {{scope.row.fileName}}
+              img.fileicon(v-bind:src='_fileTypeUri(scope.row)',height=30)
+              span(v-bind:class="scope.row.dir == 1 ? 'open-enable': 'normal'", @click='changefilepath(scope.row)')
+                  | {{scope.row.filename}}
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
             el-dropdown(trigger="click")
@@ -29,13 +29,14 @@
                 i(class='el-icon-more')
               el-dropdown-menu(slot="dropdown")
                 el-dropdown-item(@click.native.prevent='downloadFile(scope.row)') 下载
+                el-dropdown-item(divided, @click.native.prevent='copy2clipboard(scope.row.path)') 复制
                 el-dropdown-item(divided, @click.native.prevent='doNothing(scope.row)') 分享
-                el-dropdown-item(@click.native.prevent='add2plaza($squareAPI,scope.row,scope.row.fileName)') 添加到广场
+                el-dropdown-item(@click.native.prevent='add2plaza($squareAPI,scope.row)') 添加到广场
                 el-dropdown-item(divided, @click.native.prevent='deleteFile(scope.row)') 删除
         el-table-column(label='大小',width='120')
           template(scope='scope')
             span {{utils.transeSize(scope.row.size)}}
-        el-table-column(label='创建时间',show-overflow-tooltip,width='180')
+        el-table-column(label='创建时间',show-overflow-tooltip,width='160')
           template(scope='scope')
             span {{utils.transeTime(scope.row.ctime)}}
   .dialog
@@ -54,6 +55,7 @@ export default {
   mixins: [diskmixin],
   data () {
     return {
+      clipboard:null
     }
   },
   methods:{
@@ -75,47 +77,43 @@ export default {
       this.$store.commit('viewloading',true);
       this.curFile = file;
 	    this.$m4sAPI.downfiles(this.token,file.path)
-      .then(data=>{
-        if(data.links){
+      .then(links=>{
+        if(links.length>0){
           this.$store.commit('viewloading',false);
           this.dialogDL = true;
-          this.downlinks = data.links;
+          this.downlinks = links;
         }else{throw new Error(data.message)}
       })
       .catch((e)=>{
         this.$store.commit('viewloading',false);
         this.$message.error(e.message)});
     },
-    createFolder:function(){
-      this.$prompt('默认新建在当前目录，请输入文件夹名称：', '新建文件夹', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(({ value }) => {
-          const path = this.utils.pathmanager().getPath() +'/' + value;
-          this.$m4sAPI.createFolder(this.token,path)
-          .then(data=>{
-            this.$message.success('创建成功!');
-            this.goFileList();
-          });
-        }).catch((e)=>{});
+    createfolderapi:function(value){
+      const path = this.utils.pathmanager().getPath() +'/' + value;
+      this.$m4sAPI.createFolder(this.token,path)
+      .then(data=>{
+        this.$message.success('创建成功!');
+        this.goFileList();
+      });
     },
-    deleteFile:function(file){
-      this.$confirm(`确认删除文件(夹)'${file.fileName}'吗?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$m4sAPI.deletefile(this.token, file.path)
-          .then((data)=>{
-            this.$message.success('删除成功!');
-            this.goFileList();
-          })
-          .catch((e)=>{this.$message.error('删除失败。')});
-        }).catch(() => {});
+    copy2clipboard:function(filepath){
+      this.clipboard = filepath;
     },
-    doNothing:function(){
-      this.$message.info('没有效果哟～');
-    }
+    pasteHere:function(){
+      let topath = this.utils.pathmanager().getPath();
+      topath += '/' + this.clipboard.fileName;
+      this.$m4sAPI.copyFile(this.token,this.clipboard,topath)
+      .then(a=>{this.$message.success('复制成功!');this.goFileList()})
+      .catch(e=>this.$message.error(e.message));
+    },
+    deleteFileapi:function(filepath){
+      this.$m4sAPI.deletefile(this.token, filepath)
+      .then((data)=>{
+        this.$message.success('删除成功!');
+        this.goFileList();
+      })
+      .catch((e)=>{this.$message.error('删除失败。')});
+    },
   },
   watch: {
     "$route": "goFileList"

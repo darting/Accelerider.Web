@@ -27,7 +27,11 @@ class M4sAPI{
         path: path
       }
     })
-    .then(response =>response.data.list);
+    .then(response =>response.data.list)
+    .then(list=>list.map(i=>{
+      i.filename = i.fileName;
+      i.isdir = i.dir;
+      return i}));
   }
   upload2m4s(token, path, md5, size){
     const url = '/upload';
@@ -93,7 +97,7 @@ class M4sAPI{
         path: path,
       },
     })
-    .then(response => response.data);
+    .then(response => response.data.links);
   }
 }
 

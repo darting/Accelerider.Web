@@ -1,37 +1,41 @@
 <template lang="pug">
 .square
-  el-row(type="flex")
+  el-row(type="flex", v-bind:gutter='50')
     el-col
       el-button-group
-        el-button(type="info", icon="arrow-left", @click='prePage()') 上一页
-        el-button(type="info", @click='nextPage()') 下一页
+        el-button(type="info",size="small", icon="arrow-left", @click='prePage()') 上一页
+        el-button(type="info",size="small", @click='nextPage()') 下一页
           i(class='el-icon-arrow-right el-icon--right')
     el-col
+      el-input(v-model='searchs',size="small", icon="search", v-bind:on-icon-click='searchplaza',@keyup.enter.native='searchplaza')
+    el-col
       span 当前页码:
-      el-input-number(v-model='page', v-bind:min="1")
+      el-input-number(v-model='page',size="small", v-bind:min="1")
   el-row(type="flex", v-loading='isLoading')
     el-table(v-bind:data='filelist', empty-text='你来到了空无一人的广场', style='width:100%')
         el-table-column(label='文件名',prop='FileName',show-overflow-tooltip,min-width='200')
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
             el-button(type='text', @click='downloadFile(scope.row)') 下载
-        el-table-column(label='分享者',prop='From', width='130')
+        el-table-column(label='分享者',prop='From', width='140')
         el-table-column(label='分享留言',prop='Message',show-overflow-tooltip,width='180')
-        el-table-column(label='评论数',width='90')
+        el-table-column(label='评论数',width='80')
           template(scope='scope')
             el-button(type='text', @click='showComments(scope.row)') {{scope.row.Comments.length}}
-        el-table-column(label='分享时间',show-overflow-tooltip,width='180')
+        el-table-column(label='分享时间',show-overflow-tooltip,width='160')
           template(scope='scope')
             span {{utils.transeTime(scope.row.Time)}}
-  el-row(type="flex")
+  el-row(type="flex", v-bind:gutter='50')
     el-col
       el-button-group
-        el-button(type="info", icon="arrow-left", @click='prePage()') 上一页
-        el-button(type="info", @click='nextPage()') 下一页
+        el-button(type="info",size="small", icon="arrow-left", @click='prePage()') 上一页
+        el-button(type="info",size="small", @click='nextPage()') 下一页
           i(class='el-icon-arrow-right el-icon--right')
     el-col
+      el-input(v-model='searchs',size="small", icon="search", v-bind:on-icon-click='searchplaza',@keyup.enter.native='searchplaza')
+    el-col
       span 当前页码:
-      el-input-number(v-model='page', v-bind:min="1")
+      el-input-number(v-model='page',size="small", v-bind:min="1")
   .dialog
     el-dialog(v-model='dialogDL',title='下载链接')
       div()
@@ -70,6 +74,7 @@ export default {
       commentmd5: '',
       comments: [],
       mycomment: '',
+      searchs: '',
     }
   },
   computed: {
@@ -86,6 +91,16 @@ export default {
         this.$store.commit('viewloading',false);
         this.filelist = list;
       })
+      .catch(e=>{
+        this.$store.commit('viewloading',false);
+        this.$message.error(e.message)});;
+    },
+    searchplaza:function(){
+      this.$store.commit('viewloading',true);
+      this.$squareAPI.search(this.searchs, 100)
+      .then(data=>{
+        this.$store.commit('viewloading',false);
+        this.filelist=data.items})
       .catch(e=>{
         this.$store.commit('viewloading',false);
         this.$message.error(e.message)});;

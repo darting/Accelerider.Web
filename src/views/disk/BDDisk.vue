@@ -11,23 +11,22 @@
     //- el-upload(action='', v-bind:show-file-list='false')
     //-   el-button(type="primary") 上传
     el-col
-      el-button-group
-        el-button(@click='createFolder', icon='document') 新建文件夹
+      el-button(@click='createFolder', icon='document') 新建文件夹
       el-button-group(v-if='selectedFiles.length>0')
         el-button(@click='downloadFiles(selectedFiles)') 下载
-        el-button(@click='delSelectedFiles', icon='delete', v-bind:disabled='selectedFiles.length>6') 删除
+        el-button(@click='doNothing', icon='delete', v-bind:disabled='selectedFiles.length>6') 删除
     el-col(v-bind:span='4')
       span Total: {{filelist.length}}
   el-row.frame-main
     el-col(v-loading='isLoading')
-      el-table(v-bind:data='filelist', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}', style='width:100%')
+      el-table.filelist(v-bind:data='filelist', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}', style='width:100%')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
             el-col(v-bind:span='19').file-name
-              img.fileicon(v-bind:src='_fileTypeUri(scope.row.server_filename,scope.row.isdir)',height=30)
-              span(v-bind:class="scope.row.isdir == 1? 'open-enable': 'normal'", @click='changefilepath(scope.row,scope.row.isdir)')
-                  | {{scope.row.server_filename}}
+              img.fileicon(v-bind:src='_fileTypeUri(scope.row)',height=30)
+              span(v-bind:class="scope.row.isdir == 1? 'open-enable': 'normal'", @click='changefilepath(scope.row)')
+                  | {{scope.row.filename}}
         el-table-column(label='-',show-overflow-tooltip,width='100')
           template(scope="scope")
             el-dropdown(trigger="click")
@@ -37,13 +36,13 @@
                 el-dropdown-item(@click.native.prevent='downloadFiles([scope.row])') 直链下载
                 el-dropdown-item(@click.native.prevent='downloadFromM4s(scope.row)') 坐骑下载
                 el-dropdown-item(divided, @click.native.prevent='upload2m4s(scope.row)') 转移到四酱云
-                el-dropdown-item(@click.native.prevent='add2plaza($squareAPI,scope.row, scope.row.server_filename)') 添加到广场
+                el-dropdown-item(@click.native.prevent='add2plaza($squareAPI,scope.row)') 添加到广场
                 el-dropdown-item(divided, @click.native.prevent='((f)=>{curFile=f;dialogProP=true;})(scope.row)') 属性
                 el-dropdown-item(@click.native.prevent='deleteFile(scope.row)') 删除
         el-table-column(label='大小',width='120')
           template(scope="scope")
             | {{utils.transeSize(scope.row.size)}}
-        el-table-column(label='修改日期',show-overflow-tooltip,width='180')
+        el-table-column(label='修改日期',show-overflow-tooltip,width='160')
           template(scope="scope")
             | {{utils.transeTime(scope.row.server_mtime)}}
   .dialog
@@ -108,11 +107,6 @@ export default {
     downloadFiles:function(files){
       this.$store.commit('viewloading',true);
 	    this.$restAPI.downfiles(this.token,this.uk,files)
-      .then(data=>{
-        if(data.links){this.$restAPI.vertifyco(data.cookies,true);
-          return data.links
-        }else{throw new Error(data.message)}
-      })
       .then(links=>{
         this.$store.commit('viewloading',false);
         this.parseDownLinks(links);
@@ -133,35 +127,21 @@ export default {
        .catch((e)=>{
         this.$message.error('阿哦，出错了诶？是不是没有打开坐骑呢?')});
     },
-    createFolder:function(){
-      this.$prompt('默认新建在当前目录，请输入文件夹名称：', '新建文件夹', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(({ value }) => {
-          const path = this.utils.pathmanager().getPath() +'/' + value;
-          this.$restAPI.createFolder(this.token,this.uk,path)
-          .then(data=>{
-            this.$message.success('创建成功!');
-            this.goFileList();
-          });
-        }).catch((e)=>{});
+    createfolderapi:function(value){
+      const path = this.utils.pathmanager().getPath() +'/' + value;
+      this.$restAPI.createFolder(this.token,this.uk,path)
+      .then(data=>{
+        this.$message.success('创建成功!');
+        this.goFileList();
+      });
     },
-    delSelectedFiles:function(files){
-      this.$message.info('开发中。。。欢迎提出改进建议~');
-    },
-    deleteFile:function(file){
-      this.$confirm(`确认将文件(夹)'${file.server_filename}'放入回收站?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$restAPI.deletefile(this.token,this.uk,file.path)
-          .then((data)=>{
-            this.$message.success('删除成功!');
-            this.goFileList();
-          })
-          .catch((e)=>{this.$message.error('删除失败。')});
-        }).catch(() => {});
+    deleteFileapi:function(filepath){
+      this.$restAPI.deletefile(this.token,this.uk,filepath)
+      .then((data)=>{
+        this.$message.success('删除成功!');
+        this.goFileList();
+      })
+      .catch((e)=>{this.$message.error('删除失败。')});
     },
     upload2m4s:function(file){
       const filename = '/' + file.server_filename

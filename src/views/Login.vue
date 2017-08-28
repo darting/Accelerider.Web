@@ -34,40 +34,41 @@ export default {
       autologin: false,
     }
   },
-  computed:{
-    ...mapGetters ({
-      logining:'logining',
+  computed: {
+    ...mapGetters({
+      logining: 'logining',
     })
   },
-  methods:{
-    register:function(){
-      this.$router.push({path:"/signup"});
+  methods: {
+    register: function(){
+      this.$router.push({path: '/signup'});
     },
-    login:function(){
+    login: function(){
       this.$store.commit('logining',true);
-	    this.$restAPI.login(this.loginForm.account, this.loginForm.password)
+      this.$restAPI.login(this.loginForm.account, this.loginForm.password)
       .then((token)=>{
-        if(this.autologin){
+        if (this.autologin) {
           this.$store.dispatch('autologin',{
-            username:this.loginForm.account,
-            pwd:this.loginForm.password});
+            username: this.loginForm.account,
+            pwd: this.loginForm.password});
         }
         this.$store.commit('logining',false);
-        this.$store.commit('loginsuccess',{token:token});
+        this.$store.commit('loginsuccess',{token: token});
         const q = this.utils.pathmanager().getQuery();
         const redirect = q.redirect || '/disk'
-        this.$router.push({path:redirect});
+        this.$router.push({path: redirect});
       })
       .catch((err)=>{
         this.$store.commit('logining',false);
-        this.$store.commit('loginfailed',{emsg:err.message || '登录失败'});
+        this.$store.commit('loginfailed',{emsg: err.message || '登录失败'});
         this.$message.error(err.message)
       });
     }
   },
   mounted(){
     let a = localStorage.getItem('autologin');
-    if(a){ a = JSON.parse(a);
+    if (a) {
+      a = JSON.parse(a);
       this.loginForm.account = a.username;
       this.loginForm.password = a.pwd;
       this.login();

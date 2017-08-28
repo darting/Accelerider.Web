@@ -19,8 +19,8 @@ class PathManager {
   getPage(){ return this.page }
 
   getBackPath(){
-    const sq = this.path.split('/');sq.pop()
-    let back = '/';if(sq.length>1)back = sq.join('/')
+    const sq = this.path.split('/'); sq.pop()
+    let back = '/'; if (sq.length > 1) back = sq.join('/')
     return back
   }
 
@@ -35,7 +35,7 @@ class PathManager {
       rlt.push( {name:name, path:cur} )
       cur = paths.join('/')
     }
-    rlt.push({name:'全部文件',path:'/'})
+    rlt.push({name:'全部文件', path:'/'})
     rlt.reverse()
     return rlt
   }

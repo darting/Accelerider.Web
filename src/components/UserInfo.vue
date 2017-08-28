@@ -16,33 +16,33 @@ export default {
   name: 'userinfo',
   data () {
     return {
-       userInfos:[],
-       infoLoading:true
+      userInfos: [],
+      infoLoading: true
     }
   },
-  methods:{
-    gotoDisk:function(uk){
-      this.$store.dispatch('BDuser',uk);
+  methods: {
+    gotoDisk: function (uk) {
+      this.$store.dispatch('BDuser', uk)
     },
-    getToken:function(){
+    getToken: function () {
       return sessionStorage.getItem('accessToken')
     },
-    getUserList:function(){
-      this.userInfos = [];
-      const token = this.getToken();
-	    this.$restAPI.userlist(token)
+    getUserList: function () {
+      this.userInfos = []
+      const token = this.getToken()
+      this.$restAPI.userlist(token)
       .then(reps=>{
-        this.infoLoading = false;
-        for (let i in reps)
-          reps[i].then(data => {this.userInfos.push(data)})
+        this.infoLoading = false
+        for (let i in reps)reps[i].then(data => this.userInfos.push(data))
       })
       .catch((err)=>{
-        this.infoLoading = false;
-        this.$message.error(err)});
+        this.infoLoading = false
+        this.$message.error(err)
+      })
     }
   },
-  mounted(){
-    this.getUserList();
+  mounted () {
+    this.getUserList()
   }
 }
 </script>

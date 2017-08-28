@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PM from './pathmanager'
 
 class Utils{

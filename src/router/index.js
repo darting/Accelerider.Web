@@ -26,45 +26,42 @@ const router = new Router({
     {
       path: '/login',
       component: Login,
-      name: '',
     },
     {
       path: '/signup',
       component: Register,
-      name: '',
     },
     {
       path:'/',
       component:Home,
-      name:'',
       redirect: { path: '/disk' },
       meta: { requiresAuth: true },
       children:[
         {
-          path: '/disk', component:Disk, name:'网盘',
+          path: '/disk', name:'网盘', component:Disk,
           iconCls: 'el-icon-plus',
           redirect: { path: '/disk/home' },
           children:[
             {
-              path:'home', component:DDisk, name:'百度云',
+              path:'home', name:'百度云', component:DDisk,
               iconCls: 'el-icon-upload',
             },
             {
-              path:'m4s', component:DM4s, name:'四酱云',
+              path:'m4s', name:'四酱云', component:DM4s,
               iconCls: 'el-icon-document',
             },
           ]
         },
         {
           path: '/square',
-          component: Square,
           name: '广场',
+          component: Square,
           iconCls: 'el-icon-view',
         },
         {
           path: '/about',
-          component: About,
           name: '关于',
+          component: About,
           iconCls: 'el-icon-information',
         },
       ]
@@ -72,7 +69,6 @@ const router = new Router({
     {
       path: '/404',
       component: NotFound,
-      name: '',
     },
     {
       path: '*',

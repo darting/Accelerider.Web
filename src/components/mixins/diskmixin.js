@@ -27,7 +27,7 @@ export const diskmixin = {
         const cur = this.utils.pathmanager().getBackPath();
         this.$router.push({query:{path:cur}});
       },
-      createFolder:function(){
+      createFolder: function() {
         this.$prompt('默认新建在当前目录，请输入文件夹名称：', '新建文件夹', {
             inputValue: '新建文件夹',
             confirmButtonText: '确定',
@@ -36,16 +36,16 @@ export const diskmixin = {
             this.createfolderapi(value);
           }).catch((e)=>{});
       },createfolderapi:function(){},
-      deleteFile:function(file){
+      deleteFile: function (file) {
         this.$confirm(`确认删除文件(夹)'${file.filename}'吗?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
+        }).then(()=>{
           this.deleteFileapi(file.path);
-        }).catch(() => {});
+        }).catch(()=>{});
       },
-      add2plaza:function(api,f){
+      add2plaza: function (api, f) {
         this.$prompt('请输入留言', '添加到文件广场', {
             inputValue: '无',
             confirmButtonText: '确定',
@@ -58,18 +58,18 @@ export const diskmixin = {
             .catch(e=>this.$message.error(e.message));
           }).catch((e)=>{});
       },
-      _fileTypeUri:function(file){
-        const avalibleType = this.utils.getAvalibleType();
-        const movie = ['rmvb','mkv']
-        let type = this.utils.fileType(file.filename);
-        type =  this.utils.ArrContains(avalibleType, type) ? type : 'default';
-        type =  this.utils.ArrContains(movie, type) ? 'movie' : type;
-        const filetype = file.isdir==0 ? type : 'folder_win10';
-        const typeUri = `./static/icons/${filetype}.png`;
-        return typeUri;
+      _fileTypeUri: function (file) {
+        const avalibleType = this.utils.getAvalibleType()
+        const movie = ['rmvb', 'mkv']
+        let type = this.utils.fileType(file.filename)
+        type = this.utils.ArrContains(avalibleType, type) ? type : 'default'
+        type = this.utils.ArrContains(movie, type) ? 'movie' : type
+        const filetype = file.isdir === 0 ? type : 'folder_win10'
+        const typeUri = `./static/icons/${filetype}.png`
+        return typeUri
       },
-      doNothing:function(){
-        this.$message.info('开发中。。。欢迎提出改进建议~');
+      doNothing: function () {
+        this.$message.info('开发中...欢迎提出改进建议~')
       }
     }
 }

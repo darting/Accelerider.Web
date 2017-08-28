@@ -4,7 +4,7 @@ import {
 } from '../mutations-types'
 
 const state = {
-  message:{	
+  message: {
     type: '',
     content: '',
     title: ''
@@ -12,11 +12,11 @@ const state = {
 }
 
 const mutations = {
-  [SHOW_MSG](state , action){
+  [SHOW_MSG] (state, action) {
     state.message = {...action}
   },
-  [HIDE_MSG](state, action){
-    state.message = {	
+  [HIDE_MSG] (state, action) {
+    state.message = {
       type: '',
       content: '',
       title: ''

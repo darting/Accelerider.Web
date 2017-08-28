@@ -46,49 +46,47 @@ export default {
   name: 'disk',
   data () {
     return {
-      isbind:false,
-      bindDlg:false,
-      ukDlg:false
+      isbind: false,
+      bindDlg: false,
+      ukDlg: false
     }
   },
-  computed:{
-    ...mapGetters ({
-      uk:'uk',
-      userInfo:'userInfo',
+  computed: {
+    ...mapGetters({
+      uk: 'uk',
+      userInfo: 'userInfo',
     })
   },
-  methods:{
-    binding:function(){
+  methods: {
+    binding: function(){
       this.bindDlg = true;
-      // this.$store.dispatch('binding');
-      // this.$router.go(0);//refresh
     },
-    changeUser:function(){
+    changeUser: function(){
       this.ukDlg = true;
     },
-    m4s:function(){
-      this.$router.push({path:"/disk/m4s"});
+    m4s: function(){
+      this.$router.push({path: '/disk/m4s'});
     },
-    disk:function(){
-      this.$router.push({path:"/disk/home"});
+    disk: function(){
+      this.$router.push({path: '/disk/home'});
     }, 
-    getToken:function(){
+    getToken: function(){
       return sessionStorage.getItem('accessToken');
     },
-    getUserList:function(){
+    getUserList: function(){
       const token = this.getToken();
       this.$restAPI.userlist(token)
       .then(reps=>{
-        this.isbind = reps.length>0;
-        if(this.isbind)
-          reps[0].then(data => {
-            this.$store.dispatch('BDuser',data.uk);
-            })
+        this.isbind = reps.length > 0;
+        if (this.isbind){
+          reps[0].then(data => { this.$store.dispatch('BDuser',data.uk) })
+        }
       })
       .catch((err)=>{
-        this.$message.error(err)});
+        this.$message.error(err)
+      });
     },
-    getUserInfo:function(){
+    getUserInfo: function(){
       this.ukDlg = false;
       const token = this.getToken();
       this.$restAPI._userinfo(token,this.uk)
@@ -96,13 +94,13 @@ export default {
         this.$store.dispatch('BDuserInfo',info);
       });
     },
-    logout:function(){
+    logout: function(){
       this.$confirm('确认退出吗?', '提示', {
         type: 'warning'
       }).then(() => {
         sessionStorage.removeItem('accessToken');
         localStorage.removeItem('autologin');
-        this.$router.push({path:"/login"});
+        this.$router.push({path: '/login'});
       }).catch(() => {
       });
     }

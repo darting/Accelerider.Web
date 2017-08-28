@@ -53,7 +53,7 @@
           li(v-for='url in item.urls',key = 'url')
             a(v-bind:href='url',target='_blank',rel="noreferrer") 链接
     el-dialog(v-model='dialogProP',title='文件属性')
-      p 文件名： {{curFile.server_filename}}
+      p 文件名： {{curFile.filename}}
       p 文件大小： {{utils.transeSize(curFile)}}
       p(v-if='curFile.isdir==1') 是否有子目录： {{curFile.dir_empty==0}}
       p 修改时间： {{utils.transeTime(curFile.server_mtime)}}
@@ -72,25 +72,25 @@ export default {
     }
   },
   methods:{
-    goFileList:function(){
+    goFileList:function() {
       const path = this.utils.pathmanager().getPath();
       this.selectedFiles = [];
       this.token = sessionStorage.getItem('accessToken');
       if(this.uk.length<1)return;
-      this.$store.commit('viewloading',true);
+      this.$store.commit('viewloading', true);
 	    this.$restAPI.filelist(this.token,this.uk,path)
       .then(list=>{
-        this.$store.commit('viewloading',false);
+        this.$store.commit('viewloading', false);
         this.$store.dispatch('filelist',{list:list});
       })
       .catch((e)=>{
-        this.$store.commit('viewloading',false);
+        this.$store.commit('viewloading', false);
         if(e.message.indexOf('代码 -9') > 0){
           this.$router.push({query:{path:'/'}});
         }else{this.$message.error(e.message)}
         });
     },
-    fileProperty:function(file){
+    fileProperty:function(file) {
       this.curFile = file;this.dialogProP = true;
     },
     parseDownLinks:function(links){
@@ -104,18 +104,18 @@ export default {
         this.downlinks.push(obj);
       }
     },
-    downloadFiles:function(files){
-      this.$store.commit('viewloading',true);
-	    this.$restAPI.downfiles(this.token,this.uk,files)
+    downloadFiles:function(files) {
+      this.$store.commit('viewloading', true);
+	    this.$restAPI.downfiles(this.token, this.uk, files)
       .then(links=>{
-        this.$store.commit('viewloading',false);
+        this.$store.commit('viewloading', false);
         this.parseDownLinks(links);
       })
       .catch((e)=>{
-        this.$store.commit('viewloading',false);
+        this.$store.commit('viewloading', false);
         this.$message.error(e.message)});
     },
-    downloadFromM4s:function(file){
+    downloadFromM4s:function(file) {
       this.$restAPI.zqdownfiles(file)
        .then((data)=>{
          if(data!='error'){

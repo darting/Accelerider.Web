@@ -1,48 +1,47 @@
 const state = {
-    logining:false,
-    autologin:false,
-    token:'',
-    uk: '',
-    info:{},
+  logining: false,
+  autologin: false,
+  token: '',
+  uk: '',
+  info: {}
 }
 
 const getters = {
-    logining: state => state.logining,
-    autologin: state => state.autologin,
-    token: state => state.token,
-    uk: state => state.uk,
-    userInfo: state => state.info,
+  logining: state => state.logining,
+  autologin: state => state.autologin,
+  token: state => state.token,
+  uk: state => state.uk,
+  userInfo: state => state.info,
 }
 
 const mutations = {
-    logining(state,logining){
+    logining (state, logining) {
         state.logining = logining;
     },
-    loginsuccess(state,msg){
+    loginsuccess (state, msg) {
         sessionStorage.setItem('accessToken', msg.token);
         state.token = msg.token;
     },
-    loginfailed(state,msg){
-        //showMsg(store,msg)
+    loginfailed (state, msg) {
     },
-    BDuser(state,msg){
+    BDuser (state, msg) {
         sessionStorage.setItem('accessUk', msg.uk);
         state.uk = msg.uk;
     },
-    BDuserInfo(state,msg){
+    BDuserInfo (state, msg) {
         state.info = msg.info;
     }
 }
 
 const actions = {
-    autologin({commit, state, rootState},obj) {
+    autologin({commit, state, rootState}, obj) {
         localStorage.setItem('autologin', JSON.stringify(obj));
     },
-    BDuser({commit, state, rootState},uk) {
-        commit('BDuser',{'uk':uk});
+    BDuser({commit, state, rootState}, uk) {
+        commit('BDuser',{'uk': uk});
     },
-    BDuserInfo({commit, state, rootState},userInfo) {
-        commit('BDuserInfo',{'info':userInfo});
+    BDuserInfo({commit, state, rootState}, userInfo) {
+        commit('BDuserInfo',{'info': userInfo});
     }
 }
 

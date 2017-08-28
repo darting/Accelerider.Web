@@ -79,33 +79,36 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLoading:'isLoading',
-      uk:'uk',
+      isLoading: 'isLoading',
+      uk: 'uk',
     })
   },
-  methods:{
-    getSquareList:function(){
+  methods: {
+    getSquareList: function(){
       this.$store.commit('viewloading',true);
       this.$squareAPI.filelist(this.number, this.page - 1)
       .then(list=>{
-        this.$store.commit('viewloading',false);
+        this.$store.commit('viewloading', false);
         this.filelist = list;
       })
       .catch(e=>{
-        this.$store.commit('viewloading',false);
-        this.$message.error(e.message)});;
+        this.$store.commit('viewloading', false);
+        this.$message.error(e.message)
+      });
     },
-    searchplaza:function(){
+    searchplaza: function(){
       this.$store.commit('viewloading',true);
       this.$squareAPI.search(this.searchs, 100)
       .then(data=>{
         this.$store.commit('viewloading',false);
-        this.filelist=data.items})
+        this.filelist = data.items
+      })
       .catch(e=>{
         this.$store.commit('viewloading',false);
-        this.$message.error(e.message)});;
+        this.$message.error(e.message)
+      });
     },
-    downloadFile:function(file){
+    downloadFile: function(file){
       this.downName = file.FileName;
       this.$store.commit('viewloading',true);
       this.$squareAPI.downfiles(file.Md5)
@@ -116,14 +119,15 @@ export default {
       })
       .catch(e=>{
         this.$store.commit('viewloading',false);
-        this.$message.error(e.message)});
+        this.$message.error(e.message)
+      });
     },
-    showComments:function(plaza){
+    showComments: function(plaza){
       this.commentmd5 = plaza.Md5;
       this.comments = plaza.Comments;
       this.dialogCm = true;
     },
-    comment:function(){
+    comment: function(){
       this.$confirm('确认要评论这个文件吗？(一旦评论不可更改)', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -135,12 +139,12 @@ export default {
             this.$message.success(data.message);
             this.getSquareList();
           });
-        }).catch((e) => {this.$message.error('评论错误。')});
+        }).catch((e) => { this.$message.error('评论错误。') });
     },
-    prePage:function(){
-      this.page = this.page>1 ? this.page-1 : 1;
+    prePage: function(){
+      this.page = this.page > 1 ? this.page - 1 : 1;
     },
-    nextPage:function(){
+    nextPage: function(){
       this.page += 1;
     },
   },

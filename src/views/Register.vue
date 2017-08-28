@@ -24,28 +24,29 @@ export default {
   name: 'signup',
   data () {
     return {
-      regLoading:false,
+      regLoading: false,
       signupForm: {
-        account: '',
-        password: ''
+      account: '',
+      password: ''
       },
     }
   },
-  methods:{
-    login:function(){
-      this.$router.push({path:"/login"});
+  methods: {
+    login: function(){
+      this.$router.push({path: '/login'});
     },
-    register:function(){
+    register: function(){
       this.regLoading = true;
-	    this.$restAPI.signup(this.signupForm.account, this.signupForm.password)
+      this.$restAPI.signup(this.signupForm.account, this.signupForm.password)
       .then((rlt)=>{
         this.regLoading = false;
         this.$message(rlt);
-        this.$router.push({path:"/login"});
+        this.$router.push({path: '/login'});
       })
       .catch((err)=>{
         this.regLoading = false;
-        this.$message.error(err.message)});
+        this.$message.error(err.message)
+      });
     }
   }
 }

@@ -18,7 +18,7 @@ class SquareAPI{
       );
   }
   filelist(number, page){
-    const url = '/list';
+    const url = '/list'
     return this.$ajax({
       method: 'GET',
       url: url,
@@ -27,7 +27,7 @@ class SquareAPI{
     .then(response => response.data.items);
   }
   search(skey, number){
-    const url = '/search';
+    const url = '/search'
     return this.$ajax({
       method: 'GET',
       url: url,
@@ -36,7 +36,7 @@ class SquareAPI{
     .then(response => response.data);
   }
   add2square(token, file, msg){
-    const url = '/add';
+    const url = '/add'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -51,7 +51,7 @@ class SquareAPI{
     .then(response => response.data.message);
   }
   comment(token, md5, msg){
-    const url = '/comment';
+    const url = '/comment'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -63,7 +63,7 @@ class SquareAPI{
     .then(response => response.data);
   }
   downfiles(md5){
-    const url = '/link';
+    const url = '/link'
     return this.$ajax({
       method: 'GET',
       url: url,

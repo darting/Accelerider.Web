@@ -11,8 +11,6 @@ export default {
     return {
       discrimination: 'every web disk is here!',
     }
-  },
-  methods:{
-  },
+  }
 }
 </script>

@@ -1,6 +1,6 @@
 # Introduction
 
-> A Vue.js WebUI for laji Baidu
+> A Vue.js WebUI for baidu without speed limit
 
 # Getting Started
 

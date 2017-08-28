@@ -14,10 +14,10 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
 Vue.config.productionTip = false
-Vue.prototype.$restAPI = new restAPI();
-Vue.prototype.$m4sAPI = new m4sAPI();
-Vue.prototype.$squareAPI = new squareAPI();
-Vue.prototype.utils = new Utils();
+Vue.prototype.$restAPI = new restAPI()
+Vue.prototype.$m4sAPI = new m4sAPI()
+Vue.prototype.$squareAPI = new squareAPI()
+Vue.prototype.utils = new Utils()
 
 Vue.use(ElementUI)
 

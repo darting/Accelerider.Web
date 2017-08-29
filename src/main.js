@@ -5,6 +5,7 @@ import store from './vuex';
 import 'normalize.css';
 import App from './App';
 import router from './router';
+import 'font-awesome/css/font-awesome.css'
 import restAPI from './libs/restAPI';
 import m4sAPI from './libs/m4sAPI';
 import squareAPI from './libs/squareAPI';

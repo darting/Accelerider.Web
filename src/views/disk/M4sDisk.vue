@@ -9,14 +9,15 @@
           | {{p.name}}
   el-row(type="flex")
     el-col
-      el-button(@click='goFileList') 刷新
+      el-button(@click='goFileList')
+        i(class='fa fa-refresh', aria-hidden='true', v-bind:class='isLoading ? "fa-spin" : "fa"')
       el-button(@click='createFolder', icon='document') 新建文件夹
       el-button(@click='pasteHere', icon='paste', v-if='clipboard!=null') 粘贴
     el-col(v-bind:span='4')
       span Total: {{m4sfilelist.length}}
   el-row
     el-col(v-loading='isLoading')
-      el-table.filelist(v-bind:data='m4sfilelist', empty-text='文件夹是空的哟', style='width:100%')
+      el-table.filelist(v-bind:data='m4sfilelist', empty-text='文件夹是空的哟')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")

@@ -11,7 +11,8 @@
     //- el-upload(action='', v-bind:show-file-list='false')
     //-   el-button(type="primary") 上传
     el-col
-      el-button(@click='goFileList') 刷新
+      el-button(@click='goFileList')
+        i(class='fa fa-refresh', aria-hidden='true', v-bind:class='isLoading ? "fa-spin" : "fa"')
       el-button(@click='createFolder', icon='document') 新建文件夹
       el-button-group(v-if='selectedFiles.length>0')
         el-button(@click='downloadFiles(selectedFiles)') 下载
@@ -20,7 +21,7 @@
       span Total: {{filelist.length}}
   el-row.frame-main
     el-col(v-loading='isLoading')
-      el-table.filelist(v-bind:data='filelist', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}', style='width:100%')
+      el-table.filelist(v-bind:data='filelist', empty-text='文件夹是空的哟', @select='(s,r)=>{selectedFiles=s}',@select-all='(s)=>{selectedFiles=s}')
         el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")

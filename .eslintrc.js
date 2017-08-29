@@ -26,15 +26,18 @@ module.exports = {
     "eol-last": 0,
     // allow async-await
     'generator-star-spacing': 0,
-    "indent": 1,
-    "no-alert": 0,
-    // allow debugger during development
+    // @fixable
+    'indent': [
+        'error',
+        2,
+        {
+            SwitchCase: 1,
+            flatTernaryExpressions: true
+        }
+    ],
+    "no-alert": 2,
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     "no-dupe-args": 2,
-    "no-trailing-spaces": 1,
-    'no-var': 2,
-    "semi": 1,
-    "space-before-blocks": 1,
-    "space-before-function-paren": 1,
+    'no-var': 2
   }
 }

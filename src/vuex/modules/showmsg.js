@@ -1,7 +1,7 @@
 import {
   SHOW_MSG,
   HIDE_MSG
-} from '../mutations-types'
+} from '../mutations-types';
 
 const state = {
   message: {
@@ -9,22 +9,22 @@ const state = {
     content: '',
     title: ''
   }
-}
+};
 
 const mutations = {
-  [SHOW_MSG] (state, action) {
-    state.message = {...action}
+  [SHOW_MSG](state, action) {
+    state.message = { ...action };
   },
-  [HIDE_MSG] (state, action) {
+  [HIDE_MSG](state, action) {
     state.message = {
       type: '',
       content: '',
       title: ''
-    }
+    };
   }
-}
+};
 
 export default {
   state,
   mutations
-}
+};

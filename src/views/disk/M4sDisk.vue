@@ -61,16 +61,16 @@ export default {
   },
   methods: {
     goFileList: function(){
-      const path = this.utils.pathmanager().getPath();
-      this.token = this.getToken();
-      this.$store.commit('viewloading', true);
+      const path = this.utils.pathmanager().getPath()
+      this.token = this.getToken()
+      this.$store.commit('viewloading', true)
       this.$m4sAPI.filelist(this.token,path)
       .then(list=>{
-        this.$store.commit('viewloading', false);
-        this.$store.dispatch('filelist',{list: list,ism4s: true});
+        this.$store.commit('viewloading', false)
+        this.$store.dispatch('filelist',{list: list,ism4s: true})
       })
       .catch((e)=>{
-        this.$store.commit('viewloading', false);
+        this.$store.commit('viewloading', false)
         this.$message.error(e.message);
       });
     },
@@ -84,15 +84,15 @@ export default {
         this.downlinks = links;
       })
       .catch((e)=>{
-        this.$store.commit('viewloading', false);
+        this.$store.commit('viewloading', false)
         this.$message.error(e.message)
       });
     },
     createfolderapi: function(value){
-      const path = `${this.utils.pathmanager().getPath()}/${value}`;
+      const path = `${this.utils.pathmanager().getPath()}/${value}`
       this.$m4sAPI.createFolder(this.token, path)
       .then(data=>{
-        this.$message.success('创建成功!');
+        this.$message.success('创建成功!')
         this.goFileList();
       });
     },
@@ -100,11 +100,11 @@ export default {
       this.clipboard = filepath;
     },
     pasteHere: function(){
-      let topath = this.utils.pathmanager().getPath();
+      let topath = this.utils.pathmanager().getPath()
       topath += '/' + this.clipboard.fileName;
       this.$m4sAPI.copyFile(this.token,this.clipboard,topath)
       .then(a=>{ this.$message.success('复制成功!'); this.goFileList() })
-      .catch(e=>this.$message.error(e.message));
+      .catch(e=>this.$message.error(e.message))
     },
     deleteFileapi: function(filepath){
       this.$m4sAPI.deletefile(this.token, filepath)
@@ -112,7 +112,7 @@ export default {
         this.$message.success('删除成功!');
         this.goFileList();
       })
-      .catch((e)=>{ this.$message.error('删除失败。') });
+      .catch((e)=>{ this.$message.error('删除失败。') })
     },
   },
   watch: {

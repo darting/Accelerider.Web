@@ -97,7 +97,14 @@ class M4sAPI{
         path: path,
       },
     })
-    .then(response => response.data.links);
+    .then(response => response.data)
+    .then(data=>{
+      if(data.links){
+        return data.links
+      }else{
+        throw new Error(data.message)
+      }
+    });
   }
 }
 

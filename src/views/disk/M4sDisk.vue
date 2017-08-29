@@ -79,10 +79,8 @@ export default {
       this.$m4sAPI.downfiles(this.token, file.path)
       .then(links=>{
         this.$store.commit('viewloading', false);
-        if (links.length > 0) {
-          this.dialogDL = true;
-          this.downlinks = links;
-        }
+        this.dialogDL = true;
+        this.downlinks = links;
       })
       .catch((e)=>{
         this.$store.commit('viewloading', false);
@@ -124,3 +122,22 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+.breadcrumb{
+  margin: 10px
+}
+.file-name{ 
+  line-height: 40px;
+  .fileicon{
+    vertical-align:middle;
+    margin-right: 5px;
+  }
+  .open-enable{
+    cursor: pointer;
+  }
+  .normal{
+    cursor: default;
+  }
+}
+</style>

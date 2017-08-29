@@ -1,6 +1,6 @@
 {
   "name": "acceleriderweb",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "description": "A Vue.js WebUI for baidu without speed limit",
   "author": "combo",
   "private": true,

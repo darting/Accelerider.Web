@@ -106,10 +106,10 @@ export default {
     },
     downloadFiles:function(files) {
       this.$store.commit('viewloading', true);
-	    this.$restAPI.downfiles(this.token, this.uk, files)
+      this.$restAPI.downfiles(this.token, this.uk, files)
       .then(links=>{
         this.$store.commit('viewloading', false);
-        this.parseDownLinks(links);
+        this.parseDownLinks(links)
       })
       .catch((e)=>{
         this.$store.commit('viewloading', false);
@@ -163,7 +163,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .breadcrumb{
   margin: 10px
 }

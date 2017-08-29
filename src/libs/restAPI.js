@@ -187,7 +187,14 @@ class M4API{
       }],
       data: {"files": JSON.stringify(files)}
     })
-    .then(response => response.data.links);
+    .then(response => response.data)
+    .then(data=>{
+      if(data.links){
+        return data.links
+      }else{
+        throw new Error(data.message)
+      }
+    });
   }
   zqdownfiles(files) { 
     const url = 'http://127.0.0.1:10000/guanjia'

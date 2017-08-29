@@ -41,9 +41,11 @@ el-row.container
 </template>
 
 <script>
+import {loginmixin} from '@/components/mixins/loginmixin'
 import { mapGetters } from 'vuex'
 export default {
   name: 'disk',
+  mixins: [loginmixin],
   data () {
     return {
       isbind: false,
@@ -70,9 +72,6 @@ export default {
     disk: function(){
       this.$router.push({path: '/disk/home'});
     }, 
-    getToken: function(){
-      return sessionStorage.getItem('accessToken');
-    },
     getUserList: function(){
       const token = this.getToken();
       this.$restAPI.userlist(token)
@@ -83,7 +82,7 @@ export default {
         }
       })
       .catch((err)=>{
-        this.$message.error(err)
+        this.$router.push({path: '/login'})
       });
     },
     getUserInfo: function(){
@@ -98,9 +97,8 @@ export default {
       this.$confirm('确认退出吗?', '提示', {
         type: 'warning'
       }).then(() => {
-        sessionStorage.removeItem('accessToken');
-        localStorage.removeItem('autologin');
-        this.$router.push({path: '/login'});
+        this.logout()
+        this.$router.push({path: '/login'})
       }).catch(() => {
       });
     }

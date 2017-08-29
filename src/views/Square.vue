@@ -59,9 +59,11 @@
 </template>
 
 <script>
+import {loginmixin} from '@/components/mixins/loginmixin'
 import { mapGetters } from 'vuex'
 export default {
   name: 'square',
+  mixins: [loginmixin],
   data () {
     return {
       number: 15,
@@ -133,7 +135,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          const token = sessionStorage.getItem('accessToken');
+          const token = this.getToken()
           this.$squareAPI.comment(token, this.commentmd5, this.mycomment)
           .then((data)=>{
             this.$message.success(data.message);

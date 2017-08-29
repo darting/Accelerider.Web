@@ -61,10 +61,11 @@
 </template>
 
 <script>
+import {loginmixin} from '@/components/mixins/loginmixin'
 import {diskmixin} from '@/components/mixins/diskmixin'
 export default {
   name: 'webdisk',
-  mixins: [diskmixin],
+  mixins: [diskmixin, loginmixin],
   data () {
     return {
       dialogProP:false,
@@ -75,7 +76,7 @@ export default {
     goFileList:function() {
       const path = this.utils.pathmanager().getPath();
       this.selectedFiles = [];
-      this.token = sessionStorage.getItem('accessToken');
+      this.token = this.getToken();
       if(this.uk.length<1)return;
       this.$store.commit('viewloading', true);
 	    this.$restAPI.filelist(this.token,this.uk,path)

@@ -65,7 +65,7 @@ export default {
       });
     }
   },
-  mounted(){
+  mounted () {
     let a = localStorage.getItem('autologin');
     if (a) {
       a = JSON.parse(a);

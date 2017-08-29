@@ -49,10 +49,11 @@
 </template>
 
 <script>
+import {loginmixin} from '@/components/mixins/loginmixin'
 import {diskmixin} from '@/components/mixins/diskmixin'
 export default {
   name: 'webdisk',
-  mixins: [diskmixin],
+  mixins: [diskmixin, loginmixin],
   data () {
     return {
       clipboard: null
@@ -61,7 +62,7 @@ export default {
   methods: {
     goFileList: function(){
       const path = this.utils.pathmanager().getPath();
-      this.token = sessionStorage.getItem('accessToken');
+      this.token = this.getToken();
       this.$store.commit('viewloading', true);
       this.$m4sAPI.filelist(this.token,path)
       .then(list=>{

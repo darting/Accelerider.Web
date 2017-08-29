@@ -12,8 +12,10 @@
 </template>
 
 <script>
+import {loginmixin} from '@/components/mixins/loginmixin'
 export default {
   name: 'userinfo',
+  mixins: [loginmixin],
   data () {
     return {
       userInfos: [],
@@ -23,9 +25,6 @@ export default {
   methods: {
     gotoDisk: function (uk) {
       this.$store.dispatch('BDuser', uk)
-    },
-    getToken: function () {
-      return sessionStorage.getItem('accessToken')
     },
     getUserList: function () {
       this.userInfos = []

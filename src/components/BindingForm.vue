@@ -27,8 +27,10 @@ el-form(label='绑定',v-loading='loading')
 </template>
 
 <script>
+import {loginmixin} from '@/components/mixins/loginmixin'
 export default {
   name: 'bindingform',
+  mixins: [loginmixin],
   data () {
     return {
       bdcookie: '',
@@ -38,14 +40,7 @@ export default {
   methods: {
     bindingByCookie: function () {
       this.loading = true
-      this.$restAPI.vertifyco(this.bdcookie)
-        .then((data)=>{
-          if (data.ok) {
-            return sessionStorage.getItem('accessToken')
-          } else { throw new Error(data.msg) }
-        })
-        .catch(()=>sessionStorage.getItem('accessToken'))
-        .then((token)=> this.$restAPI.binding(token, this.bdcookie))
+      this.$restAPI.binding(this.getToken(), this.bdcookie)
         .then((errno)=>{ this.loading = false })
         .catch((e)=>{ this.loading = false; this.$message.error(e.msg || e.message) })
     }

@@ -9,6 +9,7 @@
           | {{p.name}}
   el-row(type="flex")
     el-col
+      el-button(@click='goFileList') 刷新
       el-button(@click='createFolder', icon='document') 新建文件夹
       el-button(@click='pasteHere', icon='paste', v-if='clipboard!=null') 粘贴
     el-col(v-bind:span='4')
@@ -16,6 +17,7 @@
   el-row
     el-col(v-loading='isLoading')
       el-table.filelist(v-bind:data='m4sfilelist', empty-text='文件夹是空的哟', style='width:100%')
+        el-table-column(type='selection')
         el-table-column(label='文件名',show-overflow-tooltip,min-width='200')
           template(scope="scope")
             el-col(v-bind:span='19').file-name
@@ -103,7 +105,7 @@ export default {
       let topath = this.utils.pathmanager().getPath()
       topath += '/' + this.clipboard.fileName;
       this.$m4sAPI.copyFile(this.token,this.clipboard,topath)
-      .then(a=>{ this.$message.success('复制成功!'); this.goFileList() })
+      .then(a=>{ this.$message.success('粘贴成功!'); this.clipboard = null; this.goFileList() })
       .catch(e=>this.$message.error(e.message))
     },
     deleteFileapi: function(filepath){

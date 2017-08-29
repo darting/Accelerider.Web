@@ -11,10 +11,11 @@
     //- el-upload(action='', v-bind:show-file-list='false')
     //-   el-button(type="primary") 上传
     el-col
+      el-button(@click='goFileList') 刷新
       el-button(@click='createFolder', icon='document') 新建文件夹
       el-button-group(v-if='selectedFiles.length>0')
         el-button(@click='downloadFiles(selectedFiles)') 下载
-        el-button(@click='doNothing', icon='delete', v-bind:disabled='selectedFiles.length>6') 删除
+        el-button(@click='deleteFiles', icon='delete', v-bind:disabled='selectedFiles.length>6') 删除
     el-col(v-bind:span='4')
       span Total: {{filelist.length}}
   el-row.frame-main
@@ -128,7 +129,7 @@ export default {
        .catch((e)=>{
         this.$message.error('阿哦，出错了诶？是不是没有打开坐骑呢?')});
     },
-    createfolderapi:function(value){
+    createfolderapi: function(value){
       const path = this.utils.pathmanager().getPath() +'/' + value;
       this.$restAPI.createFolder(this.token,this.uk,path)
       .then(data=>{
@@ -136,7 +137,29 @@ export default {
         this.goFileList();
       });
     },
-    deleteFileapi:function(filepath){
+    deleteFiles: function () {
+      this.$confirm(`确认删除所有选中的文件(夹)吗?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.commit('viewloading', true);
+        Promise.all(this.selectedFiles.map(
+          o => this.$restAPI.deletefile(this.token,this.uk,o.path))
+          .map(async o=>await o.then(r=>r.errno))
+        ).then(a=>a.reduce((a,b)=>a+b))
+        .then(r=>{if(r!=0)throw new Error(msg)})
+        .then(data => {
+          this.$store.commit('viewloading', false);
+          this.$message.success('全部删除成功!')
+          this.goFileList();
+        })
+        .catch((e)=>{
+          this.$store.commit('viewloading', false);
+          this.$message.error('删除失败。')});
+      }).catch(() => {});
+    },
+    deleteFileapi: function (filepath) {
       this.$restAPI.deletefile(this.token,this.uk,filepath)
       .then((data)=>{
         this.$message.success('删除成功!');
@@ -145,7 +168,7 @@ export default {
       .catch((e)=>{this.$message.error('删除失败。')});
     },
     upload2m4s:function(file){
-      const filename = '/' + file.server_filename
+      const filename = '/' + file.filename
       this.$m4sAPI.upload2m4s(this.token,filename,file.md5, file.size)
       .then(data=>{
         this.$message.success('转移成功!');

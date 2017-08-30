@@ -56,60 +56,60 @@ export default {
   computed: {
     ...mapGetters({
       uk: 'uk',
-      userInfo: 'userInfo',
+      userInfo: 'userInfo'
     })
   },
   methods: {
-    binding: function(){
-      this.bindDlg = true;
+    binding: function () {
+      this.bindDlg = true
     },
-    changeUser: function(){
-      this.ukDlg = true;
+    changeUser: function () {
+      this.ukDlg = true
     },
-    m4s: function(){
-      this.$router.push({path: '/disk/m4s'});
+    m4s: function () {
+      this.$router.push({path: '/disk/m4s'})
     },
-    disk: function(){
-      this.$router.push({path: '/disk/home'});
-    }, 
-    getUserList: function(){
-      const token = this.getToken();
+    disk: function () {
+      this.$router.push({path: '/disk/home'})
+    },
+    getUserList: function () {
+      const token = this.getToken()
       this.$restAPI.userlist(token)
-      .then(reps=>{
-        this.isbind = reps.length > 0;
-        if (this.isbind){
-          reps[0].then(data => { this.$store.dispatch('BDuser',data.uk) })
-        }
-      })
-      .catch((err)=>{
-        this.$router.push({path: '/login'})
-      });
+        .then(reps=>{
+          this.isbind = reps.length > 0
+          if (this.isbind) {
+            reps[0].then(data => { this.$store.dispatch('BDuser',data.uk) })
+          }
+        })
+        .catch((err)=>{
+          this.$router.push({path: '/login'})
+        })
     },
-    getUserInfo: function(){
-      this.ukDlg = false;
-      const token = this.getToken();
+    getUserInfo: function () {
+      this.ukDlg = false
+      const token = this.getToken()
       this.$restAPI._userinfo(token,this.uk)
-      .then(info=>{
-        this.$store.dispatch('BDuserInfo',info);
-      });
+        .then(info=>{
+          this.$store.dispatch('BDuserInfo',info)
+        })
     },
-    logout: function(){
+    logout: function () {
       this.$confirm('确认退出吗?', '提示', {
         type: 'warning'
       }).then(() => {
         this.logout()
         this.$router.push({path: '/login'})
       }).catch(() => {
-      });
+      })
     }
   },
   watch: {
-    uk(){
-      this.getUserInfo();
-    },
+    uk () {
+      this.getUserInfo()
+    }
   },
-  mounted(){
-    this.getUserList();
+  mounted () {
+    this.getUserList()
   }
 }
 </script>

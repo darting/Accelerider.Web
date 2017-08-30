@@ -26,27 +26,27 @@ export default {
     return {
       regLoading: false,
       signupForm: {
-      account: '',
-      password: ''
-      },
+        account: '',
+        password: ''
+      }
     }
   },
   methods: {
-    login: function(){
-      this.$router.push({path: '/login'});
+    login: function () {
+      this.$router.push({path: '/login'})
     },
-    register: function(){
-      this.regLoading = true;
+    register: function () {
+      this.regLoading = true
       this.$restAPI.signup(this.signupForm.account, this.signupForm.password)
-      .then((rlt)=>{
-        this.regLoading = false;
-        this.$message(rlt);
-        this.$router.push({path: '/login'});
-      })
-      .catch((err)=>{
-        this.regLoading = false;
-        this.$message.error(err.message)
-      });
+        .then((rlt)=>{
+          this.regLoading = false
+          this.$message(rlt)
+          this.$router.push({path: '/login'})
+        })
+        .catch((err)=>{
+          this.regLoading = false
+          this.$message.error(err.message)
+        })
     }
   }
 }

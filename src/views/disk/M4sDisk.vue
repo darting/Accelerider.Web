@@ -63,67 +63,67 @@ export default {
     }
   },
   methods: {
-    goFileList: function(){
+    goFileList: function () {
       const path = this.utils.pathmanager().getPath()
       this.token = this.getToken()
       this.$store.commit('viewloading', true)
       this.$m4sAPI.filelist(this.token,path)
-      .then(list=>{
-        this.$store.commit('viewloading', false)
-        this.$store.dispatch('filelist',{list: list,ism4s: true})
-      })
-      .catch((e)=>{
-        this.$store.commit('viewloading', false)
-        this.$message.error(e.message);
-      });
+        .then(list=>{
+          this.$store.commit('viewloading', false)
+          this.$store.dispatch('filelist',{list: list,ism4s: true})
+        })
+        .catch((e)=>{
+          this.$store.commit('viewloading', false)
+          this.$message.error(e.message)
+        })
     },
-    downloadFile: function(file){
-      this.$store.commit('viewloading', true);
-      this.curFile = file;
+    downloadFile: function (file) {
+      this.$store.commit('viewloading', true)
+      this.curFile = file
       this.$m4sAPI.downfiles(this.token, file.path)
-      .then(links=>{
-        this.$store.commit('viewloading', false);
-        this.dialogDL = true;
-        this.downlinks = links;
-      })
-      .catch((e)=>{
-        this.$store.commit('viewloading', false)
-        this.$message.error(e.message)
-      });
+        .then(links=>{
+          this.$store.commit('viewloading', false)
+          this.dialogDL = true
+          this.downlinks = links
+        })
+        .catch((e)=>{
+          this.$store.commit('viewloading', false)
+          this.$message.error(e.message)
+        })
     },
-    createfolderapi: function(value){
+    createfolderapi: function (value) {
       const path = `${this.utils.pathmanager().getPath()}/${value}`
       this.$m4sAPI.createFolder(this.token, path)
-      .then(data=>{
-        this.$message.success('创建成功!')
-        this.goFileList();
-      });
+        .then(data=>{
+          this.$message.success('创建成功!')
+          this.goFileList()
+        })
     },
-    copy2clipboard: function(filepath){
-      this.clipboard = filepath;
+    copy2clipboard: function (filepath) {
+      this.clipboard = filepath
     },
-    pasteHere: function(){
+    pasteHere: function () {
       let topath = this.utils.pathmanager().getPath()
-      topath += '/' + this.clipboard.fileName;
+      topath += '/' + this.clipboard.fileName
       this.$m4sAPI.copyFile(this.token,this.clipboard,topath)
-      .then(a=>{ this.$message.success('粘贴成功!'); this.clipboard = null; this.goFileList() })
-      .catch(e=>this.$message.error(e.message))
+        .then(a=>{ this.$message.success('粘贴成功!'); this.clipboard = null; this.goFileList() })
+        .catch(e=>this.$message.error(e.message))
     },
-    deleteFileapi: function(filepath){
+    deleteFileapi: function (filepath) {
       this.$m4sAPI.deletefile(this.token, filepath)
-      .then((data)=>{
-        this.$message.success('删除成功!');
-        this.goFileList();
-      })
-      .catch((e)=>{ this.$message.error('删除失败。') })
-    },
+        .then((data)=>{
+          this.$message.success('删除成功!')
+          this.goFileList()
+        })
+        .catch((e)=>{ this.$message.error('删除失败。') })
+    }
   },
   watch: {
     '$route': 'goFileList'
   },
-  mounted(){
-    this.goFileList();
-  },
+  mounted () {
+    this.goFileList()
+  }
 }
 </script>
 

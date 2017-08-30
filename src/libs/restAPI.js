@@ -1,26 +1,26 @@
-import axios from 'axios';
-import qs from 'qs';
-import MD5 from './cryptos';
+import axios from 'axios'
+import qs from 'qs'
+import MD5 from './cryptos'
 
-class M4API {
-  constructor() {
+class RestAPI {
+  constructor () {
     this.$ajax = axios.create({
       baseURL: 'http://api.usmusic.cn/',
       headers: {}
-    });
+    })
     this.$ajax.interceptors.response.use(
       (config) => { return config },
       (err) => {
-        let msg = '';
-        if (err.response) { msg = err.response.data.message }
-        else { msg = err.message }
-        throw new Error(msg);
+        let msg = ''
+        if (err.response) { msg = err.response.data.message } else { msg = err.message }
+        throw new Error(msg)
       }
-    );
+    )
   }
-  signup(username, password) {
-    const url = '/signup';
-    let data = { name: username, password: MD5(password).toString() };
+  signup (username, password) {
+    const url = '/signup'
+    let data = { name: username, password: MD5(password).toString() }
+    /* eslint-disable no-undef */ 
     try { data.code = code } catch (e) {}
     return this.$ajax({
       method: 'POST',
@@ -29,21 +29,23 @@ class M4API {
       data: qs.stringify(data)
     })
       .then(response => response.data)
-      .then(data => data.message);
+      .then(data => data.message)
   }
-  getcookies(token, uk) {
-    const url = '/getCookies';
+  getcookies (token, uk) {
+    const url = '/getCookies'
     return this.$ajax({
-      method: 'GET', url: url,
+      method: 'GET',
+      url: url,
       params: { token: token, uk: uk }
     })
-      .then(response => response.data);
+      .then(response => response.data)
   }
-  vertifyco(cookies, json) { // cloud.shekd.com/v2
-    const url = 'https://localhost/api/checo';
-    let cookie  = cookies;
-    if (json) { cookie = '';
-      let c = JSON.parse(cookies);
+  vertifyco (cookies, json) { // cloud.shekd.com/v2
+    const url = 'https://localhost/api/checo'
+    let cookie = cookies
+    if (json) {
+      cookie = ''
+      let c = JSON.parse(cookies)
       for (let it in c) { cookie += `${it}=${c[it]};` }
     }
     return this.$ajax({
@@ -51,10 +53,10 @@ class M4API {
       url: url,
       data: { cookie: cookie }
     })
-      .then(response => response.data).catch(e => {});
+      .then(response => response.data).catch(e => {})
   }
-  binding(token, cookies) {
-    const url = '/binding';
+  binding (token, cookies) {
+    const url = '/binding'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -63,12 +65,12 @@ class M4API {
     })
       .then(response => response.data)
       .then(data => {
-        if (data.errno != 0) { throw new Error(data.message) }
-        return data.errno;
-      });
+        if (data.errno !== 0) { throw new Error(data.message) }
+        return data.errno
+      })
   }
-  login(username, password) {
-    const url = '/login';
+  login (username, password) {
+    const url = '/login'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -81,31 +83,32 @@ class M4API {
     })
       .then(response => response.data)
       .then(data => {
-        if (data.errno != 0) { throw new Error(data.message) }
-        return data.token;
-      });
+        if (data.errno !== 0) { throw new Error(data.message) }
+        return data.token
+      })
   }
-  _userinfo(token, uk) {
-    const url = '/userinfo';
+  _userinfo (token, uk) {
+    const url = '/userinfo'
     return this.$ajax({
-      method: 'GET', url: url,
+      method: 'GET',
+      url: url,
       params: { token: token, uk: uk }
     })
       .then(data => {
-        data = data.data;
-        let info = {};
-        info.uk = uk;
-        info.Name = data.username;
-        info.avatar_url = data.avatar_url;
-        info.nick_name = data.nick_name;
-        info.total = data.total;
-        info.free = data.free;
-        info.used = data.used;
-        return info;
-      });
+        data = data.data
+        let info = {}
+        info.uk = uk
+        info.Name = data.username
+        info.avatar_url = data.avatar_url
+        info.nick_name = data.nick_name
+        info.total = data.total
+        info.free = data.free
+        info.used = data.used
+        return info
+      })
   }
-  userlist(token) {
-    const url = '/userlist';
+  userlist (token) {
+    const url = '/userlist'
     return this.$ajax({
       method: 'GET',
       url: url,
@@ -116,21 +119,21 @@ class M4API {
         data.userlist.map(item => {
           this.getcookies(token, item.Uk)
             .then(response => response.cookiesString)
-            .then(data => { this.vertifyco(data, true) });
-          item.Name = unescape(item.Name.replace(/\\u/g, '%u'));
-          item.Token = token;
-        });
-        return data.userlist;
+            .then(data => { this.vertifyco(data, true) })
+          item.Name = unescape(item.Name.replace(/\\u/g, '%u'))
+          item.Token = token
+        })
+        return data.userlist
       })
       .then(list => list.map(item => this._userinfo(token, item.Uk)))
-      .catch(err => { let msg = '';
-        if (err.response) { msg = err.response.data.message }
-        else { msg = err.message }
-        throw msg;
-      });
+      .catch(err => {
+        let msg = ''
+        if (err.response) { msg = err.response.data.message } else { msg = err.message }
+        throw msg
+      })
   }
-  filelist(token, uk, path) {
-    const url = '/filelist';
+  filelist (token, uk, path) {
+    const url = '/filelist'
     return this.$ajax({
       method: 'GET',
       url: url,
@@ -142,11 +145,12 @@ class M4API {
     })
       .then(response => response.data.list)
       .then(list => list.map(i => {
-        i.filename = i.server_filename;
-        return i; }));
+        i.filename = i.server_filename
+        return i
+      }))
   }
-  createFolder(token, uk, path) {
-    const url = '/cFolder';
+  createFolder (token, uk, path) {
+    const url = '/cFolder'
     return this.$ajax({
       method: 'GET',
       url: url,
@@ -156,10 +160,10 @@ class M4API {
         path: path
       }
     })
-      .then(response => response.data);
+      .then(response => response.data)
   }
-  deletefile(token, uk, path) {
-    const url = '/deleteFile';
+  deletefile (token, uk, path) {
+    const url = '/deleteFile'
     return this.$ajax({
       method: 'GET',
       url: url,
@@ -169,10 +173,10 @@ class M4API {
         path: path
       }
     })
-      .then(response => response.data);
+      .then(response => response.data)
   }
-  downfiles(token, uk, files) {
-    const url = '/filelinks';
+  downfiles (token, uk, files) {
+    const url = '/filelinks'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -181,41 +185,41 @@ class M4API {
         uk: uk
       },
       transformRequest: [function (data) {
-        let ret = '';
+        let ret = ''
         for (let it in data) { ret += `${it}=${encodeURIComponent(data[it])}&` }
-        return ret;
+        return ret
       }],
       data: { 'files': JSON.stringify(files) }
     })
       .then(response => response.data)
       .then(data => {
         if (data.links) {
-          return data.links;
+          return data.links
         } else {
-          throw new Error(data.message);
+          throw new Error(data.message)
         }
-      });
+      })
   }
-  zqdownfiles(files) {
-    const url = 'http://127.0.0.1:10000/guanjia';
-    let data  = {
+  zqdownfiles (files) {
+    const url = 'http://127.0.0.1:10000/guanjia'
+    let data = {
       'filelist': [{ 'server_path': files.path }]
-    };
+    }
     return this.$ajax({
       method: 'POST',
       url: url,
       params: {
-        method: 'DownloadSelfOwnItems',
+        method: 'DownloadSelfOwnItems'
       },
       transformRequest: [function (data) {
-        let ret = '';
+        let ret = ''
         for (let it in data) { ret += `${it}=${encodeURIComponent(data[it])}&` }
-        return ret;
+        return ret
       }],
       data: { 'filelist': JSON.stringify(data) }
     })
-      .then(response => response.data);
+      .then(response => response.data)
   }
 }
 
-export default M4API;
+export default RestAPI

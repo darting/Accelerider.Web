@@ -1,21 +1,21 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import * as actions from './actions';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import * as actions from './actions'
 
-import accountStore from './modules/acount';
-import fileviewStore from './modules/fileview';
+import accountStore from './modules/acount'
+import fileviewStore from './modules/fileview'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const state = {
   requesting: false,
   error: {}
-};
+}
 
 const getters = {
   requesting: state => state.requesting,
   error: state => state.error
-};
+}
 
 export default new Vuex.Store({
   state,
@@ -25,4 +25,4 @@ export default new Vuex.Store({
     account: accountStore,
     filemgr: fileviewStore
   }
-});
+})

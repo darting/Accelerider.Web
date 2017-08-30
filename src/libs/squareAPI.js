@@ -1,42 +1,41 @@
-import axios from 'axios';
-import qs from 'qs';
+import axios from 'axios'
+import qs from 'qs'
 
 class SquareAPI {
-  constructor() {
+  constructor () {
     this.$ajax = axios.create({
       baseURL: 'http://api.usmusic.cn/square',
       headers: {}
-    });
+    })
     this.$ajax.interceptors.response.use(
       (config) => { return config },
       (err) => {
-        let msg = '';
-        if (err.response) { msg = err.response.data.message }
-        else { msg = err.message }
-        throw new Error(msg);
+        let msg = ''
+        if (err.response) { msg = err.response.data.message } else { msg = err.message }
+        throw new Error(msg)
       }
-    );
+    )
   }
-  filelist(number, page) {
-    const url = '/list';
+  filelist (number, page) {
+    const url = '/list'
     return this.$ajax({
       method: 'GET',
       url: url,
       params: { n: number, p: page }
     })
-      .then(response => response.data.items);
+      .then(response => response.data.items)
   }
-  search(skey, number) {
-    const url = '/search';
+  search (skey, number) {
+    const url = '/search'
     return this.$ajax({
       method: 'GET',
       url: url,
       params: { n: number, s: skey }
     })
-      .then(response => response.data);
+      .then(response => response.data)
   }
-  add2square(token, file, msg) {
-    const url = '/add';
+  add2square (token, file, msg) {
+    const url = '/add'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -48,10 +47,10 @@ class SquareAPI {
         message: msg
       })
     })
-      .then(response => response.data.message);
+      .then(response => response.data.message)
   }
-  comment(token, md5, msg) {
-    const url = '/comment';
+  comment (token, md5, msg) {
+    const url = '/comment'
     return this.$ajax({
       method: 'POST',
       url: url,
@@ -60,17 +59,17 @@ class SquareAPI {
         comment: msg
       })
     })
-      .then(response => response.data);
+      .then(response => response.data)
   }
-  downfiles(md5) {
-    const url = '/link';
+  downfiles (md5) {
+    const url = '/link'
     return this.$ajax({
       method: 'GET',
       url: url,
       params: { md5: md5 }
     })
-      .then(response => response.data.links);
+      .then(response => response.data.links)
   }
 }
 
-export default SquareAPI;
+export default SquareAPI

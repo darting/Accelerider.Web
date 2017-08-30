@@ -81,7 +81,7 @@ export default {
             reps[0].then(data => { this.$store.dispatch('BDuser',data.uk) })
           }
         })
-        .catch((err)=>{
+        .catch((e)=>{
           this.$router.push({path: '/login'})
         })
     },

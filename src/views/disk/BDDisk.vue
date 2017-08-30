@@ -81,7 +81,7 @@ export default {
       this.token = this.getToken()
       if (this.uk.length < 1) return
       this.$store.commit('viewloading', true)
-	    this.$restAPI.filelist(this.token,this.uk,path)
+      this.$restAPI.filelist(this.token,this.uk,path)
         .then(list=>{
           this.$store.commit('viewloading', false)
           this.$store.dispatch('filelist',{list: list})
@@ -112,13 +112,6 @@ export default {
       this.$restAPI.downfiles(this.token, this.uk, files)
         .then(links=>{
           this.$store.commit('viewloading', false)
-          let func = (link)=>{
-            document.body.appendChild(
-              document.createElement('iframe')).src = 'javascript:"<script>top.location.replace(\'' +
-          link + '\')<\/script>"'
-          }
-          let downurl = links[Object.keys(links)[0]][0]
-          console.log(downurl)
           this.parseDownLinks(links)
         })
         .catch((e)=>{
@@ -129,7 +122,7 @@ export default {
     downloadFromM4s: function (file) {
       this.$restAPI.zqdownfiles(file)
         .then((data)=>{
-          if (data != 'error') {
+          if (data !== 'error') {
             this.$message.success('恭喜！发送成功~快去看看吧！')
           } else {
             this.$message.error('阿哦，发送失败。。大侠请重新来过。')
@@ -154,11 +147,12 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.commit('viewloading', true)
+        /* eslint-disable no-return-await */
         Promise.all(this.selectedFiles.map(
           o => this.$restAPI.deletefile(this.token,this.uk,o.path))
           .map(async o=>await o.then(r=>r.errno))
         ).then(a=>a.reduce((a,b)=>a + b))
-          .then(r=>{ if (r != 0) throw new Error(msg) })
+          .then(r=>{ if (r !== 0) throw new Error('err') })
           .then(data => {
             this.$store.commit('viewloading', false)
             this.$message.success('全部删除成功!')

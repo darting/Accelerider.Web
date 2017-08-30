@@ -9,23 +9,23 @@ export default {
   name: 'app',
   data () {
     return {
-      version:"3.2.8"
+      version: '3.3.0'
     }
   },
-  computed:{},
-  methods:{
-    testFunc:function(){}
+  computed: {},
+  methods: {
+    testFunc: function () {}
   },
-  beforeCreate(){},//组件实例化之前
-  created(){},//组件实例化了
-  beforeMount(){},//组件写入dom结构之前
-  mounted(){//组件写入dom结构了
-    console.log(`VERSION:${this.version}`);
+  beforeCreate () {},// 组件实例化之前
+  created () {},// 组件实例化了
+  beforeMount () {},// 组件写入dom结构之前
+  mounted () { // 组件写入dom结构了
+    console.log(`VERSION:${this.version}`)
   },
-  beforeUpdate(){},//组件更新前
-  updated(){},//组件更新比如修改了文案
-  beforeDestroy(){},//组件销毁之前
-  destroyed(){}//组件已经销毁
+  beforeUpdate () {},// 组件更新前
+  updated () {},// 组件更新比如修改了文案
+  beforeDestroy () {},// 组件销毁之前
+  destroyed () {}// 组件已经销毁
 }
 </script>
 

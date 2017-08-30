@@ -20,7 +20,7 @@ class RestAPI {
   signup (username, password) {
     const url = '/signup'
     let data = { name: username, password: MD5(password).toString() }
-    /* eslint-disable no-undef */ 
+    /* eslint-disable no-undef */
     try { data.code = code } catch (e) {}
     return this.$ajax({
       method: 'POST',
